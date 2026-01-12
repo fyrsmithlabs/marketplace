@@ -1,0 +1,94 @@
+# {{.RepoName}}
+
+![Build](https://github.com/{{.Org}}/{{.RepoName}}/actions/workflows/ci.yml/badge.svg)
+{{- if .IsGo }}
+![Go](https://img.shields.io/badge/go-{{.GoVersion}}+-blue)
+{{- end }}
+![License](https://img.shields.io/badge/license-{{.LicenseBadge}}-{{.LicenseColor}})
+![Gitleaks](https://img.shields.io/badge/gitleaks-enabled-blue)
+
+{{.Description}}
+
+{{- if eq .License "AGPL-3.0" }}
+
+> **License Notice:** This software is licensed under AGPL-3.0. Network use constitutes distribution.
+{{- end }}
+
+## Prerequisites
+
+{{- if .IsGo }}
+- Go {{.GoVersion}} or later
+{{- end }}
+- List other prerequisites here
+
+## Installation
+
+{{- if .IsGo }}
+```bash
+go install github.com/{{.Org}}/{{.RepoName}}@latest
+```
+{{- else }}
+```bash
+# Add installation instructions
+```
+{{- end }}
+
+## Usage
+
+```bash
+# Add usage examples
+```
+
+## Development
+
+### Setup
+
+```bash
+git clone https://github.com/{{.Org}}/{{.RepoName}}.git
+cd {{.RepoName}}
+{{- if .IsGo }}
+go mod download
+{{- end }}
+```
+
+### Testing
+
+```bash
+{{- if .IsGo }}
+go test ./...
+{{- else }}
+# Add test command
+{{- end }}
+```
+
+### Building
+
+```bash
+{{- if .IsGo }}
+go build ./...
+{{- else }}
+# Add build command
+{{- end }}
+```
+
+## Configuration
+
+Describe configuration options, environment variables, etc.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please ensure:
+- All tests pass
+- Code follows project conventions
+- Commits follow [Conventional Commits](https://www.conventionalcommits.org/)
+- No secrets are committed (gitleaks will block them)
+
+## License
+
+This project is licensed under the {{.License}} License - see the [LICENSE](LICENSE) file for details.

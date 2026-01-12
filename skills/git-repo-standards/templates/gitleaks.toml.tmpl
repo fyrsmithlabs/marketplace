@@ -1,0 +1,84 @@
+# Gitleaks configuration for fyrsmithlabs projects
+# https://github.com/gitleaks/gitleaks
+
+title = "fyrsmithlabs gitleaks config"
+
+[extend]
+# Use default gitleaks rules as base
+useDefault = true
+
+[allowlist]
+description = "Global allowlist"
+
+# Paths to ignore
+paths = [
+    # Agent artifacts (gitignored but belt-and-suspenders)
+    '''docs/\.claude/''',
+
+    # Vendored dependencies
+    '''vendor/''',
+
+    # Test fixtures
+    '''testdata/''',
+    '''fixtures/''',
+    '''__fixtures__/''',
+
+    # Generated files
+    '''\.gen\.''',
+    '''generated/''',
+
+    # Documentation examples (may contain fake secrets)
+    '''docs/examples/''',
+]
+
+# Regex patterns to ignore (use sparingly)
+regexes = [
+    # Example placeholder patterns
+    '''EXAMPLE_.*''',
+    '''YOUR_.*_HERE''',
+    '''<your-.*>''',
+]
+
+# Specific commits to ignore (add as needed for false positives)
+# commits = [
+#     "abc123def456",
+# ]
+
+# Additional rules beyond defaults
+[[rules]]
+id = "fyrsmith-api-key"
+description = "fyrsmithlabs API Key"
+regex = '''(?i)fyrsmith[_-]?api[_-]?key\s*[=:]\s*['"]?([a-zA-Z0-9_-]{32,})['"]?'''
+secretGroup = 1
+tags = ["key", "fyrsmithlabs"]
+
+[[rules]]
+id = "generic-secret-assignment"
+description = "Generic secret assignment"
+regex = '''(?i)(secret|password|passwd|pwd|token|api_key|apikey|auth)[_-]?\s*[=:]\s*['"]([^'"]{8,})['"]'''
+secretGroup = 2
+tags = ["generic", "secret"]
+
+# Entropy-based detection for high-entropy strings
+[[rules]]
+id = "high-entropy-base64"
+description = "High entropy base64 string (potential secret)"
+regex = '''[A-Za-z0-9+/]{40,}={0,2}'''
+entropy = 4.5
+tags = ["entropy", "base64"]
+
+[[rules]]
+id = "high-entropy-hex"
+description = "High entropy hex string (potential secret)"
+regex = '''[a-fA-F0-9]{32,}'''
+entropy = 3.5
+tags = ["entropy", "hex"]
+
+# Environment file patterns
+[[rules]]
+id = "env-file-secret"
+description = "Secret in .env file format"
+regex = '''(?i)^[A-Z_]*(SECRET|PASSWORD|TOKEN|KEY|CREDENTIAL)[A-Z_]*\s*=\s*(.+)$'''
+path = '''\.env.*'''
+secretGroup = 2
+tags = ["env", "secret"]

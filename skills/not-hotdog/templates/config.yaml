@@ -1,0 +1,97 @@
+# not-hotdog: YAGNI/KISS enforcement settings
+# Copy to ~/.claude/not-hotdog.yaml to customize globally
+# Or use .claude/not-hotdog.local.md for project overrides
+
+version: 1
+
+# Sensitivity levels:
+# - conservative: Only fire on obvious over-engineering (fewer nudges)
+# - moderate: Balanced detection (recommended starting point)
+# - aggressive: Fire early and often (more nudges, faster feedback)
+sensitivity: moderate
+
+patterns:
+  # The Cynic watches for unnecessary abstraction layers
+  abstraction_creep:
+    enabled: true
+    triggers:
+      - "*Factory*"
+      - "*Manager*"
+      - "*Provider*"
+      - "*Handler*"
+      - "*Helper*"
+      - "*Utils*"
+      - "*Base*"
+      - "*Abstract*"
+      - "*Wrapper*"
+      - "*Adapter*"
+
+  # The Executive watches for enterprise-brain config addiction
+  config_driven:
+    enabled: true
+    # Triggers when adding feature flags, env vars, or config
+    # for behavior that only exists in one place
+
+  # The Insecure Dev watches for premature generalization
+  speculative_generality:
+    enabled: true
+    # Triggers on interfaces with single implementation,
+    # unused generic type parameters, abstract classes with one subclass
+
+  # The Perfectionist watches for optimizing without evidence
+  premature_optimization:
+    enabled: true
+    # Triggers on caching, memoization, lazy loading
+    # before profiling shows a bottleneck
+
+  # The Minimalist watches for dead weight
+  dead_code:
+    enabled: true
+    # Triggers on commented-out code blocks, unused imports,
+    # functions that are never called
+
+  # The Bro watches for building NASA when you need a bicycle
+  swiss_army_knife:
+    enabled: true
+    # Triggers on plugin systems, extensibility layers,
+    # elaborate architectures for simple features
+
+  # The Realist watches for scope creep
+  scope_creep:
+    enabled: true
+    file_threshold: 5        # Files touched before nudge (moderate)
+    new_file_threshold: 3    # New files created before nudge
+
+  # The Confused notices when things get confusing
+  file_explosion:
+    enabled: true
+    threshold: 5             # New files in single session
+
+  # The Supporter checks in when sessions run long
+  time_based:
+    enabled: true
+    context_threshold: 50    # % of context usage before first check-in
+    tool_call_threshold: 30  # Tool calls before check-in
+    backoff_multiplier: 1.5  # Each subsequent trigger waits longer
+
+# Individual characters can be disabled
+# (if you really can't handle The Supporter's earnest concern)
+characters:
+  the_cynic: true
+  the_executive: true
+  the_supporter: true
+  the_bro: true
+  the_minimalist: true
+  the_realist: true
+  the_insecure_dev: true
+  the_perfectionist: true
+  the_confused: true
+
+# Paths to ignore (legitimate complexity zones)
+allowlist:
+  - "**/generated/**"
+  - "**/vendor/**"
+  - "**/node_modules/**"
+  - "**/*.generated.*"
+  - "**/*.g.dart"
+  - "**/migrations/**"

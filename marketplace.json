@@ -1,0 +1,38 @@
+{
+  "name": "fyrsmithlabs",
+  "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, and development practices",
+  "version": "1.0.0",
+  "plugins": [
+    {
+      "name": "not-hotdog",
+      "description": "YAGNI/KISS enforcement with humorous archetype nudges",
+      "version": "1.0.0",
+      "path": ".",
+      "skills": ["skills/not-hotdog/SKILL.md"],
+      "commands": ["commands/not-hotdog.md"],
+      "hooks": "hooks/hooks.json"
+    },
+    {
+      "name": "git-repo-standards",
+      "description": "Repository naming, structure, and documentation standards",
+      "version": "1.0.0",
+      "path": ".",
+      "skills": ["skills/git-repo-standards/SKILL.md"]
+    },
+    {
+      "name": "git-workflows",
+      "description": "Multi-agent consensus code review and git workflows",
+      "version": "1.0.0",
+      "path": ".",
+      "skills": ["skills/git-workflows/SKILL.md"]
+    },
+    {
+      "name": "project-onboarding",
+      "description": "Initialize or onboard projects to fyrsmithlabs standards",
+      "version": "1.0.0",
+      "path": ".",
+      "skills": ["skills/project-onboarding/SKILL.md"],
+      "commands": ["commands/onboard.md"]
+    }
+  ]
+}

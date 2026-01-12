@@ -1,7 +1,6 @@
 ---
 name: project-onboarding
 description: Use when initializing new projects or onboarding existing repos to fyrsmithlabs workflow standards - validates compliance, generates missing artifacts, and configures git-repo-standards + git-workflows
-version: 1.0.0
 ---
 
 # Project Onboarding

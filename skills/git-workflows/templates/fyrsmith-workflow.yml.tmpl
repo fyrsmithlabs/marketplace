@@ -1,0 +1,125 @@
+# fyrsmithlabs Git Workflow Configuration
+# Place in: .github/fyrsmith-workflow.yml
+
+# Multi-Agent Consensus Review Configuration
+consensus:
+  # Review agents and their settings
+  agents:
+    security:
+      enabled: true
+      veto_power: true  # Can block PR regardless of other agents
+      budget: 8192      # Token budget for context folding
+    vulnerability:
+      enabled: true
+      veto_power: true
+      budget: 8192
+    code_quality:
+      enabled: true
+      veto_power: false
+      budget: 8192
+    documentation:
+      enabled: true
+      veto_power: false
+      budget: 4096
+    user_persona:
+      enabled: true
+      veto_power: false
+      budget: 4096
+
+  # Severity thresholds
+  thresholds:
+    # Which severities block the PR
+    block_on:
+      - critical
+      - high
+      - medium
+    # Auto-create issues if Low findings below this count
+    # If >= this count, author must triage
+    auto_issue_below: 3
+
+  # Audit trail configuration
+  tracing:
+    # standard: verdicts + summary
+    # full: + reasoning chains, debate transcripts, confidence scores
+    level: standard
+    # Use contextd for persistent memory
+    contextd_enabled: true
+
+# Human Review Tiers (after agent consensus passes)
+review:
+  tiers:
+    # Critical path: security, breaking changes
+    - labels:
+        - critical-path
+        - security-sensitive
+        - breaking-change
+      approvals: 2
+      required_reviewers:
+        - "@security-team"
+
+    # Elevated: API and infrastructure changes
+    - labels:
+        - api-change
+        - infrastructure
+      approvals: 2
+
+    # Default: all other changes
+    - labels: []
+      approvals: 1
+
+# Branch Management
+branches:
+  # Branching strategy
+  strategy: trunk-based
+
+  # Merge configuration
+  merge_method: squash  # squash | merge | rebase
+  auto_delete: true     # Delete branch after merge
+  require_up_to_date: true  # Branch must be current with main
+
+  # Stale branch cleanup
+  stale:
+    warn_days: 1      # Warning after N days
+    close_days: 2     # Auto-close PR after N days
+    delete_days: 3    # Delete branch after N days
+    exempt_labels:    # Labels that prevent auto-close
+      - long-running
+      - experiment
+      - spike
+
+# PR Template Configuration
+pr_template:
+  # Let agent generate initial PR description from commits
+  agent_assisted: true
+
+  # Required sections (validation fails if missing)
+  required_sections:
+    - description
+    - change_type
+    - test_plan
+    - breaking_changes
+    - linked_issues
+
+# Agent-Generated Commit Handling
+agent_commits:
+  # Label applied to agent-generated PRs
+  label: agent-generated
+
+  # Use same review rules as human PRs
+  same_rules: true
+
+  # Track metrics separately for analysis
+  track_metrics: true
+
+# GitHub Issue Creation for Low Findings
+issues:
+  # Labels applied to auto-created issues
+  labels:
+    - tech-debt
+    - from-review
+
+  # Assignee for auto-created issues (optional)
+  # assignee: ""
+
+  # Project to add issues to (optional)
+  # project: ""

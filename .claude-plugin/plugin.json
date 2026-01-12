@@ -1,0 +1,17 @@
+{
+  "name": "marketplace",
+  "version": "0.1.0",
+  "description": "A marketplace for discovering, publishing, and installing Claude Code plugins used in fyrsmithlabs projects",
+  "author": {
+    "name": "fyrsmithlabs"
+  },
+  "repository": "https://github.com/fyrsmithlabs/marketplace",
+  "license": "MIT",
+  "keywords": [
+    "marketplace",
+    "plugins",
+    "claude-code",
+    "fyrsmithlabs",
+    "plugin-management"
+  ]
+}
