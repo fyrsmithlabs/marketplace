@@ -2,49 +2,20 @@
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "fyrsmithlabs",
   "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, and development practices",
+  "version": "1.0.0",
   "owner": {
     "name": "fyrsmithlabs",
     "email": "plugins@fyrsmithlabs.com"
   },
   "plugins": [
     {
-      "name": "not-hotdog",
-      "description": "YAGNI/KISS enforcement with humorous archetype nudges",
+      "name": "fyrsmithlabs-standards",
+      "description": "Repository standards, git workflows, YAGNI enforcement, and project onboarding for fyrsmithlabs projects",
       "version": "1.0.0",
       "author": {
         "name": "fyrsmithlabs"
       },
-      "source": ".",
-      "category": "development"
-    },
-    {
-      "name": "git-repo-standards",
-      "description": "Repository naming, structure, and documentation standards",
-      "version": "1.0.0",
-      "author": {
-        "name": "fyrsmithlabs"
-      },
-      "source": ".",
-      "category": "development"
-    },
-    {
-      "name": "git-workflows",
-      "description": "Multi-agent consensus code review and git workflows",
-      "version": "1.0.0",
-      "author": {
-        "name": "fyrsmithlabs"
-      },
-      "source": ".",
-      "category": "development"
-    },
-    {
-      "name": "project-onboarding",
-      "description": "Initialize or onboard projects to fyrsmithlabs standards",
-      "version": "1.0.0",
-      "author": {
-        "name": "fyrsmithlabs"
-      },
-      "source": ".",
+      "source": "./",
       "category": "development"
     }
   ]
