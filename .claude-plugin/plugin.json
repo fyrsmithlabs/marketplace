@@ -1,7 +1,7 @@
 {
-  "name": "marketplace",
-  "version": "0.1.0",
-  "description": "A marketplace for discovering, publishing, and installing Claude Code plugins used in fyrsmithlabs projects",
+  "name": "fyrsmithlabs",
+  "version": "1.0.0",
+  "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, and development practices",
   "author": {
     "name": "fyrsmithlabs"
   },
