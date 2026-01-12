@@ -15,6 +15,22 @@ Initialize new projects or onboard existing repos to fyrsmithlabs standards. Val
 | **Onboard** | Existing repo | Audit, fix gaps, add missing pieces |
 | **Validate** | Any repo | Check compliance without modifications |
 
+### Discovery Flag (Optional)
+
+Add `--discover [lens]` to any mode to run roadmap-discovery before onboarding:
+
+```bash
+/onboard --discover               # Run all lenses before onboarding
+/onboard --discover security      # Security-focused discovery first
+/onboard validate --discover      # Discovery + validation (no changes)
+```
+
+When `--discover` is used:
+1. Run roadmap-discovery skill with specified lens(es)
+2. Present findings summary
+3. Ask: "Proceed with onboarding?" or "Create issues for findings?"
+4. Continue to normal onboarding flow
+
 ---
 
 ## Pre-Flight (contextd)
@@ -416,5 +432,108 @@ If you're thinking any of these, you're about to violate the skill:
 This skill orchestrates:
 - `git-repo-standards` - Structure, naming, files
 - `git-workflows` - Review process, PR requirements
+- `roadmap-discovery` - Optional pre-onboarding analysis (via --discover flag)
 
-Both skills must be available for full onboarding.
+Both `git-repo-standards` and `git-workflows` must be available for full onboarding.
+
+---
+
+## Discovery Integration
+
+When `--discover` flag is used:
+
+### Phase 0.5: Discovery (Before Audit)
+
+```
+IF --discover flag present:
+  1. Parse lens argument (default: "all")
+
+  2. mcp__contextd__branch_create(
+       session_id: "<session>",
+       description: "Pre-onboarding discovery",
+       budget: 8192
+     )
+
+  3. Run roadmap-discovery with specified lens(es):
+     - security: Auth, secrets, vulnerabilities
+     - quality: Tests, complexity, duplication
+     - perf: Queries, caching, bottlenecks
+     - docs: README, API docs, comments
+
+  4. mcp__contextd__branch_return(
+       branch_id: "<branch>",
+       message: "Discovery complete: <findings summary>"
+     )
+
+  5. Present findings to user:
+
+     ┌─────────────────────────────────────────────────────────┐
+     │ Pre-Onboarding Discovery                                │
+     └─────────────────────────────────────────────────────────┘
+
+     Found 12 issues before onboarding:
+       CRITICAL: 2 (security: hardcoded secrets, missing auth)
+       MAJOR: 5 (quality: no tests, high complexity)
+       MINOR: 5 (docs: outdated comments)
+
+  6. AskUserQuestion(
+       questions: [{
+         question: "Discovery found issues. How to proceed?",
+         header: "Action",
+         options: [
+           { label: "Continue onboarding", description: "Fix standards first, address findings later" },
+           { label: "Create issues first", description: "Create GitHub Issues for findings, then onboard" },
+           { label: "Address critical first", description: "Fix CRITICAL findings before onboarding" },
+           { label: "View details", description: "Show full findings before deciding" }
+         ],
+         multiSelect: false
+       }]
+     )
+
+  7. Continue to normal onboarding flow (Step 1: Audit)
+```
+
+### Discovery + Validate Mode
+
+When combined with validate mode (`/onboard validate --discover`):
+
+1. Run discovery analysis
+2. Run compliance validation
+3. Combine into unified report:
+
+```markdown
+## Combined Assessment: [repo-name]
+
+### Discovery Findings
+| Lens | Critical | Major | Minor |
+|------|----------|-------|-------|
+| security | 2 | 1 | 0 |
+| quality | 0 | 3 | 2 |
+| perf | 0 | 1 | 1 |
+| docs | 0 | 0 | 2 |
+
+### Compliance Status
+Score: 8/12 (67%)
+Critical gaps: 4
+Warnings: 2
+
+### Recommended Priority
+1. Security findings (CRITICAL)
+2. Compliance gaps (standards)
+3. Quality findings (MAJOR)
+4. Documentation (MINOR)
+```
+
+### Memory Recording with Discovery
+
+```
+mcp__contextd__memory_record(
+  project_id: "<project>",
+  title: "Onboarding with discovery: <repo-name>",
+  content: "Discovery: <lens> found <n> issues.
+            Compliance: <score>. Gaps fixed: <list>.
+            Combined assessment provided.",
+  outcome: "success",
+  tags: ["onboarding", "discovery", "<lens>"]
+)
+```
