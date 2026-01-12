@@ -49,31 +49,10 @@ mcp__contextd__repository_index(
 
 ### 2. Run Lens Analyzers
 
-For each enabled lens, execute analyzer from `includes/analyzers/`:
-
-**Security Analyzer:**
-- Check auth patterns
-- Scan for hardcoded secrets
-- Review input validation
-- Check dependency vulnerabilities
-
-**Quality Analyzer:**
-- Measure test coverage
-- Calculate cyclomatic complexity
-- Detect code duplication
-- Review error handling patterns
-
-**Performance Analyzer:**
-- Identify N+1 query patterns
-- Check for unbounded loops/queries
-- Review caching opportunities
-- Analyze bundle size (if applicable)
-
-**Documentation Analyzer:**
-- Check README completeness
-- Review API documentation
-- Identify outdated comments
-- Check for missing JSDoc/docstrings
+**Security:** `Grep: password|secret|api_key|eval\(|exec\(|innerHTML` → Check auth, secrets, injection
+**Quality:** `Grep: catch\s*\(\w*\)\s*\{\s*\}` + test file ratio → Check coverage, complexity, error handling
+**Perf:** `Grep: for.*SELECT|\.find\(\)(?!.*limit)` → Check N+1, unbounded queries
+**Docs:** `Glob: README.md` + section check → Check completeness, API docs
 
 ### 3. Aggregate Findings
 
@@ -141,15 +120,6 @@ gh issue create \
   --label "<lens>,discovery" \
   --body "<description + recommendation>"
 ```
-
-## Analyzer Includes
-
-Each lens has dedicated analyzer in `includes/analyzers/`:
-
-- `security.md` - Security analysis rules
-- `quality.md` - Code quality metrics
-- `performance.md` - Performance patterns
-- `docs.md` - Documentation coverage
 
 ## Integration Points
 
@@ -229,7 +199,7 @@ See CREDITS.md for full attribution.
 ### Analysis Phase:
 - [ ] Complete pre-flight (index check, memory search)
 - [ ] Run ALL specified lenses (default: all 4)
-- [ ] For each lens, execute analyzer from includes/analyzers/
+- [ ] For each lens, execute analysis (see Run Lens Analyzers section)
 - [ ] Apply severity classification to each finding
 - [ ] Apply confidence scoring
 

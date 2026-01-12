@@ -124,22 +124,6 @@ gh project item-add <project-number> --owner <owner> --url <epic-url>
 gh project item-add <project-number> --owner <owner> --url <sub-issue-url>
 ```
 
-## Issue Templates
-
-Use templates from `includes/issue-templates/`:
-
-- `simple-checklist.md` - Single issue with tasks
-- `epic.md` - Parent epic issue
-- `sub-issue.md` - Child task issue
-
-## Verification Criteria
-
-Include auto-generated verification in each Issue body.
-
-Reference `includes/verification/` for:
-- Type selection based on task type
-- Template population
-
 ## contextd Integration
 
 Record created artifacts:
@@ -221,7 +205,7 @@ Adapted from Auto-Claude planning concepts. See CREDITS.md.
 
 ### For ALL Tiers:
 - [ ] Run pre-flight checks (gh auth, remote, tier)
-- [ ] Generate verification criteria for EACH task (see includes/verification-criteria/)
+- [ ] Generate verification criteria for EACH task (see Verification Criteria section)
 - [ ] Include verification table in EVERY Issue body
 - [ ] Record created artifacts in contextd
 
@@ -276,7 +260,7 @@ If you're thinking any of these, you're about to violate the skill:
 |---------|------------------|
 | Creating sub-Issues without Epic reference | Every sub-Issue body MUST contain `Contributes to #<epic>` |
 | Creating Epic without updating links | After ALL sub-Issues created, update Epic with `- #<n>: <title>` list |
-| Skipping verification criteria | Use includes/verification-criteria/ to generate for each task type |
+| Skipping verification criteria | Use Verification Criteria section to generate for each task type |
 | COMPLEX without Project board | gh project create, then gh project item-add for each Issue |
 | Not recording in contextd | memory_record with ALL Issue URLs is mandatory |
 | Using wrong tier artifacts | SIMPLE = single Issue, STANDARD = Epic+subs, COMPLEX = Epic+subs+Project |
