@@ -1,6 +1,6 @@
 ---
 name: app-interview
-description: Conduct comprehensive app interview - reads existing specs, performs competitor analysis, and helps flesh out the app idea with differentiation strategies
+description: Use when starting a new app idea, exploring product concepts, or doing market research. Reads existing specs, conducts competitor analysis, and helps flesh out the app idea with differentiation strategies. Say "I have an app idea", "interview me about this product", or "help me differentiate from competitors".
 arguments:
   - name: reuse
     description: "Reuse previous interview context from contextd (optional)"

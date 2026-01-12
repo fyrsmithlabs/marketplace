@@ -1,6 +1,6 @@
 ---
 name: not-hotdog
-description: YAGNI/KISS enforcement controls - view status, adjust sensitivity, toggle patterns
+description: Use when managing YAGNI/KISS enforcement - view nudge statistics, adjust sensitivity, understand why a nudge fired, or toggle enforcement on/off. Say "show not-hotdog status", "why did I get that nudge?", "turn off not-hotdog", or "adjust complexity settings".
 arguments:
   - name: action
     description: "Action to perform: status (default), config, why, off, on, principles"

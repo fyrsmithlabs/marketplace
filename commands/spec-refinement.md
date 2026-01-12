@@ -1,6 +1,6 @@
 ---
 name: spec-refinement
-description: Interview user in-depth about a spec file to refine technical implementation, UI/UX, concerns, and tradeoffs
+description: Use when refining an existing specification document, drilling into technical details, exploring edge cases, or validating design decisions. Conducts deep-dive interview about implementation, UI/UX, concerns, and tradeoffs. Say "refine this spec", "drill into the details", or "let's validate this design".
 arguments:
   - name: spec_file
     description: Path to the spec file to refine (required)

@@ -1,6 +1,6 @@
 ---
 name: onboard
-description: Initialize or onboard a project to fyrsmithlabs workflow standards
+description: Use when setting up a new project, bringing an existing repo into compliance, or checking if a repo meets fyrsmithlabs standards. Validates against git-repo-standards and configures git-workflows. Say "onboard this repo", "initialize project", "check compliance", or "set up standards".
 arguments:
   - name: mode
     description: "Mode: init (new project), onboard (existing), validate (audit only)"

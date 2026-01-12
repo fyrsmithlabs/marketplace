@@ -1,6 +1,6 @@
 ---
 name: test-skill
-description: Run pressure test scenarios against a marketplace skill
+description: Use when testing marketplace skills for compliance, validating skill behavior against scenarios, or running TDD-style pressure tests. Tests if agents follow skill guidance correctly and catches rationalizations. Say "test this skill", "run pressure tests", or "validate skill compliance".
 arguments:
   - name: skill-name
     description: Name of skill to test (git-workflows, git-repo-standards, project-onboarding)

@@ -1,6 +1,6 @@
 ---
 name: brainstorm
-description: Interactive design interview with complexity-aware questioning. Creates GitHub Issues based on tier.
+description: Use when designing a feature, planning implementation, exploring approaches, or needing to think through a change before coding. Runs an interactive interview to understand requirements, assess complexity, explore alternatives, and create GitHub Issues. Say "let's brainstorm", "help me design", or "plan this feature".
 arguments:
   - name: topic
     description: "Brief description of what to build (optional - will be asked if not provided)"

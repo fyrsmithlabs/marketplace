@@ -1,6 +1,6 @@
 ---
 name: roadmap-discovery
-description: Non-interactive codebase analysis that identifies improvement opportunities. Supports lens filtering (security, quality, perf, docs).
+description: Use when analyzing codebase for improvements, running discovery, finding issues, auditing security/quality/performance, identifying tech debt, or scanning for problems. Autonomous non-interactive analysis with lens filtering (security, quality, perf, docs) and severity classification (CRITICAL, MAJOR, MINOR, SUGGESTION).
 ---
 
 # Roadmap Discovery

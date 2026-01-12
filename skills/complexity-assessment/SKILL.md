@@ -1,6 +1,6 @@
 ---
 name: complexity-assessment
-description: Assess task complexity using 5 dimensions to right-size workflow depth. Returns SIMPLE, STANDARD, or COMPLEX tier.
+description: Use when assessing task complexity, determining workflow depth, asking "how complex is this?", "should I use a worktree?", "is this a big change?", or sizing work before planning. Analyzes 5 dimensions (scope, integration, infrastructure, knowledge, risk) to return SIMPLE, STANDARD, or COMPLEX tier.
 ---
 
 # Complexity Assessment

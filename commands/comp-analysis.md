@@ -1,6 +1,6 @@
 ---
 name: comp-analysis
-description: Generate token-efficient executive summary of competitor analysis to terminal
+description: Use when reviewing competitor analysis results, getting a quick market overview, or summarizing competitive landscape from previous app-interview sessions. Generates executive summary directly to terminal. Say "summarize competitors", "show competitive analysis", or "what did we learn about the market?".
 arguments:
   - name: source
     description: "Path to competition.json or interview directory (optional - searches .claude/interviews/ if not provided)"

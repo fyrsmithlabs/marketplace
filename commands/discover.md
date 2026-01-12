@@ -1,6 +1,6 @@
 ---
 name: discover
-description: Run non-interactive codebase discovery and optionally create GitHub Issues for findings
+description: Use when auditing codebase quality, finding security issues, identifying tech debt, checking test coverage, or scanning for improvements. Runs autonomous analysis across security, quality, performance, and documentation. Say "analyze this codebase", "find issues", "audit security", or "check code quality".
 arguments:
   - name: lens
     description: "Filter analysis: security, quality, perf, docs, or all (default: all)"

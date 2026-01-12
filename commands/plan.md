@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Unified planning workflow - assess complexity, brainstorm design, create GitHub Issues, offer worktree
+description: Use when starting a new feature or task from scratch. Orchestrates the full workflow - assesses complexity, runs brainstorming interview, creates GitHub Issues, and offers worktree setup. The complete planning pipeline. Say "plan this feature", "start planning", or "I want to build X".
 arguments:
   - name: topic
     description: "Brief description of what to build"

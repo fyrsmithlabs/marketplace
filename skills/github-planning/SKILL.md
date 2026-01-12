@@ -1,6 +1,6 @@
 ---
 name: github-planning
-description: Create GitHub Issues and Projects based on complexity tier. Replaces local markdown plans with native GitHub artifacts.
+description: Use when creating GitHub Issues, making an epic, creating sub-issues, setting up a project board, or converting plans into GitHub artifacts. Creates tier-appropriate structures - SIMPLE (single issue with checklist), STANDARD (epic + sub-issues), COMPLEX (epic + sub-issues + project board).
 ---
 
 # GitHub Planning
