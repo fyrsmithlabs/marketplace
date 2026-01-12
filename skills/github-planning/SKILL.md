@@ -136,7 +136,7 @@ Use templates from `includes/issue-templates/`:
 
 Include auto-generated verification in each Issue body.
 
-Reference `includes/verification-criteria/` for:
+Reference `includes/verification/` for:
 - Type selection based on task type
 - Template population
 
