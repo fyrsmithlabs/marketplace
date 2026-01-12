@@ -6,7 +6,7 @@
     "name": "fyrsmithlabs"
   },
   "repository": "https://github.com/fyrsmithlabs/marketplace",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "keywords": [
     "marketplace",
     "plugins",

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "contextd": {
+      "type": "stdio",
+      "command": "contextd",
+      "args": ["serve"],
+      "env": {
+        "CONTEXTD_DATA_DIR": "${HOME}/.contextd"
+      }
+    }
+  }
+}
