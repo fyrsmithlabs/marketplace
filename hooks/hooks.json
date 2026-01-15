@@ -1,25 +1,6 @@
 {
-  "hooks": [
+  "PreToolUse": [
     {
-      "event": "PostToolUse",
-      "matcher": "Write|Edit",
-      "config": {
-        "type": "prompt",
-        "prompt": "## not-hotdog: YAGNI/KISS Pattern Detection\n\nAnalyze the just-completed Write/Edit for over-engineering patterns.\n\n### Check these patterns:\n\n**1. Abstraction Creep (The Cynic)**\nDoes filename match: *Factory*, *Manager*, *Provider*, *Handler*, *Helper*, *Utils*, *Base*, *Abstract*, *Wrapper*, *Adapter*, *Builder*, *Coordinator*, *Orchestrator*?\n\n**2. Config-Driven Everything (The Executive)**\nAdding feature flags, env vars, or config for single-use behavior?\n\n**3. Dead Code (The Minimalist)**\nLarge blocks of commented-out code? Unused imports?\n\n**4. Swiss Army Knife (The Bro)**\nPlugin system, event bus, or elaborate architecture for simple feature?\n\n### Skip if:\n- Path contains: generated/, vendor/, node_modules/, migrations/\n- File is a test file\n- Pattern is legitimate for project type (check .claude/not-hotdog.local.md)\n\n### If pattern detected:\nOutput a nudge in archetype character voice (see includes/not-hotdog/characters.md).\nInclude: character quote, what triggered it, simpler path suggestion.\nEnd with: Dismiss/Snooze/Adjust options.\n\n### If no pattern:\nAllow silently - don't output anything.",
-        "mode": "notify"
-      }
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": "TodoWrite",
-      "config": {
-        "type": "prompt",
-        "prompt": "## not-hotdog: Scope Check (The Realist)\n\nWhen a todo is marked completed, briefly check for scope creep.\n\n### Compare:\n- Original task description\n- What was actually done (files touched, changes made)\n\n### Trigger nudge if:\n- Completed todo involved 5+ files for a 'simple' task keyword (fix, typo, rename, update, tweak)\n- Work expanded significantly beyond todo description\n\n### The Realist's voice:\nExasperated but caring. Voice of reason. Has seen scope creep kill startups.\n\nExample: \"Okay, let me get this straight. The task was 'fix typo'. You touched 7 files. I've seen this movie. It doesn't end well.\"\n\n### If no scope creep:\nAllow silently.",
-        "mode": "notify"
-      }
-    },
-    {
-      "event": "PreToolUse",
       "matcher": "Write|Edit",
       "config": {
         "type": "prompt",
@@ -28,7 +9,6 @@
       }
     },
     {
-      "event": "PreToolUse",
       "matcher": "Bash",
       "config": {
         "type": "prompt",
@@ -37,21 +17,37 @@
       }
     },
     {
-      "event": "PostToolUse",
-      "matcher": "Write",
-      "config": {
-        "type": "prompt",
-        "prompt": "After file creation, check if this is a new repository being set up. If so, verify:\n1. README.md exists with required sections (title, badges, description, install, usage, license)\n2. CHANGELOG.md exists with [Unreleased] section\n3. .gitignore exists with docs/.claude/ ignored\n4. LICENSE exists (or is planned)\n5. .gitleaks.toml exists (or is planned)\n\nReport any missing required files as warnings.",
-        "mode": "notify"
-      }
-    },
-    {
-      "event": "PreToolUse",
       "matcher": "Bash",
       "config": {
         "type": "prompt",
         "prompt": "If this is a 'git commit' command AND staged files include skills/**:\n\n1. Identify which skills have staged changes by parsing paths\n2. For each affected skill, run /test-skill <skill-name>\n3. If ANY scenario fails:\n   - BLOCK the commit\n   - Create TodoWrite items for each failure:\n     - 'Fix skill: <skill> - scenario <name> rationalization: <phrase>'\n   - Display failure summary\n4. If all scenarios pass:\n   - ALLOW the commit\n   - Report: 'Pressure tests passed for: <skills>'\n\nTo check staged files: git diff --cached --name-only | grep '^skills/'\nExtract skill name from path: skills/<skill-name>/...",
         "mode": "filter"
+      }
+    }
+  ],
+  "PostToolUse": [
+    {
+      "matcher": "Write|Edit",
+      "config": {
+        "type": "prompt",
+        "prompt": "## not-hotdog: YAGNI/KISS Pattern Detection\n\nAnalyze the just-completed Write/Edit for over-engineering patterns.\n\n### Check these patterns:\n\n**1. Abstraction Creep (The Cynic)**\nDoes filename match: *Factory*, *Manager*, *Provider*, *Handler*, *Helper*, *Utils*, *Base*, *Abstract*, *Wrapper*, *Adapter*, *Builder*, *Coordinator*, *Orchestrator*?\n\n**2. Config-Driven Everything (The Executive)**\nAdding feature flags, env vars, or config for single-use behavior?\n\n**3. Dead Code (The Minimalist)**\nLarge blocks of commented-out code? Unused imports?\n\n**4. Swiss Army Knife (The Bro)**\nPlugin system, event bus, or elaborate architecture for simple feature?\n\n### Skip if:\n- Path contains: generated/, vendor/, node_modules/, migrations/\n- File is a test file\n- Pattern is legitimate for project type (check .claude/not-hotdog.local.md)\n\n### If pattern detected:\nOutput a nudge in archetype character voice (see includes/not-hotdog/characters.md).\nInclude: character quote, what triggered it, simpler path suggestion.\nEnd with: Dismiss/Snooze/Adjust options.\n\n### If no pattern:\nAllow silently - don't output anything.",
+        "mode": "notify"
+      }
+    },
+    {
+      "matcher": "TodoWrite",
+      "config": {
+        "type": "prompt",
+        "prompt": "## not-hotdog: Scope Check (The Realist)\n\nWhen a todo is marked completed, briefly check for scope creep.\n\n### Compare:\n- Original task description\n- What was actually done (files touched, changes made)\n\n### Trigger nudge if:\n- Completed todo involved 5+ files for a 'simple' task keyword (fix, typo, rename, update, tweak)\n- Work expanded significantly beyond todo description\n\n### The Realist's voice:\nExasperated but caring. Voice of reason. Has seen scope creep kill startups.\n\nExample: \"Okay, let me get this straight. The task was 'fix typo'. You touched 7 files. I've seen this movie. It doesn't end well.\"\n\n### If no scope creep:\nAllow silently.",
+        "mode": "notify"
+      }
+    },
+    {
+      "matcher": "Write",
+      "config": {
+        "type": "prompt",
+        "prompt": "After file creation, check if this is a new repository being set up. If so, verify:\n1. README.md exists with required sections (title, badges, description, install, usage, license)\n2. CHANGELOG.md exists with [Unreleased] section\n3. .gitignore exists with docs/.claude/ ignored\n4. LICENSE exists (or is planned)\n5. .gitleaks.toml exists (or is planned)\n\nReport any missing required files as warnings.",
+        "mode": "notify"
       }
     }
   ]
