@@ -8,14 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Plugin validation report identifying gaps
-- 5 review agents for consensus code review
-- contextd dependency documentation
-- .mcp.json.example for contextd setup
+- 5 review agents for consensus code review (security, vulnerability, code-quality, documentation, user-persona)
+- contextd MCP server dependency documentation
+- `.mcp.json.example` for contextd setup
+- `CHANGELOG.md`, `LICENSE` (Apache-2.0), `.gitleaks.toml` - plugin now follows its own standards
+
+### Changed
+- Simplified plugin structure from 46 to 27 files
+- Enhanced skill and command descriptions with trigger phrases
 
 ### Fixed
-- License mismatch in plugin.json (MIT -> AGPL-3.0)
+- License mismatch in plugin.json (MIT → Apache-2.0)
 - README.md now documents all 9 commands and 7 skills
+- Plugin namespace renamed to fyrsmithlabs for correct namespacing
+- Marketplace source format now uses relative paths
 
 ## [0.1.0] - 2026-01-08
 
