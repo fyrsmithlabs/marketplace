@@ -1,6 +1,6 @@
 ---
-name: not-hotdog
-description: Use when managing YAGNI/KISS enforcement - view nudge statistics, adjust sensitivity, understand why a nudge fired, or toggle enforcement on/off. Say "show not-hotdog status", "why did I get that nudge?", "turn off not-hotdog", or "adjust complexity settings".
+name: yagni
+description: Use when managing YAGNI/KISS enforcement - view nudge statistics, adjust sensitivity, understand why a nudge fired, or toggle enforcement on/off. Say "show yagni status", "why did I get that nudge?", "turn off yagni", or "adjust complexity settings".
 arguments:
   - name: action
     description: "Action to perform: status (default), config, why, off, on, principles"
@@ -8,20 +8,20 @@ arguments:
     type: string
 ---
 
-# /not-hotdog Command
+# /yagni Command
 
-Manage the not-hotdog YAGNI/KISS enforcement system.
+Manage the yagni YAGNI/KISS enforcement system.
 
 ## Actions
 
-### `/not-hotdog` or `/not-hotdog status`
+### `/yagni` or `/yagni status`
 
 Show current session statistics and recent nudges.
 
 **Display:**
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ 🤠 not-hotdog status                                        │
+│ 🤠 yagni status                                        │
 └─────────────────────────────────────────────────────────────┘
 
 Session Stats:
@@ -42,7 +42,7 @@ Config: {{config_path}}
 
 ---
 
-### `/not-hotdog config`
+### `/yagni config`
 
 Interactively adjust sensitivity and pattern settings.
 
@@ -62,7 +62,7 @@ Patterns enabled:
 
 Characters enabled: all
 
-Config file: ~/.claude/not-hotdog.yaml
+Config file: ~/.claude/yagni.yaml
 ```
 
 2. Ask what to adjust using AskUserQuestion:
@@ -85,7 +85,7 @@ Config file: ~/.claude/not-hotdog.yaml
 - Toggle individual patterns on/off
 - Adjust pattern-specific thresholds
 
-4. Write updated config to `~/.claude/not-hotdog.yaml`
+4. Write updated config to `~/.claude/yagni.yaml`
 
 5. Confirm changes:
 ```
@@ -93,19 +93,19 @@ Configuration updated:
   Sensitivity: conservative → moderate
   abstraction_creep: disabled → enabled
 
-Changes saved to ~/.claude/not-hotdog.yaml
+Changes saved to ~/.claude/yagni.yaml
 ```
 
 ---
 
-### `/not-hotdog why`
+### `/yagni why`
 
 Explain the most recent nudge in detail.
 
 **Display:**
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ 🤠 not-hotdog: Why did {{character}} speak up?              │
+│ 🤠 yagni: Why did {{character}} speak up?              │
 └─────────────────────────────────────────────────────────────┘
 
 Pattern: {{pattern_name}}
@@ -131,31 +131,31 @@ If "No - false positive" or "Needs tuning":
 
 ---
 
-### `/not-hotdog off`
+### `/yagni off`
 
-Disable all not-hotdog nudges for this session.
+Disable all yagni nudges for this session.
 
 **Display:**
 ```
-not-hotdog disabled for this session.
+yagni disabled for this session.
 
 The Cynic: "Finally. Some peace and quiet. Over-engineer away."
 The Supporter: "I'll... I'll be here if you need me. Just watching. From a distance."
 
-To re-enable: /not-hotdog on
+To re-enable: /yagni on
 ```
 
 Set session flag: `middle_out_disabled: true`
 
 ---
 
-### `/not-hotdog on`
+### `/yagni on`
 
-Re-enable not-hotdog nudges after disabling.
+Re-enable yagni nudges after disabling.
 
 **Display:**
 ```
-not-hotdog re-enabled.
+yagni re-enabled.
 
 The team is back:
   The Cynic: "I see you've returned to reason."
@@ -169,14 +169,14 @@ Clear session flag: `middle_out_disabled: false`
 
 ---
 
-### `/not-hotdog principles`
+### `/yagni principles`
 
 Display YAGNI and KISS principles with examples.
 
 **Display:**
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ 🤠 not-hotdog principles                                    │
+│ 🤠 yagni principles                                    │
 └─────────────────────────────────────────────────────────────┘
 
 ## YAGNI — You Aren't Gonna Need It
@@ -238,8 +238,8 @@ Each character watches for specific smells:
 
 | Scope | Path |
 |-------|------|
-| Global | `~/.claude/not-hotdog.yaml` |
-| Project | `.claude/not-hotdog.local.md` |
+| Global | `~/.claude/yagni.yaml` |
+| Project | `.claude/yagni.local.md` |
 
 Project config overrides global. Use project config for:
 - Legitimate patterns (DI frameworks, plugin architectures)

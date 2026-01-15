@@ -1,4 +1,4 @@
-# not-hotdog Pattern Detector
+# yagni Pattern Detector
 
 This hook runs on `PostToolUse` for Write and Edit operations. It analyzes file changes and session context to detect over-engineering patterns.
 
@@ -190,7 +190,7 @@ When a pattern is detected, output the nudge in this format:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ 🤠 not-hotdog: {{character_name}}                           │
+│ 🤠 yagni: {{character_name}}                           │
 └─────────────────────────────────────────────────────────────┘
 
 {{character_message}}
@@ -202,7 +202,7 @@ When a pattern is detected, output the nudge in this format:
 ───────────────────────────────────────
 Dismiss: "I know what I'm doing"
 Snooze: "Back off for this session"
-Adjust: /not-hotdog config
+Adjust: /yagni config
 
 Sensitivity: {{sensitivity}} | Pattern: {{pattern_name}}
 ```
@@ -211,8 +211,8 @@ Sensitivity: {{sensitivity}} | Pattern: {{pattern_name}}
 
 ## Configuration Loading
 
-1. Check `~/.claude/not-hotdog.yaml` for global config
-2. Check `.claude/not-hotdog.local.md` for project overrides
+1. Check `~/.claude/yagni.yaml` for global config
+2. Check `.claude/yagni.local.md` for project overrides
 3. Merge with project overriding global
 4. Apply sensitivity multipliers to thresholds:
    - conservative: thresholds * 1.5

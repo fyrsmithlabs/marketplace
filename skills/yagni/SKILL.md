@@ -1,9 +1,9 @@
 ---
-name: not-hotdog
-description: YAGNI/KISS enforcement with humorous nudges. Use when discussing code complexity, over-engineering concerns, or when the user wants to understand a not-hotdog nudge.
+name: yagni
+description: YAGNI/KISS enforcement with humorous nudges. Use when discussing code complexity, over-engineering concerns, or when the user wants to understand a yagni nudge.
 ---
 
-# not-hotdog
+# yagni
 
 > "Is it a hotdog? Or is it not a hotdog?" — Sometimes the simplest binary classifier is the best solution.
 
@@ -25,11 +25,11 @@ This skill enforces YAGNI (You Aren't Gonna Need It) and KISS (Keep It Simple, S
 
 | Command | Purpose |
 |---------|---------|
-| `/not-hotdog` | Show current session stats and recent nudges |
-| `/not-hotdog config` | Adjust sensitivity and pattern settings |
-| `/not-hotdog why` | Explain the last nudge in detail |
-| `/not-hotdog off` | Disable nudges for this session |
-| `/not-hotdog principles` | Review YAGNI/KISS guidelines with examples |
+| `/yagni` | Show current session stats and recent nudges |
+| `/yagni config` | Adjust sensitivity and pattern settings |
+| `/yagni why` | Explain the last nudge in detail |
+| `/yagni off` | Disable nudges for this session |
+| `/yagni principles` | Review YAGNI/KISS guidelines with examples |
 
 ## When You See a Nudge
 
@@ -43,7 +43,7 @@ Nudges are **suggestions, not blocks**. When one fires:
 
 - **"I know what I'm doing"** — Dismisses this instance
 - **"Back off for this session"** — Snoozes the pattern for this session
-- **Adjust config** — Tune thresholds in `~/.claude/not-hotdog.yaml`
+- **Adjust config** — Tune thresholds in `~/.claude/yagni.yaml`
 
 ## The Characters
 
@@ -63,7 +63,7 @@ Each pattern is delivered by an archetype whose personality fits the smell:
 
 ## Configuration
 
-### Global Settings (`~/.claude/not-hotdog.yaml`)
+### Global Settings (`~/.claude/yagni.yaml`)
 
 ```yaml
 sensitivity: moderate  # conservative | moderate | aggressive
@@ -78,7 +78,7 @@ patterns:
     backoff_multiplier: 1.5
 ```
 
-### Project Override (`.claude/not-hotdog.local.md`)
+### Project Override (`.claude/yagni.local.md`)
 
 ```markdown
 ---

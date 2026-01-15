@@ -109,7 +109,7 @@ If the specific case matches a known example, use that. Otherwise, generate a ge
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ 🤠 middle-out: {{character_name}}                           │
+│ 🤠 yagni: {{character_name}}                           │
 └─────────────────────────────────────────────────────────────┘
 
 {{filled_character_quote}}
@@ -122,7 +122,7 @@ If the specific case matches a known example, use that. Otherwise, generate a ge
 ───────────────────────────────────────
 Dismiss: "I know what I'm doing"
 Snooze: "Back off for this session"
-Adjust: /not-hotdog config
+Adjust: /yagni config
 
 Sensitivity: {{sensitivity}} | Pattern: {{pattern_name}}
 ```
@@ -142,7 +142,7 @@ Sensitivity: {{sensitivity}} | Pattern: {{pattern_name}}
 - Add pattern to snooze list in session state
 - Pattern will not fire again this session
 
-### On "/not-hotdog config"
+### On "/yagni config"
 
 - Show current configuration
 - Offer to adjust sensitivity or disable specific patterns

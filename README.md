@@ -1,12 +1,10 @@
 # Marketplace
 
 ![Build](https://github.com/fyrsmithlabs/marketplace/actions/workflows/ci.yml/badge.svg)
-![License](https://img.shields.io/badge/license-AGPL--3.0-blue)
+![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![Gitleaks](https://img.shields.io/badge/gitleaks-enabled-blue)
 
 A Claude Code plugin providing skills, commands, and agents for fyrsmithlabs project standards and workflows.
-
-> **License Notice:** This software is licensed under AGPL-3.0. Network use constitutes distribution.
 
 ## Overview
 
@@ -32,7 +30,7 @@ marketplace/
 ├── .claude-plugin/           # Plugin manifest
 ├── commands/                 # Slash commands
 │   ├── onboard.md           # /onboard command
-│   ├── not-hotdog.md        # /not-hotdog command
+│   ├── yagni.md        # /yagni command
 │   ├── brainstorm.md        # /brainstorm command
 │   ├── plan.md              # /plan command
 │   ├── discover.md          # /discover command
@@ -45,12 +43,12 @@ marketplace/
 │   ├── git-repo-standards/  # Repo standards skill
 │   ├── git-workflows/       # Workflow skill
 │   ├── project-onboarding/  # Onboarding skill
-│   ├── not-hotdog/          # YAGNI/KISS enforcement
+│   ├── yagni/          # YAGNI/KISS enforcement
 │   ├── complexity-assessment/ # Task complexity evaluation
 │   ├── github-planning/     # GitHub Issues/Projects
 │   └── roadmap-discovery/   # Codebase analysis
 ├── includes/                 # Shared hook includes
-│   └── not-hotdog/          # Pattern detection templates
+│   └── yagni/          # Pattern detection templates
 └── hooks/
     └── hooks.json           # Enforcement hooks
 ```
@@ -62,7 +60,7 @@ marketplace/
 | `git-repo-standards` | Repository naming, structure, README, CHANGELOG, LICENSE, gitleaks |
 | `git-workflows` | 5-agent consensus review, PR requirements, trunk-based branching |
 | `project-onboarding` | Initialize new projects or onboard existing repos |
-| `not-hotdog` | YAGNI/KISS enforcement with humorous archetype nudges |
+| `yagni` | YAGNI/KISS enforcement with humorous archetype nudges |
 | `complexity-assessment` | Assess task complexity (SIMPLE/STANDARD/COMPLEX) across 5 dimensions |
 | `github-planning` | Create tier-appropriate GitHub Issues, epics, and project boards |
 | `roadmap-discovery` | Autonomous codebase analysis with lens filtering (security, quality, perf, docs) |
@@ -74,7 +72,7 @@ marketplace/
 | `/onboard` | Onboard existing project to standards |
 | `/onboard init` | Initialize new project from scratch |
 | `/onboard validate` | Audit compliance without changes |
-| `/not-hotdog` | Manage YAGNI/KISS enforcement settings |
+| `/yagni` | Manage YAGNI/KISS enforcement settings |
 | `/brainstorm` | Interactive design interview with complexity-aware questioning |
 | `/plan` | Full planning workflow - assess, brainstorm, create GitHub Issues |
 | `/discover` | Run codebase discovery with optional lens filtering |
@@ -166,4 +164,4 @@ This plugin integrates deeply with contextd:
 
 ## License
 
-AGPL-3.0
+Apache-2.0

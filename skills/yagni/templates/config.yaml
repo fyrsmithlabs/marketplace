@@ -1,6 +1,6 @@
-# not-hotdog: YAGNI/KISS enforcement settings
-# Copy to ~/.claude/not-hotdog.yaml to customize globally
-# Or use .claude/not-hotdog.local.md for project overrides
+# yagni: YAGNI/KISS enforcement settings
+# Copy to ~/.claude/yagni.yaml to customize globally
+# Or use .claude/yagni.local.md for project overrides
 
 version: 1
 

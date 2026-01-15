@@ -30,11 +30,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - git-repo-standards skill for repository naming, structure, and documentation
 - git-workflows skill for multi-agent consensus review
 - project-onboarding skill for project initialization
-- not-hotdog skill for YAGNI/KISS enforcement
+- yagni skill for YAGNI/KISS enforcement
 - complexity-assessment skill for task complexity evaluation
 - github-planning skill for GitHub Issues/Projects integration
 - roadmap-discovery skill for codebase analysis
-- 9 slash commands (onboard, not-hotdog, brainstorm, plan, discover, test-skill, comp-analysis, spec-refinement, app-interview)
+- 9 slash commands (onboard, yagni, brainstorm, plan, discover, test-skill, comp-analysis, spec-refinement, app-interview)
 - PostToolUse hooks for YAGNI/KISS detection and scope creep checks
 - PreToolUse hooks for artifact placement, secrets check, and conventional commits
 

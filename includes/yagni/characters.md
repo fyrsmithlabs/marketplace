@@ -300,7 +300,7 @@ All messages end with:
 ───────────────────────────────────────
 Dismiss: "I know what I'm doing"
 Snooze: "Back off for this session"
-Adjust: /not-hotdog config
+Adjust: /yagni config
 
 Sensitivity: {{sensitivity}} | Pattern: {{pattern_name}}
 ```
