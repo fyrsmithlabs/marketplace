@@ -11,7 +11,7 @@ A Claude Code plugin providing skills, commands, and agents for fyrsmithlabs pro
 This plugin provides:
 - **Repository Standards** - Naming conventions, structure, documentation requirements
 - **Git Workflows** - Multi-agent consensus review, PR requirements, branching strategy
-- **Project Onboarding** - Initialize or onboard projects to fyrsmithlabs standards
+- **Project Init** - Set up projects to follow fyrsmithlabs standards
 - **YAGNI/KISS Enforcement** - Humorous nudges against over-engineering
 - **Complexity Assessment** - Right-size workflows based on task complexity
 - **GitHub Planning** - Native GitHub Issues/Projects instead of local markdown
@@ -29,7 +29,7 @@ This plugin provides:
 marketplace/
 ├── .claude-plugin/           # Plugin manifest
 ├── commands/                 # Slash commands
-│   ├── onboard.md           # /onboard command
+│   ├── init.md           # /init command
 │   ├── yagni.md        # /yagni command
 │   ├── brainstorm.md        # /brainstorm command
 │   ├── plan.md              # /plan command
@@ -42,7 +42,7 @@ marketplace/
 ├── skills/
 │   ├── git-repo-standards/  # Repo standards skill
 │   ├── git-workflows/       # Workflow skill
-│   ├── project-onboarding/  # Onboarding skill
+│   ├── init/  # Onboarding skill
 │   ├── yagni/          # YAGNI/KISS enforcement
 │   ├── complexity-assessment/ # Task complexity evaluation
 │   ├── github-planning/     # GitHub Issues/Projects
@@ -59,7 +59,7 @@ marketplace/
 |-------|-------------|
 | `git-repo-standards` | Repository naming, structure, README, CHANGELOG, LICENSE, gitleaks |
 | `git-workflows` | 5-agent consensus review, PR requirements, trunk-based branching |
-| `project-onboarding` | Initialize new projects or onboard existing repos |
+| `init` | Set up projects to follow fyrsmithlabs standards |
 | `yagni` | YAGNI/KISS enforcement with humorous archetype nudges |
 | `complexity-assessment` | Assess task complexity (SIMPLE/STANDARD/COMPLEX) across 5 dimensions |
 | `github-planning` | Create tier-appropriate GitHub Issues, epics, and project boards |
@@ -69,9 +69,8 @@ marketplace/
 
 | Command | Description |
 |---------|-------------|
-| `/onboard` | Onboard existing project to standards |
-| `/onboard init` | Initialize new project from scratch |
-| `/onboard validate` | Audit compliance without changes |
+| `/init` | Set up project to follow fyrsmithlabs standards |
+| `/init --check` | Audit compliance without changes |
 | `/yagni` | Manage YAGNI/KISS enforcement settings |
 | `/brainstorm` | Interactive design interview with complexity-aware questioning |
 | `/plan` | Full planning workflow - assess, brainstorm, create GitHub Issues |
@@ -88,14 +87,11 @@ Add to your Claude Code plugins or install via the marketplace.
 ## Usage
 
 ```bash
-# Onboard an existing project
-/onboard
+# Set up project to follow fyrsmithlabs standards
+/init
 
-# Create a new project
-/onboard init
-
-# Check compliance
-/onboard validate
+# Check compliance only (no changes)
+/init --check
 
 # Plan a new feature (full workflow)
 /plan "add user authentication"

@@ -24,13 +24,13 @@ A Claude Code plugin marketplace providing skills, commands, and agents for fyrs
 marketplace/
 ├── .claude-plugin/      # Plugin manifest
 ├── commands/            # Claude Code slash commands
-│   ├── onboard.md       # /onboard command
+│   ├── init.md       # /init command
 │   └── yagni.md    # /yagni command
 ├── agents/              # Claude Code subagents
 ├── skills/              # Claude Code skills
 │   ├── git-repo-standards/    # Repo naming, structure, docs
 │   ├── git-workflows/         # Consensus review, PRs, branching
-│   ├── project-onboarding/    # Init/onboard/validate
+│   ├── init/    # Project setup
 │   └── yagni/            # YAGNI/KISS enforcement
 ├── includes/            # Shared includes for hooks
 │   └── yagni/      # Pattern detection, character templates
@@ -44,9 +44,9 @@ marketplace/
 |-----------|---------|
 | `git-repo-standards` | Repository naming, structure, README, CHANGELOG, LICENSE, gitleaks |
 | `git-workflows` | 5-agent consensus review with contextd, PR requirements, branching |
-| `project-onboarding` | Initialize new projects or onboard existing repos |
-| `yagni` | YAGNI/KISS enforcement with Silicon Valley humor |
-| `/onboard` | Command to run onboarding workflow |
+| `init` | Set up projects to follow fyrsmithlabs standards |
+| `yagni` | YAGNI/KISS enforcement with humorous nudges |
+| `/init` | Command to set up project standards |
 | `/yagni` | Command to manage YAGNI/KISS enforcement |
 
 ## Code Standards
@@ -72,11 +72,10 @@ Modern agentic git workflows with multi-agent consensus review:
 - contextd integration for learning and remediation
 - Trunk-based development, squash merge only
 
-### project-onboarding
-Initialize or onboard projects to fyrsmithlabs standards:
-- `/onboard init` - New project from scratch
-- `/onboard` - Onboard existing project
-- `/onboard validate` - Audit compliance only
+### init
+Set up projects to follow fyrsmithlabs standards:
+- `/init` - Set up project (detects new vs existing)
+- `/init --check` - Audit only, no modifications
 
 ### yagni
 YAGNI/KISS enforcement with archetype-themed nudges:
