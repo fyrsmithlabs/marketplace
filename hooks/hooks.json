@@ -1,4 +1,39 @@
 {
+  "SessionStart": [
+    {
+      "matcher": "startup|resume|clear|compact",
+      "hooks": [
+        {
+          "type": "prompt",
+          "prompt": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.md"
+        }
+      ]
+    }
+  ],
+  "UserPromptSubmit": [
+    {
+      "hooks": [
+        {
+          "type": "prompt",
+          "prompt": "${CLAUDE_PLUGIN_ROOT}/hooks/prompt-reminder.md"
+        },
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/context-monitor.sh"
+        }
+      ]
+    }
+  ],
+  "PreCompact": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/precompact.sh"
+        }
+      ]
+    }
+  ],
   "PreToolUse": [
     {
       "matcher": "Write|Edit",
@@ -27,6 +62,18 @@
   ],
   "PostToolUse": [
     {
+      "matcher": {
+        "tool_name": "Bash",
+        "exit_code_not": 0
+      },
+      "hooks": [
+        {
+          "type": "prompt",
+          "prompt": "${CLAUDE_PLUGIN_ROOT}/hooks/error-diagnose.md"
+        }
+      ]
+    },
+    {
       "matcher": "Write|Edit",
       "config": {
         "type": "prompt",
@@ -49,6 +96,16 @@
         "prompt": "After file creation, check if this is a new repository being set up. If so, verify:\n1. README.md exists with required sections (title, badges, description, install, usage, license)\n2. CHANGELOG.md exists with [Unreleased] section\n3. .gitignore exists with docs/.claude/ ignored\n4. LICENSE exists (or is planned)\n5. .gitleaks.toml exists (or is planned)\n\nReport any missing required files as warnings.",
         "mode": "notify"
       }
+    }
+  ],
+  "Stop": [
+    {
+      "hooks": [
+        {
+          "type": "prompt",
+          "prompt": "${CLAUDE_PLUGIN_ROOT}/hooks/stop-reminder.md"
+        }
+      ]
     }
   ]
 }

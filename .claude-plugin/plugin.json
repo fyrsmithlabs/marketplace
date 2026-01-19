@@ -1,9 +1,10 @@
 {
   "name": "fyrsmithlabs",
-  "version": "1.0.0",
-  "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, and development practices",
+  "version": "1.1.0",
+  "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, development practices, and contextd cross-session memory",
   "author": {
-    "name": "fyrsmithlabs"
+    "name": "fyrsmithlabs",
+    "email": "plugins@fyrsmithlabs.com"
   },
   "repository": "https://github.com/fyrsmithlabs/marketplace",
   "license": "Apache-2.0",
@@ -12,6 +13,39 @@
     "plugins",
     "claude-code",
     "fyrsmithlabs",
-    "plugin-management"
-  ]
+    "plugin-management",
+    "contextd",
+    "memory",
+    "semantic-search"
+  ],
+  "commands": [
+    "./commands/app-interview.md",
+    "./commands/brainstorm.md",
+    "./commands/comp-analysis.md",
+    "./commands/discover.md",
+    "./commands/init.md",
+    "./commands/plan.md",
+    "./commands/spec-refinement.md",
+    "./commands/test-skill.md",
+    "./commands/yagni.md",
+    "./commands/contextd-search.md",
+    "./commands/contextd-remember.md",
+    "./commands/contextd-checkpoint.md",
+    "./commands/contextd-diagnose.md",
+    "./commands/contextd-status.md",
+    "./commands/contextd-init.md",
+    "./commands/contextd-reflect.md",
+    "./commands/contextd-consensus-review.md",
+    "./commands/contextd-help.md"
+  ],
+  "agents": [
+    "./agents/security-reviewer.md",
+    "./agents/vulnerability-reviewer.md",
+    "./agents/code-quality-reviewer.md",
+    "./agents/user-persona-reviewer.md",
+    "./agents/documentation-reviewer.md",
+    "./agents/contextd-task-agent.md",
+    "./agents/contextd-orchestrator.md"
+  ],
+  "hooks": "./hooks/hooks.json"
 }
