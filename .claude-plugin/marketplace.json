@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "fyrsmithlabs",
   "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, development practices, and contextd cross-session memory",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "owner": {
     "name": "fyrsmithlabs",
     "email": "plugins@fyrsmithlabs.com"
@@ -11,7 +11,7 @@
     {
       "name": "fyrsmithlabs",
       "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, development practices, and contextd cross-session memory. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and contextd integration for semantic search, memory, checkpoints, and error remediation.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": {
         "name": "fyrsmithlabs"
       },

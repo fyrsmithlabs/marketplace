@@ -210,13 +210,23 @@ One-line description of what this repo does.
 | Services, platforms, APIs | AGPL-3.0 | `*-service`, `*-api`, `*-server`, `*-worker`, has `cmd/` |
 | Internal/proprietary | Proprietary | Private repos, no LICENSE file |
 
+**Alternative Licenses (Supported but Flagged):**
+
+| License | Acceptable For | Flag Level |
+|---------|----------------|------------|
+| MIT | Libraries, small utilities | Warn - prefer Apache-2.0 for patent protection |
+| BSD-3-Clause | Libraries | Warn - prefer Apache-2.0 for patent protection |
+| ISC | Minimal packages | Warn - prefer Apache-2.0 |
+| GPL-3.0 | Libraries that must stay copyleft | Warn - consider AGPL-3.0 for network use |
+
 **Enforcement Rules:**
 
 | Rule | Action |
 |------|--------|
 | LICENSE missing (public repo) | Block |
-| Service repo with Apache-2.0 | Warn - suggest AGPL-3.0 |
+| Service repo with MIT/BSD/Apache-2.0 | Warn - services should use AGPL-3.0 to ensure network use triggers copyleft |
 | Library repo with AGPL-3.0 | Warn - may limit adoption |
+| MIT/BSD instead of Apache-2.0 | Warn - Apache-2.0 provides patent protection |
 
 **AGPL-3.0 Additional Requirements:**
 - Include notice in README: "This software is licensed under AGPL-3.0. Network use constitutes distribution."

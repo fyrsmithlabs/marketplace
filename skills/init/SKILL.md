@@ -26,35 +26,94 @@ Set up any project to follow fyrsmithlabs standards. Detects whether repo is new
 
 ---
 
+## Severity Tiers
+
+All checklist items have a severity tier that determines action:
+
+| Tier | Action | Description |
+|------|--------|-------------|
+| **Critical** | Block | Cannot proceed until fixed. Init cannot complete. |
+| **Required** | Block | Must be fixed before init completes. |
+| **Style** | Fix | Must be fixed. Lower priority but still required. |
+
+**Critical Rule:** Init MUST achieve 100% pass rate on ALL checklist items. No exceptions - Critical, Required, AND Style items must all pass before init completes.
+
+**Why Style Items Are Required:**
+- Style items (badges, README sections, PR templates) affect discoverability and usability
+- "Good enough" mindset leads to debt accumulation
+- It's easier to fix now than create issues to fix later
+- Projects should start fully compliant, not partially compliant
+
+---
+
 ## Compliance Checklist
 
 ### Repository Standards (git-repo-standards)
 
-| Item | Required | Check |
-|------|----------|-------|
-| **Naming** | Yes | Repo name follows `[domain]-[type]` pattern |
-| **README.md** | Yes | Exists with required sections + badges |
-| **CHANGELOG.md** | Yes | Exists with `[Unreleased]` section |
-| **LICENSE** | Yes | Exists, matches project type |
-| **.gitignore** | Yes | Exists with `docs/.claude/` ignored |
-| **.gitleaks.toml** | Yes | Exists |
-| **docs/.claude/** | Yes | Directory exists and gitignored |
+| Item | Tier | Check |
+|------|------|-------|
+| **Naming** | Critical | Repo name follows `[domain]-[type]` pattern |
+| **README.md** | Critical | Exists with required sections + badges |
+| **CHANGELOG.md** | Critical | Exists with `[Unreleased]` section |
+| **LICENSE** | Critical | Exists, matches project type |
+| **.gitignore** | Critical | Exists with `docs/.claude/` ignored |
+| **.gitleaks.toml** | Critical | Exists |
+| **docs/.claude/** | Required | Directory exists and gitignored |
 
 ### Go-Specific (if detected)
 
-| Item | Required | Check |
-|------|----------|-------|
-| **go.mod** | Yes | Exists with valid module path |
-| **cmd/** | If service | Entry points for executables |
-| **internal/** | Recommended | Private packages |
-| **No /src** | Yes | Avoid Java-style src directory |
+| Item | Tier | Check |
+|------|------|-------|
+| **go.mod** | Critical | Exists with valid module path |
+| **cmd/** | Required | Entry points for executables (services only) |
+| **internal/** | Style | Private packages recommended |
+| **No /src** | Required | Avoid Java-style src directory |
 
 ### Workflow Standards (git-workflows)
 
-| Item | Required | Check |
-|------|----------|-------|
-| **fyrsmith-workflow.yml** | Yes | Consensus review config exists |
-| **PR template** | Recommended | `.github/pull_request_template.md` |
+| Item | Tier | Check |
+|------|------|-------|
+| **fyrsmith-workflow.yml** | Required | Consensus review config exists |
+| **PR template** | Style | `.github/pull_request_template.md` |
+
+---
+
+## Remediation Guidance
+
+### Missing Files
+
+For missing files, generate from templates:
+
+| Missing | Action |
+|---------|--------|
+| README.md | Generate from `README.md.tmpl` |
+| CHANGELOG.md | Generate from `CHANGELOG.md.tmpl` |
+| LICENSE | Generate based on project type |
+| .gitignore | Generate from language-specific template |
+| .gitleaks.toml | Generate from `gitleaks.toml.tmpl` |
+
+### Existing Incorrect Files
+
+For files that exist but are incorrect:
+
+| Issue | Remediation |
+|-------|-------------|
+| README missing sections | **Add** missing sections, preserve existing content |
+| README missing badges | **Add** badges at top, keep existing badges |
+| CHANGELOG wrong format | **Convert** to Keep a Changelog format, preserve entries |
+| LICENSE wrong type | **Warn and recommend** change with migration guidance |
+| .gitignore missing patterns | **Append** required patterns, keep existing |
+| .gitleaks.toml incomplete | **Merge** required config, keep custom allowlist |
+
+**License Change Protocol:**
+When LICENSE type is incorrect (e.g., MIT for a service):
+1. Warn with specific recommendation
+2. Explain why the change matters
+3. Note: changing license may require contributor consent
+4. Create issue to track license migration
+5. Do NOT auto-change license files
+
+**Key Principle:** Init prefers **additive** changes over **destructive** ones. Existing content is preserved where possible.
 
 ---
 
@@ -71,14 +130,14 @@ Set up any project to follow fyrsmithlabs standards. Detects whether repo is new
 ```markdown
 ## Init Audit: [repo-name]
 
-| Check | Status | Action |
-|-------|--------|--------|
-| README.md | ⚠️ Missing badges | Add badges |
-| CHANGELOG.md | ❌ Missing | Create |
-| .gitleaks.toml | ❌ Missing | Create |
-| docs/.claude/ | ❌ Missing | Create |
+| Check | Tier | Status | Action |
+|-------|------|--------|--------|
+| README.md | Style | ⚠️ Missing badges | Add badges |
+| CHANGELOG.md | Critical | ❌ Missing | Create |
+| .gitleaks.toml | Critical | ❌ Missing | Create |
+| docs/.claude/ | Required | ❌ Missing | Create |
 
-**Gaps:** 3 critical, 1 warning
+**Gaps:** 2 Critical, 1 Required, 1 Style - ALL must be fixed
 ```
 
 ### Step 3: Fix Gaps (with confirmation)
@@ -88,9 +147,16 @@ For each gap:
 2. Update existing file if needed
 3. Create commit for logical changes
 
+**Do NOT skip any gaps.** Even Style-tier items must be fixed.
+
 ### Step 4: Verify
 
 Re-run checklist. **ALL items MUST pass.**
+
+If ANY item fails (Critical, Required, OR Style):
+- Init CANNOT complete
+- Return to Step 3 and fix the failing item
+- Do NOT proceed with "good enough" mindset
 
 ### Step 5: Record Memory
 
@@ -137,9 +203,15 @@ If you're thinking:
 - "Good enough for now"
 - "I'll fix the rest later"
 - "Warnings aren't critical"
+- "Style items don't really matter"
+- "Only Critical items block"
+- "I'll create an issue for the warnings"
 - "I already know what's missing"
+- "Most things are done"
 
 **You're rationalizing. Follow the skill exactly.**
+
+ALL items must pass - Critical, Required, AND Style. There are no "optional" checklist items.
 
 ---
 

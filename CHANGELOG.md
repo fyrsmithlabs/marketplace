@@ -5,10 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.0] - 2026-01-19
 
 ### Added
 - 5 review agents for consensus code review (security, vulnerability, code-quality, documentation, user-persona)
+- **Skill test scenarios** for TDD-style validation (23 scenarios across 4 skills)
+- **Force Push Policy** in git-workflows - secret removal with credential rotation is only allowed case
+- **MIT/BSD license coverage** in git-repo-standards - alternative licenses flagged with warnings
+- **Severity tiers** in init - Critical/Required/Style with explicit blocking rules
+- **Remediation guidance** in init - handling existing incorrect files (additive, not destructive)
 - contextd MCP server dependency documentation
 - `.mcp.json.example` for contextd setup
 - `CHANGELOG.md`, `LICENSE` (Apache-2.0), `.gitleaks.toml` - plugin now follows its own standards
@@ -19,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Simplified `/init` modes: just `/init` and `/init --check` (removed init/onboard/validate complexity)
 - Simplified plugin structure from 46 to 27 files
 - Enhanced skill and command descriptions with trigger phrases
+- **Simplified YAGNI system** - removed 9 character personalities, now uses structured tree-style output
+  - Reduced includes from 3 files (700+ lines) to 1 file (55 lines)
+  - Output is now structured and token-efficient
+  - Patterns reduced to 4 core types: abstraction, config-addiction, scope-creep, dead-code
 
 ### Fixed
 - **hooks.json format** - Changed to correct nested format `{"hooks": {"PreToolUse": [...]}}` (was causing startup errors)
@@ -41,5 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PostToolUse hooks for YAGNI/KISS detection and scope creep checks
 - PreToolUse hooks for artifact placement, secrets check, and conventional commits
 
-[Unreleased]: https://github.com/fyrsmithlabs/marketplace/compare/v0.1.0...HEAD
+[1.2.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.0.0...v1.2.0
+[1.0.0]: https://github.com/fyrsmithlabs/marketplace/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/fyrsmithlabs/marketplace/releases/tag/v0.1.0

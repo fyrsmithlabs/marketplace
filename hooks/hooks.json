@@ -78,7 +78,7 @@
         "matcher": "Write|Edit",
         "config": {
           "type": "prompt",
-          "prompt": "## yagni: YAGNI/KISS Pattern Detection\n\nAnalyze the just-completed Write/Edit for over-engineering patterns.\n\n### Check these patterns:\n\n**1. Abstraction Creep (The Cynic)**\nDoes filename match: *Factory*, *Manager*, *Provider*, *Handler*, *Helper*, *Utils*, *Base*, *Abstract*, *Wrapper*, *Adapter*, *Builder*, *Coordinator*, *Orchestrator*?\n\n**2. Config-Driven Everything (The Executive)**\nAdding feature flags, env vars, or config for single-use behavior?\n\n**3. Dead Code (The Minimalist)**\nLarge blocks of commented-out code? Unused imports?\n\n**4. Swiss Army Knife (The Bro)**\nPlugin system, event bus, or elaborate architecture for simple feature?\n\n### Skip if:\n- Path contains: generated/, vendor/, node_modules/, migrations/\n- File is a test file\n- Pattern is legitimate for project type (check .claude/yagni.local.md)\n\n### If pattern detected:\nOutput a nudge in archetype character voice (see includes/yagni/characters.md).\nInclude: character quote, what triggered it, simpler path suggestion.\nEnd with: Dismiss/Snooze/Adjust options.\n\n### If no pattern:\nAllow silently - don't output anything.",
+          "prompt": "## YAGNI Pattern Check\n\nAnalyze the Write/Edit for over-engineering.\n\n**Patterns:**\n- abstraction: Filename contains Factory/Manager/Provider/Handler/Helper/Utils/Base/Abstract/Wrapper/Builder/Coordinator/Orchestrator\n- config-addiction: Feature flag/env var for single-use behavior\n- dead-code: 10+ commented lines or unused imports\n\n**Skip:** generated/, vendor/, node_modules/, migrations/, test files, .claude/yagni.local.md exclusions\n\n**If detected, output:**\n```\n⚠️ YAGNI: [pattern]\n├─ Trigger: [what]\n├─ Concern: [why]\n└─ Simpler: [alternative]\nOptions: Dismiss | Snooze | /yagni config\n```\n\n**If no pattern:** Silent.",
           "mode": "notify"
         }
       },
@@ -86,7 +86,7 @@
         "matcher": "TodoWrite",
         "config": {
           "type": "prompt",
-          "prompt": "## yagni: Scope Check (The Realist)\n\nWhen a todo is marked completed, briefly check for scope creep.\n\n### Compare:\n- Original task description\n- What was actually done (files touched, changes made)\n\n### Trigger nudge if:\n- Completed todo involved 5+ files for a 'simple' task keyword (fix, typo, rename, update, tweak)\n- Work expanded significantly beyond todo description\n\n### The Realist's voice:\nExasperated but caring. Voice of reason. Has seen scope creep kill startups.\n\nExample: \"Okay, let me get this straight. The task was 'fix typo'. You touched 7 files. I've seen this movie. It doesn't end well.\"\n\n### If no scope creep:\nAllow silently.",
+          "prompt": "## YAGNI Scope Check\n\nOn todo completion, check for scope creep.\n\n**Trigger:** Task has simple keyword (fix/typo/rename/tweak) but touched 5+ files.\n\n**If detected, output:**\n```\n⚠️ YAGNI: scope-creep\n├─ Trigger: [task] touched [N] files\n├─ Concern: Simple task expanded beyond scope\n└─ Simpler: Stay focused on original task\nOptions: Dismiss | Snooze | /yagni config\n```\n\n**If no scope creep:** Silent.",
           "mode": "notify"
         }
       },

@@ -33,7 +33,7 @@ marketplace/
 │   ├── init/    # Project setup
 │   └── yagni/            # YAGNI/KISS enforcement
 ├── includes/            # Shared includes for hooks
-│   └── yagni/      # Pattern detection, character templates
+│   └── yagni/      # Pattern detection
 └── hooks/               # Claude Code hooks
     └── hooks.json       # Enforcement hooks
 ```
@@ -78,10 +78,10 @@ Set up projects to follow fyrsmithlabs standards:
 - `/init --check` - Audit only, no modifications
 
 ### yagni
-YAGNI/KISS enforcement with archetype-themed nudges:
-- Non-blocking, humorous feedback when over-engineering detected
-- Characters: The Cynic, The Executive, The Supporter, The Bro, The Minimalist, The Realist, The Insecure Dev, The Perfectionist, The Confused
-- Patterns: abstraction creep, config addiction, scope creep, dead code, Swiss Army Knife syndrome
+YAGNI/KISS enforcement with structured nudges:
+- Non-blocking feedback when over-engineering detected
+- Patterns: abstraction, config-addiction, scope-creep, dead-code
+- Structured output format (tree-style, concise)
 - Configurable sensitivity (conservative/moderate/aggressive)
 - `/yagni config` to adjust settings
 

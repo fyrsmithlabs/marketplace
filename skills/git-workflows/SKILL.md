@@ -402,6 +402,55 @@ main (protected)
 - Agent consensus passed
 - Human approvals met
 
+### Force Push Policy
+
+Force push is **prohibited** except for one specific case:
+
+| Scenario | Allowed | Required Actions |
+|----------|---------|------------------|
+| Secret accidentally committed | **Yes** | 1. Rotate credential immediately, 2. Force push to remove from history, 3. Verify removal, 4. Document in PR |
+| Clean up commit history | No | Use interactive rebase before push |
+| Fix merge conflicts | No | Pull and merge properly |
+| Override CI failures | No | Fix the actual issue |
+| "Clean up" force push to main | **Never** | Not allowed under any circumstances |
+
+**Secret Removal Procedure:**
+
+**Recommended: Use git-filter-repo (safer, faster):**
+```bash
+# 1. IMMEDIATELY rotate the exposed credential
+# 2. Install git-filter-repo: pip install git-filter-repo
+# 3. Remove file from history (use single quotes to prevent injection):
+git filter-repo --invert-paths --path 'config/secrets.json'
+
+# 4. Force push (branch only, NEVER main)
+git push origin --force --all
+```
+
+**Alternative: BFG Repo-Cleaner:**
+```bash
+# For removing specific secrets from all files:
+bfg --replace-text passwords.txt repo.git
+```
+
+**Legacy: git filter-branch (deprecated, use with caution):**
+```bash
+# WARNING: Ensure filename is properly escaped
+# NEVER use user input directly in this command
+git filter-branch --force --index-filter \
+  'git rm --cached --ignore-unmatch -- "config/secrets.json"' \
+  --prune-empty --tag-name-filter cat -- --all
+
+# Clean up refs
+git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin
+git reflog expire --expire=now --all
+git gc --prune=now
+```
+
+**Security Warning:** Never interpolate untrusted input into shell commands. Always validate and escape file paths before use.
+
+**Key Rule:** Force push for secret removal is acceptable ONLY with immediate credential rotation. The credential must be rotated BEFORE the force push completes.
+
 ---
 
 ## PR Structure (Agent-Assisted)
