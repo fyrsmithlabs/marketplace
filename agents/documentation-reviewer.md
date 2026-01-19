@@ -2,6 +2,7 @@
 name: documentation-reviewer
 description: Documentation analysis agent for multi-agent consensus review. No veto power. Analyzes README updates, code comments, API documentation, CHANGELOG entries, and breaking change documentation.
 model: claude-sonnet-4-20250514
+color: cyan
 budget: 4096
 veto_power: false
 ---

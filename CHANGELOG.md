@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced skill and command descriptions with trigger phrases
 
 ### Fixed
-- **hooks.json format** - Changed from `{"hooks": [...]}` array to `{"PreToolUse": [...]}` event-keyed format (was causing startup errors)
+- **hooks.json format** - Changed to correct nested format `{"hooks": {"PreToolUse": [...]}}` (was causing startup errors)
 - License mismatch in plugin.json (MIT → Apache-2.0)
 - README.md now documents all commands and skills
 - Plugin namespace renamed to fyrsmithlabs for correct namespacing

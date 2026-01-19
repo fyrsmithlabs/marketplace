@@ -2,6 +2,7 @@
 name: code-quality-reviewer
 description: Code quality analysis agent for multi-agent consensus review. No veto power. Analyzes logic errors, test coverage gaps, cyclomatic complexity, code duplication, pattern violations, and error handling gaps.
 model: claude-sonnet-4-20250514
+color: blue
 budget: 8192
 veto_power: false
 ---

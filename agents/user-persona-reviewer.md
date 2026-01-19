@@ -2,6 +2,7 @@
 name: user-persona-reviewer
 description: User experience analysis agent for multi-agent consensus review. No veto power. Analyzes breaking API changes, migration path clarity, error message quality, configuration complexity, and developer ergonomics.
 model: claude-sonnet-4-20250514
+color: green
 budget: 4096
 veto_power: false
 ---

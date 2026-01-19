@@ -203,11 +203,6 @@ mcp__contextd__memory_record(
 /brainstorm <topic>          # Design improvement
 ```
 
-### With /onboard
-```
-/onboard --discover security,quality
-```
-
 ### Pre-session Context
 Run at session start for automatic context gathering.
 

@@ -1,0 +1,35 @@
+{
+  "name": "Marketplace Plugin Dev",
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "remoteEnv": {
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspaces/marketplace,type=bind"
+  ],
+  "workspaceFolder": "/workspaces/marketplace",
+  "containerEnv": {
+    "CLAUDE_PLUGIN_DEV": "true"
+  },
+  "forwardPorts": [],
+  "portsAttributes": {}
+}

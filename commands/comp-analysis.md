@@ -174,7 +174,7 @@ Consider running `/app-interview` again for deeper research.
 |---------|--------------|
 | `/app-interview` | Generates the competition.json this command reads |
 | `/spec-refinement` | Can use insights from this summary |
-| `/onboard` | May suggest running this for new projects |
+| `/init` | May suggest running this for new projects |
 
 ## Example Output
 

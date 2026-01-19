@@ -10,7 +10,7 @@ Autonomous codebase analysis to identify improvement opportunities without user 
 ## When to Use
 
 - **Pre-session:** Run before brainstorming for context
-- **Onboarding:** Part of `/onboard --discover` flow
+- **Onboarding:** Part of `/init` setup flow
 - **On-demand:** Via `/discover` command
 
 ## Lenses
@@ -131,10 +131,11 @@ Run discovery before brainstorming to inform design:
 3. /brainstorm with context
 ```
 
-### With /onboard
-Run discovery during onboarding:
+### With /init
+Run discovery during project setup:
 ```
-/onboard --discover security,quality
+/init            # Set up project, then run /discover
+/discover --lens security,quality
 ```
 
 ### Pre-session Hook

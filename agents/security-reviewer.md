@@ -2,6 +2,7 @@
 name: security-reviewer
 description: Security analysis agent for multi-agent consensus review. Has VETO power on security issues. Analyzes injection vulnerabilities, authentication flaws, secrets exposure, supply chain risks, and OWASP Top 10 violations.
 model: claude-sonnet-4-20250514
+color: red
 budget: 8192
 veto_power: true
 ---

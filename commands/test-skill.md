@@ -3,12 +3,12 @@ name: test-skill
 description: Use when testing marketplace skills for compliance, validating skill behavior against scenarios, or running TDD-style pressure tests. Tests if agents follow skill guidance correctly and catches rationalizations. Say "test this skill", "run pressure tests", or "validate skill compliance".
 arguments:
   - name: skill-name
-    description: Name of skill to test (git-workflows, git-repo-standards, project-onboarding)
+    description: Name of skill to test (git-workflows, git-repo-standards, init, yagni)
     required: true
-  - name: --baseline
+  - name: baseline
     description: Run WITHOUT skill loaded (RED phase for TDD)
     required: false
-  - name: --scenario
+  - name: scenario
     description: Run specific scenario by name (e.g., skip-consensus-simple-fix)
     required: false
 allowed-tools:
