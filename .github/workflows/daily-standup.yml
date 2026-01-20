@@ -106,16 +106,25 @@ jobs:
       - name: Create GitHub Issue
         id: create-issue
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STANDUP_TITLE: ${{ needs.generate-standup.outputs.standup_title }}
           STANDUP_BODY: ${{ needs.generate-standup.outputs.standup_body }}
         run: |
-          # Create issue with standup label
-          ISSUE_URL=$(gh issue create \
-            --repo "$GITHUB_REPOSITORY" \
-            --title "$STANDUP_TITLE" \
-            --body "$STANDUP_BODY" \
-            --label "standup")
+          # Create issue via REST API
+          RESPONSE=$(curl -s -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/issues" \
+            -d "$(jq -n --arg title "$STANDUP_TITLE" --arg body "$STANDUP_BODY" \
+              '{title: $title, body: $body, labels: ["standup"]}')")
+
+          ISSUE_URL=$(echo "$RESPONSE" | jq -r '.html_url')
+
+          if [ "$ISSUE_URL" = "null" ]; then
+            echo "Failed to create issue:"
+            echo "$RESPONSE" | jq .
+            exit 1
+          fi
 
           echo "issue-url=$ISSUE_URL" >> "$GITHUB_OUTPUT"
           echo "✅ Standup posted!"
