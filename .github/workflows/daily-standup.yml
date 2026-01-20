@@ -37,34 +37,34 @@ jobs:
           prompt: |
             Generate a daily standup report for the fyrsmithlabs organization.
 
+            IMPORTANT: Use the GitHub MCP tools (list_pull_requests, list_issues, list_commits) to query data.
+            Do NOT use bash or gh CLI commands.
+
             ## Instructions
 
-            1. Query GitHub for the following fyrsmithlabs repositories:
+            1. Query GitHub using MCP tools for these fyrsmithlabs repositories:
                - fyrsmithlabs/marketplace
                - fyrsmithlabs/contextd
-               (Add more repos as the org grows)
 
-            2. For each repo, gather:
-               - Open PRs: count, oldest age, any blocked/stale (>48h no activity)
-               - Open issues by priority label (critical, high, medium)
-               - Recent commits to main (last 24h)
+            2. For each repo, use these MCP tools:
+               - list_pull_requests(owner, repo, state="open") for PRs
+               - list_issues(owner, repo, state="OPEN") for issues
+               - list_commits(owner, repo, perPage=10) for recent commits
 
             3. Synthesize into priority list:
                - CRITICAL: Security issues, failing CI, blocked PRs
                - HIGH: PRs ready to merge, high-priority issues
                - MEDIUM: In-review PRs, medium-priority issues
 
-            4. Identify cross-project dependencies (references between repos)
-
-            5. Generate 3 actionable recommendations
+            4. Generate 3 actionable recommendations
 
             ## Output Format
 
             Return a JSON object with:
             - title: "Daily Standup: YYYY-MM-DD"
-            - body: Full markdown standup report
+            - body: Full markdown standup report (use proper markdown formatting)
           claude_args: |
-            --max-turns 5
+            --max-turns 15
             --model claude-sonnet-4-20250514
             --json-schema '{"type":"object","properties":{"title":{"type":"string"},"body":{"type":"string"}},"required":["title","body"]}'
 
