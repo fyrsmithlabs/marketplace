@@ -26,6 +26,7 @@
     "./commands/init.md",
     "./commands/plan.md",
     "./commands/spec-refinement.md",
+    "./commands/standup.md",
     "./commands/test-skill.md",
     "./commands/yagni.md",
     "./commands/contextd-search.md",
@@ -44,6 +45,7 @@
     "./agents/code-quality-reviewer.md",
     "./agents/user-persona-reviewer.md",
     "./agents/documentation-reviewer.md",
+    "./agents/product-owner.md",
     "./agents/contextd-task-agent.md",
     "./agents/contextd-orchestrator.md"
   ],
