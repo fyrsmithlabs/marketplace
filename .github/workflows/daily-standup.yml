@@ -1,0 +1,121 @@
+name: Daily Standup
+
+on:
+  schedule:
+    # Run at 9:00 AM UTC, Monday through Friday
+    - cron: '0 9 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (skip creating discussion)'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: read
+  discussions: write
+  issues: read
+  pull-requests: read
+
+jobs:
+  generate-standup:
+    runs-on: ubuntu-latest
+    outputs:
+      standup_title: ${{ steps.extract.outputs.title }}
+      standup_body: ${{ steps.extract.outputs.body }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate standup content
+        id: generate
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Generate a daily standup report for the fyrsmithlabs organization.
+
+            ## Instructions
+
+            1. Query GitHub for the following fyrsmithlabs repositories:
+               - fyrsmithlabs/marketplace
+               - fyrsmithlabs/contextd
+               (Add more repos as the org grows)
+
+            2. For each repo, gather:
+               - Open PRs: count, oldest age, any blocked/stale (>48h no activity)
+               - Open issues by priority label (critical, high, medium)
+               - Recent commits to main (last 24h)
+
+            3. Synthesize into priority list:
+               - CRITICAL: Security issues, failing CI, blocked PRs
+               - HIGH: PRs ready to merge, high-priority issues
+               - MEDIUM: In-review PRs, medium-priority issues
+
+            4. Identify cross-project dependencies (references between repos)
+
+            5. Generate 3 actionable recommendations
+
+            ## Output Format
+
+            Return a JSON object with:
+            - title: "Daily Standup: YYYY-MM-DD"
+            - body: Full markdown standup report
+          claude_args: |
+            --max-turns 5
+            --model claude-sonnet-4-20250514
+            --json-schema '{"type":"object","properties":{"title":{"type":"string"},"body":{"type":"string"}},"required":["title","body"]}'
+
+      - name: Extract outputs
+        id: extract
+        env:
+          STRUCTURED_OUTPUT: ${{ steps.generate.outputs.structured_output }}
+        run: |
+          # Safely extract title and body using jq
+          TITLE=$(echo "$STRUCTURED_OUTPUT" | jq -r '.title')
+          BODY=$(echo "$STRUCTURED_OUTPUT" | jq -r '.body')
+
+          # Output title
+          echo "title=$TITLE" >> "$GITHUB_OUTPUT"
+
+          # Handle multiline body safely
+          {
+            echo 'body<<STANDUP_EOF'
+            echo "$BODY"
+            echo 'STANDUP_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Debug output (dry run only)
+        if: inputs.dry_run == 'true'
+        env:
+          STANDUP_TITLE: ${{ steps.extract.outputs.title }}
+          STANDUP_BODY: ${{ steps.extract.outputs.body }}
+        run: |
+          echo "=== STANDUP TITLE ==="
+          echo "$STANDUP_TITLE"
+          echo ""
+          echo "=== STANDUP BODY ==="
+          echo "$STANDUP_BODY"
+
+  post-discussion:
+    needs: generate-standup
+    if: inputs.dry_run != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub Discussion
+        id: create-discussion
+        uses: abirismyname/create-discussion@v1
+        with:
+          title: ${{ needs.generate-standup.outputs.standup_title }}
+          body: ${{ needs.generate-standup.outputs.standup_body }}
+          repository-name: ${{ github.repository }}
+          category-name: Announcements
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print discussion URL
+        env:
+          DISCUSSION_URL: ${{ steps.create-discussion.outputs.discussion-url }}
+        run: |
+          echo "✅ Standup posted!"
+          echo "📍 $DISCUSSION_URL"
