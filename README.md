@@ -1,5 +1,6 @@
 # Marketplace
 
+![Version](https://img.shields.io/badge/version-1.2.0-green)
 ![Build](https://github.com/fyrsmithlabs/marketplace/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![Gitleaks](https://img.shields.io/badge/gitleaks-enabled-blue)
@@ -12,7 +13,7 @@ This plugin provides:
 - **Repository Standards** - Naming conventions, structure, documentation requirements
 - **Git Workflows** - Multi-agent consensus review, PR requirements, branching strategy
 - **Project Init** - Set up projects to follow fyrsmithlabs standards
-- **YAGNI/KISS Enforcement** - Humorous nudges against over-engineering
+- **YAGNI/KISS Enforcement** - Structured nudges against over-engineering
 - **Complexity Assessment** - Right-size workflows based on task complexity
 - **GitHub Planning** - Native GitHub Issues/Projects instead of local markdown
 - **Roadmap Discovery** - Autonomous codebase analysis for improvements
@@ -27,45 +28,79 @@ This plugin provides:
 
 ```
 marketplace/
-├── .claude-plugin/           # Plugin manifest
-├── commands/                 # Slash commands
-│   ├── init.md           # /init command
-│   ├── yagni.md        # /yagni command
-│   ├── brainstorm.md        # /brainstorm command
-│   ├── plan.md              # /plan command
-│   ├── discover.md          # /discover command
-│   ├── test-skill.md        # /test-skill command
-│   ├── comp-analysis.md     # /comp-analysis command
-│   ├── spec-refinement.md   # /spec-refinement command
-│   └── app-interview.md     # /app-interview command
-├── agents/                   # Subagents
-├── skills/
-│   ├── git-repo-standards/  # Repo standards skill
-│   ├── git-workflows/       # Workflow skill
-│   ├── init/  # Onboarding skill
-│   ├── yagni/          # YAGNI/KISS enforcement
-│   ├── complexity-assessment/ # Task complexity evaluation
-│   ├── github-planning/     # GitHub Issues/Projects
-│   └── roadmap-discovery/   # Codebase analysis
-├── includes/                 # Shared hook includes
-│   └── yagni/          # Pattern detection templates
+├── .claude-plugin/           # Plugin manifests (plugin.json, marketplace.json)
+├── commands/                 # Slash commands (18 total)
+│   ├── init.md               # /init - project setup
+│   ├── yagni.md              # /yagni - YAGNI settings
+│   ├── brainstorm.md         # /brainstorm - design interview
+│   ├── plan.md               # /plan - planning workflow
+│   ├── discover.md           # /discover - codebase discovery
+│   ├── test-skill.md         # /test-skill - pressure tests
+│   ├── contextd-*.md         # 9 contextd commands
+│   └── ...
+├── agents/                   # Subagents (7 total)
+│   ├── security-reviewer.md
+│   ├── vulnerability-reviewer.md
+│   ├── code-quality-reviewer.md
+│   ├── documentation-reviewer.md
+│   ├── user-persona-reviewer.md
+│   ├── contextd-task-agent.md
+│   └── contextd-orchestrator.md
+├── skills/                   # Skills (13 total)
+│   ├── git-repo-standards/   # Repo naming, structure, docs
+│   ├── git-workflows/        # Consensus review, PRs, branching
+│   ├── init/                 # Project setup
+│   ├── yagni/                # YAGNI/KISS enforcement
+│   ├── complexity-assessment/
+│   ├── github-planning/
+│   ├── roadmap-discovery/
+│   └── contextd-*/           # 6 contextd skills
+├── includes/                 # Shared includes
+│   └── yagni/                # Pattern detection
 └── hooks/
-    └── hooks.json           # Enforcement hooks
+    └── hooks.json            # Enforcement hooks
 ```
 
 ## Skills
+
+### Core Skills
 
 | Skill | Description |
 |-------|-------------|
 | `git-repo-standards` | Repository naming, structure, README, CHANGELOG, LICENSE, gitleaks |
 | `git-workflows` | 5-agent consensus review, PR requirements, trunk-based branching |
 | `init` | Set up projects to follow fyrsmithlabs standards |
-| `yagni` | YAGNI/KISS enforcement with humorous archetype nudges |
+| `yagni` | YAGNI/KISS enforcement with structured nudges |
 | `complexity-assessment` | Assess task complexity (SIMPLE/STANDARD/COMPLEX) across 5 dimensions |
 | `github-planning` | Create tier-appropriate GitHub Issues, epics, and project boards |
 | `roadmap-discovery` | Autonomous codebase analysis with lens filtering (security, quality, perf, docs) |
 
+### contextd Skills
+
+| Skill | Description |
+|-------|-------------|
+| `using-contextd` | Core tools for cross-session memory, semantic search, and error remediation |
+| `context-folding` | Create context-isolated branches with token budgets for sub-tasks |
+| `contextd-setup` | Codebase analysis, CLAUDE.md generation, policy management |
+| `contextd-workflow` | Session lifecycle - start/end protocols, checkpoints, error remediation |
+| `contextd-consensus-review` | Multi-agent parallel review with Security, Correctness, Architecture, UX agents |
+| `contextd-self-reflection` | Mine memories for poor behaviors, pressure-test CLAUDE.md improvements |
+
+## Agents
+
+| Agent | Description | Veto Power |
+|-------|-------------|------------|
+| `security-reviewer` | Injection, auth, secrets, OWASP Top 10 | Yes |
+| `vulnerability-reviewer` | CVEs, dependencies, supply chain | Yes |
+| `code-quality-reviewer` | Logic, complexity, patterns, tests | No |
+| `documentation-reviewer` | README, comments, API docs, CHANGELOG | No |
+| `user-persona-reviewer` | UX impact, breaking changes, API ergonomics | No |
+| `contextd-task-agent` | Debugging, refactoring, architecture analysis | N/A |
+| `contextd-orchestrator` | Multi-agent workflows with context folding | N/A |
+
 ## Commands
+
+### Core Commands
 
 | Command | Description |
 |---------|-------------|
@@ -79,6 +114,20 @@ marketplace/
 | `/comp-analysis` | Generate executive summary of competitor analysis |
 | `/spec-refinement` | Deep-dive interview to refine specification documents |
 | `/app-interview` | Comprehensive app ideation with competitor analysis |
+
+### contextd Commands
+
+| Command | Description |
+|---------|-------------|
+| `/contextd-search` | Semantic search across memories, remediations, and indexed code |
+| `/contextd-remember` | Record a learning or insight from the current session |
+| `/contextd-checkpoint` | Save session state (accomplishments, in-progress, next steps) |
+| `/contextd-diagnose` | Diagnose errors using AI analysis and past fixes |
+| `/contextd-status` | Show contextd status for current session and project |
+| `/contextd-init` | Initialize contextd for a project (CLAUDE.md, indexing) |
+| `/contextd-reflect` | Analyze memories for behavior patterns and policy compliance |
+| `/contextd-consensus-review` | Run multi-agent consensus review on files/directories |
+| `/contextd-help` | List all available contextd skills and commands |
 
 ## Installation
 

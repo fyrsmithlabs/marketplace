@@ -1,7 +1,8 @@
 # CLAUDE.md - Marketplace
 
 **Status**: Active Development
-**Last Updated**: 2026-01-08
+**Version**: 1.2.0
+**Last Updated**: 2026-01-20
 
 ---
 
@@ -22,32 +23,57 @@ A Claude Code plugin marketplace providing skills, commands, and agents for fyrs
 
 ```
 marketplace/
-├── .claude-plugin/      # Plugin manifest
-├── commands/            # Claude Code slash commands
-│   ├── init.md       # /init command
-│   └── yagni.md    # /yagni command
-├── agents/              # Claude Code subagents
-├── skills/              # Claude Code skills
+├── .claude-plugin/      # Plugin manifests
+├── commands/            # 18 slash commands (9 core + 9 contextd)
+├── agents/              # 7 subagents (5 reviewers + 2 contextd)
+├── skills/              # 13 skills
 │   ├── git-repo-standards/    # Repo naming, structure, docs
 │   ├── git-workflows/         # Consensus review, PRs, branching
-│   ├── init/    # Project setup
-│   └── yagni/            # YAGNI/KISS enforcement
+│   ├── init/                  # Project setup
+│   ├── yagni/                 # YAGNI/KISS enforcement
+│   ├── complexity-assessment/ # Task complexity
+│   ├── github-planning/       # GitHub Issues/Projects
+│   ├── roadmap-discovery/     # Codebase analysis
+│   └── contextd-*/            # 6 contextd skills
 ├── includes/            # Shared includes for hooks
-│   └── yagni/      # Pattern detection
+│   └── yagni/           # Pattern detection
 └── hooks/               # Claude Code hooks
     └── hooks.json       # Enforcement hooks
 ```
 
 ## Plugin Components
 
-| Component | Purpose |
-|-----------|---------|
+### Core Skills
+
+| Skill | Purpose |
+|-------|---------|
 | `git-repo-standards` | Repository naming, structure, README, CHANGELOG, LICENSE, gitleaks |
 | `git-workflows` | 5-agent consensus review with contextd, PR requirements, branching |
 | `init` | Set up projects to follow fyrsmithlabs standards |
-| `yagni` | YAGNI/KISS enforcement with humorous nudges |
-| `/init` | Command to set up project standards |
-| `/yagni` | Command to manage YAGNI/KISS enforcement |
+| `yagni` | YAGNI/KISS enforcement with structured nudges |
+| `complexity-assessment` | Task complexity evaluation (SIMPLE/STANDARD/COMPLEX) |
+| `github-planning` | GitHub Issues/Projects integration |
+| `roadmap-discovery` | Codebase analysis with lens filtering |
+
+### Review Agents
+
+| Agent | Focus | Veto |
+|-------|-------|------|
+| `security-reviewer` | Injection, auth, secrets, OWASP | Yes |
+| `vulnerability-reviewer` | CVEs, deps, supply chain | Yes |
+| `code-quality-reviewer` | Logic, complexity, patterns | No |
+| `documentation-reviewer` | README, API docs, CHANGELOG | No |
+| `user-persona-reviewer` | UX, breaking changes, ergonomics | No |
+
+### Key Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/init` | Set up project standards |
+| `/yagni` | Manage YAGNI settings |
+| `/plan` | Full planning workflow |
+| `/test-skill` | Run pressure tests |
+| `/contextd-*` | 9 contextd commands |
 
 ## Code Standards
 
@@ -80,10 +106,10 @@ Set up projects to follow fyrsmithlabs standards:
 ### yagni
 YAGNI/KISS enforcement with structured nudges:
 - Non-blocking feedback when over-engineering detected
-- Patterns: abstraction, config-addiction, scope-creep, dead-code
-- Structured output format (tree-style, concise)
+- 4 pattern types: abstraction, config-addiction, scope-creep, dead-code
+- Structured tree-style output format
 - Configurable sensitivity (conservative/moderate/aggressive)
-- `/yagni config` to adjust settings
+- `/yagni` to manage settings
 
 ## Known Pitfalls
 
