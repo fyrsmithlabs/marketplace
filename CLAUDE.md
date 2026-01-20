@@ -24,9 +24,9 @@ A Claude Code plugin marketplace providing skills, commands, and agents for fyrs
 ```
 marketplace/
 ├── .claude-plugin/      # Plugin manifests
-├── commands/            # 18 slash commands (9 core + 9 contextd)
-├── agents/              # 7 subagents (5 reviewers + 2 contextd)
-├── skills/              # 13 skills
+├── commands/            # 19 slash commands (10 core + 9 contextd)
+├── agents/              # 8 subagents (5 reviewers + 1 product-owner + 2 contextd)
+├── skills/              # 14 skills
 │   ├── git-repo-standards/    # Repo naming, structure, docs
 │   ├── git-workflows/         # Consensus review, PRs, branching
 │   ├── init/                  # Project setup
@@ -34,6 +34,7 @@ marketplace/
 │   ├── complexity-assessment/ # Task complexity
 │   ├── github-planning/       # GitHub Issues/Projects
 │   ├── roadmap-discovery/     # Codebase analysis
+│   ├── product-owner/         # Standups, priorities
 │   └── contextd-*/            # 6 contextd skills
 ├── includes/            # Shared includes for hooks
 │   └── yagni/           # Pattern detection
@@ -54,6 +55,7 @@ marketplace/
 | `complexity-assessment` | Task complexity evaluation (SIMPLE/STANDARD/COMPLEX) |
 | `github-planning` | GitHub Issues/Projects integration |
 | `roadmap-discovery` | Codebase analysis with lens filtering |
+| `product-owner` | Daily standups, priority synthesis, cross-project dependencies |
 
 ### Review Agents
 
@@ -65,6 +67,12 @@ marketplace/
 | `documentation-reviewer` | README, API docs, CHANGELOG | No |
 | `user-persona-reviewer` | UX, breaking changes, ergonomics | No |
 
+### Other Agents
+
+| Agent | Purpose |
+|-------|---------|
+| `product-owner` | Priority analysis, cross-project dependencies, strategic recommendations |
+
 ### Key Commands
 
 | Command | Purpose |
@@ -72,6 +80,7 @@ marketplace/
 | `/init` | Set up project standards |
 | `/yagni` | Manage YAGNI settings |
 | `/plan` | Full planning workflow |
+| `/standup` | Daily standup with GitHub + contextd synthesis |
 | `/test-skill` | Run pressure tests |
 | `/contextd-*` | 9 contextd commands |
 
@@ -110,6 +119,14 @@ YAGNI/KISS enforcement with structured nudges:
 - Structured tree-style output format
 - Configurable sensitivity (conservative/moderate/aggressive)
 - `/yagni` to manage settings
+
+### product-owner
+Daily standups and priority synthesis:
+- `/standup` - Daily standup with GitHub + contextd synthesis
+- `/standup --platform` - Cross-project view for all fyrsmithlabs repos
+- Priority classification: CRITICAL → HIGH → DEPENDENCY ALERT → MEDIUM → CARRIED OVER
+- Cross-project dependency detection
+- Velocity tracking via checkpoint comparison
 
 ## Known Pitfalls
 
