@@ -14,8 +14,7 @@ on:
 
 permissions:
   contents: read
-  discussions: write
-  issues: read
+  issues: write
   pull-requests: read
   id-token: write
 
@@ -99,43 +98,25 @@ jobs:
           echo "=== STANDUP BODY ==="
           echo "$STANDUP_BODY"
 
-  post-discussion:
+  post-standup:
     needs: generate-standup
     if: ${{ github.event.inputs.dry_run != 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Create GitHub Discussion
-        id: create-discussion
+      - name: Create GitHub Issue
+        id: create-issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STANDUP_TITLE: ${{ needs.generate-standup.outputs.standup_title }}
           STANDUP_BODY: ${{ needs.generate-standup.outputs.standup_body }}
         run: |
-          # Get repository ID and category ID
-          REPO_ID=$(gh api graphql -f query='
-            query($owner: String!, $repo: String!) {
-              repository(owner: $owner, name: $repo) { id }
-            }' -f owner="${GITHUB_REPOSITORY_OWNER}" -f repo="${GITHUB_REPOSITORY#*/}" --jq '.data.repository.id')
+          # Create issue with standup label
+          ISSUE_URL=$(gh issue create \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$STANDUP_TITLE" \
+            --body "$STANDUP_BODY" \
+            --label "standup")
 
-          CATEGORY_ID=$(gh api graphql -f query='
-            query($owner: String!, $repo: String!) {
-              repository(owner: $owner, name: $repo) {
-                discussionCategories(first: 10) {
-                  nodes { id name }
-                }
-              }
-            }' -f owner="${GITHUB_REPOSITORY_OWNER}" -f repo="${GITHUB_REPOSITORY#*/}" \
-            --jq '.data.repository.discussionCategories.nodes[] | select(.name == "Announcements") | .id')
-
-          # Create discussion
-          RESULT=$(gh api graphql -f query='
-            mutation($repositoryId: ID!, $categoryId: ID!, $title: String!, $body: String!) {
-              createDiscussion(input: {repositoryId: $repositoryId, categoryId: $categoryId, title: $title, body: $body}) {
-                discussion { url }
-              }
-            }' -f repositoryId="$REPO_ID" -f categoryId="$CATEGORY_ID" -f title="$STANDUP_TITLE" -f body="$STANDUP_BODY")
-
-          DISCUSSION_URL=$(echo "$RESULT" | jq -r '.data.createDiscussion.discussion.url')
-          echo "discussion-url=$DISCUSSION_URL" >> "$GITHUB_OUTPUT"
+          echo "issue-url=$ISSUE_URL" >> "$GITHUB_OUTPUT"
           echo "✅ Standup posted!"
-          echo "📍 $DISCUSSION_URL"
+          echo "📍 $ISSUE_URL"
