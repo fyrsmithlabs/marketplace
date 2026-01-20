@@ -37,19 +37,18 @@ jobs:
           prompt: |
             Generate a daily standup report for the fyrsmithlabs organization.
 
-            IMPORTANT: Use the GitHub MCP tools (list_pull_requests, list_issues, list_commits) to query data.
-            Do NOT use bash or gh CLI commands.
+            Use the `gh` CLI to query GitHub data. The CLI is pre-authenticated.
 
             ## Instructions
 
-            1. Query GitHub using MCP tools for these fyrsmithlabs repositories:
+            1. Query these fyrsmithlabs repositories:
                - fyrsmithlabs/marketplace
                - fyrsmithlabs/contextd
 
-            2. For each repo, use these MCP tools:
-               - list_pull_requests(owner, repo, state="open") for PRs
-               - list_issues(owner, repo, state="OPEN") for issues
-               - list_commits(owner, repo, perPage=10) for recent commits
+            2. For each repo, run these gh commands:
+               - `gh pr list --repo fyrsmithlabs/<repo> --state open --json number,title,author,createdAt,labels`
+               - `gh issue list --repo fyrsmithlabs/<repo> --state open --json number,title,labels,createdAt`
+               - `gh api repos/fyrsmithlabs/<repo>/commits --jq '.[0:10] | .[] | {sha: .sha[0:7], message: .commit.message | split("\n")[0], author: .commit.author.name}'`
 
             3. Synthesize into priority list:
                - CRITICAL: Security issues, failing CI, blocked PRs
@@ -64,6 +63,7 @@ jobs:
             - title: "Daily Standup: YYYY-MM-DD"
             - body: Full markdown standup report (use proper markdown formatting)
           claude_args: |
+            --allowedTools Bash
             --max-turns 15
             --model claude-sonnet-4-20250514
             --json-schema '{"type":"object","properties":{"title":{"type":"string"},"body":{"type":"string"}},"required":["title","body"]}'
