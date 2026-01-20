@@ -17,6 +17,7 @@ permissions:
   discussions: write
   issues: read
   pull-requests: read
+  id-token: write
 
 jobs:
   generate-standup:
