@@ -88,7 +88,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Debug output (dry run only)
-        if: inputs.dry_run == 'true'
+        if: ${{ github.event.inputs.dry_run == 'true' }}
         env:
           STANDUP_TITLE: ${{ steps.extract.outputs.title }}
           STANDUP_BODY: ${{ steps.extract.outputs.body }}
@@ -101,12 +101,12 @@ jobs:
 
   post-discussion:
     needs: generate-standup
-    if: inputs.dry_run != 'true'
+    if: ${{ github.event.inputs.dry_run != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Create GitHub Discussion
         id: create-discussion
-        uses: abirismyname/create-discussion@v1
+        uses: abirismyname/create-discussion@v2.1.0
         with:
           title: ${{ needs.generate-standup.outputs.standup_title }}
           body: ${{ needs.generate-standup.outputs.standup_body }}
