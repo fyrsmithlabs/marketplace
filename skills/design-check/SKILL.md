@@ -46,9 +46,10 @@ Check for these violations:
 
 **CRITICAL - Hardcoded Colors**
 ```
-Pattern: #[0-9a-fA-F]{3,8}
+Pattern: (?<!:root[^}]*)\b#[0-9a-fA-F]{3,8}\b
 Excludes: Inside :root {} or comments
 Should be: var(--color-*), var(--bg-*), var(--text-*), var(--border-*)
+Note: Use negative lookbehind to exclude :root declarations
 ```
 
 Known design system hex values (acceptable in :root only):
@@ -60,16 +61,18 @@ Known design system hex values (acceptable in :root only):
 
 **ERROR - Hardcoded Spacing**
 ```
-Pattern: margin|padding|gap:\s*\d+px
-Excludes: 0px, 1px (borders)
+Pattern: (?<!var\(--[^)]*)(margin|padding|gap):\s*[2-9]\d*px
+Excludes: 0px, 1px (borders), CSS variable definitions
 Should be: var(--space-*)
+Note: Use negative lookbehind to exclude var(--*) declarations
 ```
 
 **ERROR - Hardcoded Font Sizes**
 ```
-Pattern: font-size:\s*\d+(\.\d+)?(px|rem|em)
-Excludes: 16px (iOS zoom prevention)
+Pattern: (?<!var\(--[^)]*)(font-size:\s*(?!16px)\d+(\.\d+)?(px|rem|em))
+Excludes: 16px (iOS zoom prevention), CSS variable definitions
 Should be: var(--text-*)
+Note: Use negative lookbehind to exclude var(--*) declarations
 ```
 
 **WARNING - Hardcoded Z-Index**

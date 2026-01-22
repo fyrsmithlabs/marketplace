@@ -135,17 +135,20 @@ Based on 4px grid (0.25rem base):
 
 ```regex
 # Hardcoded colors (outside :root)
-#[0-9a-fA-F]{3,8}
-rgb\(\d+,\s*\d+,\s*\d+\)
-rgba\(\d+,\s*\d+,\s*\d+,\s*[\d.]+\)
+# Use negative lookbehind to exclude :root context
+(?<!:root[^}]*)\b#[0-9a-fA-F]{3,8}\b
+(?<!:root[^}]*)rgb\(\d+,\s*\d+,\s*\d+\)
+(?<!:root[^}]*)rgba\(\d+,\s*\d+,\s*\d+,\s*[\d.]+\)
 
 # Hardcoded spacing (not 0 or 1px)
-(margin|padding|gap):\s*[2-9]\d*px
-(margin|padding|gap):\s*\d+rem
+# Use negative lookbehind to exclude CSS variable definitions
+(?<!var\(--[^)]*)(margin|padding|gap):\s*[2-9]\d*px
+(?<!var\(--[^)]*)(margin|padding|gap):\s*\d+rem
 
 # Hardcoded font sizes (not 16px iOS exception)
-font-size:\s*(?!16px)\d+px
-font-size:\s*\d+(\.\d+)?rem
+# Use negative lookbehind to exclude CSS variable definitions
+(?<!var\(--[^)]*)(font-size:\s*(?!16px)\d+px)
+(?<!var\(--[^)]*)(font-size:\s*\d+(\.\d+)?rem)
 
 # Hardcoded z-index (not 0 or 100)
 z-index:\s*(?!0|100)\d+
