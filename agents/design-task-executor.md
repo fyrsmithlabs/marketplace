@@ -86,6 +86,9 @@ When asked to refactor code to use design tokens:
 
 #### Token Mapping Reference
 
+<!-- Note: This mapping is intentionally duplicated from skills/design-check/references/design-tokens.md
+     for quick reference during agent execution. Keep both in sync when updating tokens. -->
+
 **Colors**
 | Hardcoded | Token |
 |-----------|-------|

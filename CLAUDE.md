@@ -1,8 +1,8 @@
 # CLAUDE.md - Marketplace
 
 **Status**: Active Development
-**Version**: 1.2.0
-**Last Updated**: 2026-01-20
+**Version**: 1.3.0
+**Last Updated**: 2026-01-22
 
 ---
 
@@ -25,8 +25,8 @@ A Claude Code plugin marketplace providing skills, commands, and agents for fyrs
 marketplace/
 ├── .claude-plugin/      # Plugin manifests
 ├── commands/            # 19 slash commands (10 core + 9 contextd)
-├── agents/              # 8 subagents (5 reviewers + 1 product-owner + 2 contextd)
-├── skills/              # 14 skills
+├── agents/              # 10 subagents (5 reviewers + 1 product-owner + 2 contextd + 2 design)
+├── skills/              # 15 skills
 │   ├── git-repo-standards/    # Repo naming, structure, docs
 │   ├── git-workflows/         # Consensus review, PRs, branching
 │   ├── init/                  # Project setup
@@ -56,6 +56,7 @@ marketplace/
 | `github-planning` | GitHub Issues/Projects integration |
 | `roadmap-discovery` | Codebase analysis with lens filtering |
 | `product-owner` | Daily standups, priority synthesis, cross-project dependencies |
+| `design-check` | Terminal Elegance design system compliance checking and reporting |
 
 ### Review Agents
 
@@ -72,6 +73,8 @@ marketplace/
 | Agent | Purpose |
 |-------|---------|
 | `product-owner` | Priority analysis, cross-project dependencies, strategic recommendations |
+| `design-consistency-reviewer` | Audit files for Terminal Elegance design system compliance |
+| `design-task-executor` | Execute design system refactoring with user permission |
 
 ### Key Commands
 
@@ -127,6 +130,14 @@ Daily standups and priority synthesis:
 - Priority classification: CRITICAL → HIGH → DEPENDENCY ALERT → MEDIUM → CARRIED OVER
 - Cross-project dependency detection
 - Velocity tracking via checkpoint comparison
+
+### design-check
+Terminal Elegance design system compliance checking:
+- `/design-check [path]` - Audit files for design system violations
+- Reports hardcoded colors, spacing, fonts, z-index values
+- Checks accessibility (alt text, ARIA labels, focus states)
+- Validates brand name consistency in documentation
+- Report-only tool, does not auto-fix issues
 
 ## Known Pitfalls
 
