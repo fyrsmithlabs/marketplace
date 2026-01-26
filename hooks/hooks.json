@@ -1,30 +1,5 @@
 {
   "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "startup|resume|clear|compact",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "## Session Start Protocol (CONTEXTD)\n\n**MANDATORY: Before your first substantive response, you MUST:**\n\n1. Run `mcp__contextd__checkpoint_list(tenant_id, project_path)` to check for existing checkpoints\n2. If checkpoints exist, present the most recent relevant checkpoint to the user:\n   - Show checkpoint name, summary, and when it was created\n   - Ask: \"Would you like to resume from this checkpoint?\"\n3. If user says yes, run `mcp__contextd__checkpoint_resume(checkpoint_id, tenant_id, level)` with level=\"context\"\n4. Run `mcp__contextd__memory_search(project_id, \"current task context\")` to retrieve relevant memories\n\n**This protocol ensures continuity across sessions. Do not skip these steps.**"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "## Contextd Pre-flight Reminder\n\nBefore starting work on this task, did you:\n\n- [ ] `memory_search(project_id, \"task keywords\")` - Check past learnings\n- [ ] `remediation_search(query)` - If this involves an error\n\nThese take seconds and often save significant time by surfacing relevant context.\n\n**Skip only if:** This is a continuation of work already in context."
-          },
-          {
-            "type": "command",
-            "command": "./hooks/context-monitor.sh"
-          }
-        ]
-      }
-    ],
     "PreCompact": [
       {
         "hooks": [
@@ -44,61 +19,15 @@
             "prompt": "Before writing/editing files, verify:\n1. No agent artifacts (TODO.md, PLAN.md, *.task) in repo root - must go to docs/.claude/\n2. No secrets or API keys in content\n3. If creating new file, verify it follows naming conventions (kebab-case)\n\nIf violations found, BLOCK with explanation. Otherwise, ALLOW."
           }
         ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Before executing git commit:\n1. Verify commit message follows Conventional Commits format: <type>(<scope>): <description>\n2. Valid types: feat, fix, docs, style, refactor, perf, test, chore, build, ci, revert\n3. Description should be lowercase, no period at end, max 72 chars\n\nIf 'git commit' command doesn't follow format, BLOCK with correct format suggestion. Otherwise, ALLOW."
-          }
-        ]
       }
     ],
     "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "## Command Failed - SRE Debug Protocol\n\nIf the command exited with a non-zero status, follow this systematic troubleshooting process:\n\n### 1. Triage\n- Is this blocking? Can we mitigate before diagnosing?\n- What's the blast radius?\n\n### 2. Examine\n```\nmcp__contextd__remediation_search(query: \"<error message>\")\nmcp__contextd__troubleshoot_diagnose(error_message: \"<error>\", error_context: \"<stack trace or context>\")\n```\n\n### 3. Diagnose\nGenerate hypotheses using:\n- **Divide and conquer:** Bisect through system layers\n- **What/where/why:** Question each component's role\n- **Change correlation:** What touched it last?\n\n### 4. Test\nFor each hypothesis, use `branch_create` to test in isolation.\n\n### 5. Record (when fixed)\nRun `remediation_record` with the problem, root_cause, and solution.\n\n**Document negative results too** - they help others avoid wasted effort."
-          }
-        ]
-      },
       {
         "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "## YAGNI Pattern Check\n\nAnalyze the Write/Edit for over-engineering.\n\n**Patterns:**\n- abstraction: Filename contains Factory/Manager/Provider/Handler/Helper/Utils/Base/Abstract/Wrapper/Builder/Coordinator/Orchestrator\n- config-addiction: Feature flag/env var for single-use behavior\n- dead-code: 10+ commented lines or unused imports\n\n**Skip:** generated/, vendor/, node_modules/, migrations/, test files, .claude/yagni.local.md exclusions\n\n**If detected, output:**\n```\n⚠️ YAGNI: [pattern]\n├─ Trigger: [what]\n├─ Concern: [why]\n└─ Simpler: [alternative]\nOptions: Dismiss | Snooze | /yagni config\n```\n\n**If no pattern:** Silent."
-          }
-        ]
-      },
-      {
-        "matcher": "TodoWrite",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "## YAGNI Scope Check\n\nOn todo completion, check for scope creep.\n\n**Trigger:** Task has simple keyword (fix/typo/rename/tweak) but touched 5+ files.\n\n**If detected, output:**\n```\n⚠️ YAGNI: scope-creep\n├─ Trigger: [task] touched [N] files\n├─ Concern: Simple task expanded beyond scope\n└─ Simpler: Stay focused on original task\nOptions: Dismiss | Snooze | /yagni config\n```\n\n**If no scope creep:** Silent."
-          }
-        ]
-      },
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "After file creation, check if this is a new repository being set up. If so, verify:\n1. README.md exists with required sections (title, badges, description, install, usage, license)\n2. CHANGELOG.md exists with [Unreleased] section\n3. .gitignore exists with docs/.claude/ ignored\n4. LICENSE exists (or is planned)\n5. .gitleaks.toml exists (or is planned)\n\nReport any missing required files as warnings."
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "## Contextd Post-flight Check\n\nBefore finishing, consider:\n\n- [ ] `memory_record(project_id, title, content, outcome, tags)` - Did you learn something worth saving?\n- [ ] `remediation_record(...)` - Did you fix an error others might encounter?\n- [ ] `memory_feedback(memory_id, helpful)` - Did a past memory help you?\n\n**Building the knowledge base helps future sessions.**\n\nSkip only if: No new learnings or fixes occurred."
+            "prompt": "## YAGNI Pattern Check\n\nAnalyze the Write/Edit for over-engineering.\n\n**Patterns:**\n- abstraction: Filename contains Factory/Manager/Provider/Handler/Helper/Utils/Base/Abstract/Wrapper/Builder/Coordinator/Orchestrator\n- config-addiction: Feature flag/env var for single-use behavior\n- dead-code: 10+ commented lines or unused imports\n\n**Skip:** generated/, vendor/, node_modules/, migrations/, test files, .claude/yagni.local.md exclusions\n\n**If detected, output:**\n```\nYAGNI: [pattern]\n- Trigger: [what]\n- Concern: [why]\n- Simpler: [alternative]\n```\n\n**If no pattern:** Silent."
           }
         ]
       }
