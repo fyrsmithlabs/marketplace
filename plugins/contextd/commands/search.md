@@ -1,5 +1,5 @@
 ---
-name: search
+name: contextd:search
 description: Search across memories, remediations, and code using semantic search. Combines results from contextd memory, remediations, and indexed code.
 arguments:
   - name: query

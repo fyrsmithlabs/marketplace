@@ -1,5 +1,5 @@
 ---
-name: status
+name: contextd:status
 description: Show contextd status for current session and project including memories, checkpoints, and remediations.
 ---
 

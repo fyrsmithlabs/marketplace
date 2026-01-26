@@ -1,5 +1,5 @@
 ---
-name: reflect
+name: contextd:reflect
 description: Analyze memories and remediations for behavior patterns, evaluate policy compliance, and optionally remediate with pressure-tested doc updates. Use for self-improvement and quality assurance.
 arguments:
   - name: flags

@@ -1,5 +1,5 @@
 ---
-name: diagnose
+name: contextd:diagnose
 description: Diagnose an error message using AI analysis and past fixes. Searches remediations and provides root cause analysis with recommended next steps.
 arguments:
   - name: error

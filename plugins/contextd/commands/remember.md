@@ -1,5 +1,5 @@
 ---
-name: remember
+name: contextd:remember
 description: Record a learning or insight from the current session. Captures what was learned, details, and outcome (success/failure) into contextd memory.
 ---
 

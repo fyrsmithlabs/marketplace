@@ -1,5 +1,5 @@
 ---
-name: orchestrate
+name: contextd:orchestrate
 description: Execute multi-task orchestration from GitHub issues or epics with parallel agents and consensus reviews
 arguments:
   - name: issues
