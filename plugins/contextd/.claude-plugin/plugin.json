@@ -1,7 +1,7 @@
 {
   "name": "contextd",
   "description": "Cross-session memory and learning for Claude Code. Provides semantic search, memory recording, checkpoints, error remediation, and multi-agent orchestration via the contextd MCP server.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "fyrsmithlabs"
   },
