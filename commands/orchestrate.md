@@ -70,7 +70,17 @@ Execute a multi-task orchestration plan with parallel agents, dependency managem
 ### Phase 0: Initialization (Contextd Setup)
 
 ```
-1. Search for relevant past orchestrations:
+1. MANDATORY: Read engineering practices before any work:
+   Read("CLAUDE.md")
+   Read("engineering-practices.md") OR Read("docs/engineering-practices.md")
+   → Load project-specific guidelines, security requirements, and coding standards
+   → These practices MUST be followed throughout the orchestration
+   → If engineering-practices.md not found, check for:
+     - docs/CONTRIBUTING.md
+     - .github/CONTRIBUTING.md
+     - README.md (development section)
+
+2. Search for relevant past orchestrations:
    mcp__contextd__memory_search(
      project_id: "<repo>",
      query: "orchestration <plan_name>",
@@ -78,7 +88,7 @@ Execute a multi-task orchestration plan with parallel agents, dependency managem
    )
    → Load learnings from previous runs
 
-2. Check for existing checkpoints if resuming:
+3. Check for existing checkpoints if resuming:
    if --resume:
      mcp__contextd__checkpoint_list(
        session_id: "orchestrate-<plan>",
@@ -92,7 +102,7 @@ Execute a multi-task orchestration plan with parallel agents, dependency managem
      )
      → Restore state, skip completed groups
 
-3. Create orchestration context branch:
+4. Create orchestration context branch:
    mcp__contextd__branch_create(
      session_id: "<session>",
      description: "Orchestration: <plan_name>",
@@ -100,7 +110,7 @@ Execute a multi-task orchestration plan with parallel agents, dependency managem
    )
    → Isolate orchestration context
 
-4. Save initial checkpoint:
+5. Save initial checkpoint:
    mcp__contextd__checkpoint_save(
      session_id: "orchestrate-<plan>",
      project_path: ".",
@@ -189,6 +199,12 @@ For each group in execution order:
        subagent_type: "fyrsmithlabs:contextd-task-agent",
        prompt: |
          {task.prompt}
+
+         ## Engineering Practices (MANDATORY)
+         - Read and follow CLAUDE.md and engineering-practices.md
+         - Follow project security requirements and coding standards
+         - Apply TDD: write tests BEFORE implementation
+         - Run tests before considering task complete
 
          ## Contextd Integration
          - Record architectural decisions with mcp__contextd__memory_record
