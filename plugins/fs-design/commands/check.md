@@ -1,5 +1,5 @@
 ---
-name: fs-design:check
+name: check
 description: Audit files for Terminal Elegance design system compliance. Checks CSS, templates, and documentation for hardcoded values, accessibility issues, and brand consistency.
 arguments:
   - name: path

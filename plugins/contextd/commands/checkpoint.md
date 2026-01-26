@@ -1,5 +1,5 @@
 ---
-name: contextd:checkpoint
+name: checkpoint
 description: Save a checkpoint of the current session state including accomplishments, in-progress work, and next steps. Use before clearing context or ending a session.
 ---
 

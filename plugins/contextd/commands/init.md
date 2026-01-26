@@ -1,5 +1,5 @@
 ---
-name: contextd:init
+name: init
 description: Initialize contextd for a project repository. Creates CLAUDE.md, indexes the repo, and optionally extracts learnings from past conversations.
 arguments:
   - name: flags
