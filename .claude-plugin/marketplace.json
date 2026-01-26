@@ -1,8 +1,8 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "fyrsmithlabs",
-  "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, development practices, and design system compliance",
-  "version": "1.4.0",
+  "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, cross-session memory, and design system compliance",
+  "version": "1.5.0",
   "owner": {
     "name": "fyrsmithlabs",
     "email": "plugins@fyrsmithlabs.com"
@@ -10,13 +10,23 @@
   "plugins": [
     {
       "name": "fyrsmithlabs",
-      "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, development practices, and contextd cross-session memory. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and contextd integration for semantic search, memory, checkpoints, and error remediation.",
-      "version": "1.4.0",
+      "description": "Claude Code plugins for fyrsmithlabs project standards and workflows. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and GitHub planning integration.",
+      "version": "1.5.0",
       "author": {
         "name": "fyrsmithlabs"
       },
       "source": "./",
       "category": "development"
+    },
+    {
+      "name": "contextd",
+      "description": "Cross-session memory and learning for Claude Code. Provides semantic search, memory recording, checkpoints, error remediation, and multi-agent orchestration via the contextd MCP server.",
+      "version": "1.0.0",
+      "author": {
+        "name": "fyrsmithlabs"
+      },
+      "source": "./plugins/contextd/",
+      "category": "memory"
     },
     {
       "name": "terminal-elegance",

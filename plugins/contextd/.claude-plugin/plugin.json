@@ -1,0 +1,41 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "contextd",
+  "description": "Cross-session memory and learning for Claude Code. Provides semantic search, memory recording, checkpoints, error remediation, and multi-agent orchestration via the contextd MCP server.",
+  "version": "1.0.0",
+  "author": {
+    "name": "fyrsmithlabs"
+  },
+  "keywords": [
+    "contextd",
+    "memory",
+    "semantic-search",
+    "checkpoints",
+    "remediation",
+    "cross-session",
+    "mcp",
+    "fyrsmithlabs"
+  ],
+  "agents": [
+    "./agents/contextd-orchestrator.md",
+    "./agents/contextd-task-agent.md"
+  ],
+  "skills": [
+    "./skills/contextd-consensus-review/SKILL.md",
+    "./skills/contextd-self-reflection/SKILL.md",
+    "./skills/contextd-setup/SKILL.md",
+    "./skills/contextd-workflow/SKILL.md",
+    "./skills/using-contextd/SKILL.md"
+  ],
+  "commands": [
+    "./commands/contextd-checkpoint.md",
+    "./commands/contextd-consensus-review.md",
+    "./commands/contextd-diagnose.md",
+    "./commands/contextd-help.md",
+    "./commands/contextd-init.md",
+    "./commands/contextd-reflect.md",
+    "./commands/contextd-remember.md",
+    "./commands/contextd-search.md",
+    "./commands/contextd-status.md"
+  ]
+}

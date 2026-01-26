@@ -1,7 +1,7 @@
 # CLAUDE.md - Marketplace
 
 **Status**: Active Development
-**Version**: 1.4.0
+**Version**: 1.5.0
 **Last Updated**: 2026-01-26
 
 ---
@@ -26,9 +26,9 @@ marketplace/
 ├── .claude-plugin/      # Root marketplace manifest
 │   ├── marketplace.json # Multi-plugin registry
 │   └── plugin.json      # fyrsmithlabs plugin manifest
-├── commands/            # 19 slash commands (10 core + 9 contextd)
-├── agents/              # 8 subagents (5 reviewers + 1 product-owner + 2 contextd)
-├── skills/              # 14 skills
+├── commands/            # 10 slash commands (core workflow)
+├── agents/              # 6 subagents (5 reviewers + 1 product-owner)
+├── skills/              # 9 skills (standards, workflows, planning)
 │   ├── git-repo-standards/    # Repo naming, structure, docs
 │   ├── git-workflows/         # Consensus review, PRs, branching
 │   ├── init/                  # Project setup
@@ -37,8 +37,13 @@ marketplace/
 │   ├── github-planning/       # GitHub Issues/Projects
 │   ├── roadmap-discovery/     # Codebase analysis
 │   ├── product-owner/         # Standups, priorities
-│   └── contextd-*/            # 6 contextd skills
+│   └── context-folding/       # Context isolation
 ├── plugins/             # Additional plugins
+│   ├── contextd/              # Cross-session memory plugin
+│   │   ├── .claude-plugin/    # Plugin manifest
+│   │   ├── agents/            # 2 contextd agents
+│   │   ├── skills/            # 5 contextd skills
+│   │   └── commands/          # 9 contextd commands
 │   └── terminal-elegance/     # Design system plugin
 │       ├── .claude-plugin/    # Plugin manifest
 │       ├── agents/            # 2 design agents
@@ -52,30 +57,33 @@ marketplace/
 
 ## Plugins
 
-This marketplace contains two plugins:
+This marketplace contains three plugins:
 
-### fyrsmithlabs (v1.4.0)
-Core development standards, workflows, and contextd integration.
-
-### terminal-elegance (v1.0.0)
-Terminal Elegance design system compliance checking.
+| Plugin | Version | Category | Description |
+|--------|---------|----------|-------------|
+| `fyrsmithlabs` | v1.5.0 | development | Core standards, workflows, planning |
+| `contextd` | v1.0.0 | memory | Cross-session memory and learning |
+| `terminal-elegance` | v1.0.0 | design | Design system compliance |
 
 ---
 
 ## fyrsmithlabs Plugin
+
+Core development standards, workflows, and GitHub integration.
 
 ### Core Skills
 
 | Skill | Purpose |
 |-------|---------|
 | `git-repo-standards` | Repository naming, structure, README, CHANGELOG, LICENSE, gitleaks |
-| `git-workflows` | 5-agent consensus review with contextd, PR requirements, branching |
+| `git-workflows` | 5-agent consensus review, PR requirements, branching |
 | `init` | Set up projects to follow fyrsmithlabs standards |
 | `yagni` | YAGNI/KISS enforcement with structured nudges |
 | `complexity-assessment` | Task complexity evaluation (SIMPLE/STANDARD/COMPLEX) |
 | `github-planning` | GitHub Issues/Projects integration |
 | `roadmap-discovery` | Codebase analysis with lens filtering |
 | `product-owner` | Daily standups, priority synthesis, cross-project dependencies |
+| `context-folding` | Context isolation for complex sub-tasks |
 
 ### Review Agents
 
@@ -100,26 +108,66 @@ Terminal Elegance design system compliance checking.
 | `/init` | Set up project standards |
 | `/yagni` | Manage YAGNI settings |
 | `/plan` | Full planning workflow |
-| `/standup` | Daily standup with GitHub + contextd synthesis |
+| `/standup` | Daily standup with GitHub synthesis |
 | `/test-skill` | Run pressure tests |
-| `/contextd-*` | 9 contextd commands |
+| `/discover` | Codebase analysis |
+| `/brainstorm` | Feature design workflow |
 
 ---
 
-## terminal-elegance Plugin
+## contextd Plugin
+
+Cross-session memory and learning via the contextd MCP server.
 
 ### Skills
 
 | Skill | Purpose |
 |-------|---------|
-| `design-check` | Terminal Elegance design system compliance checking and reporting |
+| `using-contextd` | Core tools introduction |
+| `contextd-setup` | Project onboarding and CLAUDE.md management |
+| `contextd-workflow` | Session lifecycle management |
+| `contextd-consensus-review` | Multi-agent parallel review |
+| `contextd-self-reflection` | Behavior pattern analysis |
 
 ### Agents
 
 | Agent | Purpose |
 |-------|---------|
-| `design-consistency-reviewer` | Audit files for Terminal Elegance design system compliance |
-| `design-task-executor` | Execute design system refactoring with user permission |
+| `contextd-task-agent` | Unified debugging, refactoring, architecture analysis |
+| `contextd-orchestrator` | Multi-agent workflow with context-folding |
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/contextd-search` | Semantic search across memories |
+| `/contextd-remember` | Record learnings from session |
+| `/contextd-checkpoint` | Save session state |
+| `/contextd-diagnose` | Error analysis with AI |
+| `/contextd-status` | Show contextd status |
+| `/contextd-init` | Initialize contextd for project |
+| `/contextd-reflect` | Analyze patterns, improve policies |
+| `/contextd-consensus-review` | Multi-agent code review |
+| `/contextd-help` | List available commands |
+
+---
+
+## terminal-elegance Plugin
+
+Terminal Elegance design system compliance checking.
+
+### Skills
+
+| Skill | Purpose |
+|-------|---------|
+| `design-check` | Design system compliance checking and reporting |
+
+### Agents
+
+| Agent | Purpose |
+|-------|---------|
+| `design-consistency-reviewer` | Audit files for design system compliance |
+| `design-task-executor` | Execute design system refactoring |
 
 ### Commands
 
@@ -142,43 +190,6 @@ Terminal Elegance design system compliance checking.
 - Use kebab-case for all component names
 - Skills must integrate with contextd (memory, remediation, checkpoints)
 - Templates go in `skills/<skill-name>/templates/`
-
-## Skills Overview
-
-### git-repo-standards
-Enforces repository naming, structure, and documentation standards:
-- Naming: `[domain]-[type]` kebab-case
-- Required files: README, CHANGELOG, LICENSE, .gitignore, .gitleaks.toml
-- Agent artifacts must go in `docs/.claude/` (gitignored)
-- Licensing: Apache-2.0 for libs, AGPL-3.0 for services
-
-### git-workflows
-Modern agentic git workflows with multi-agent consensus review:
-- 5 agents: Security, Vulnerability, Code Quality, Documentation, User Persona
-- Security/Vuln have veto power
-- contextd integration for learning and remediation
-- Trunk-based development, squash merge only
-
-### init
-Set up projects to follow fyrsmithlabs standards:
-- `/init` - Set up project (detects new vs existing)
-- `/init --check` - Audit only, no modifications
-
-### yagni
-YAGNI/KISS enforcement with structured nudges:
-- Non-blocking feedback when over-engineering detected
-- 4 pattern types: abstraction, config-addiction, scope-creep, dead-code
-- Structured tree-style output format
-- Configurable sensitivity (conservative/moderate/aggressive)
-- `/yagni` to manage settings
-
-### product-owner
-Daily standups and priority synthesis:
-- `/standup` - Daily standup with GitHub + contextd synthesis
-- `/standup --platform` - Cross-project view for all fyrsmithlabs repos
-- Priority classification: CRITICAL → HIGH → DEPENDENCY ALERT → MEDIUM → CARRIED OVER
-- Cross-project dependency detection
-- Velocity tracking via checkpoint comparison
 
 ## Known Pitfalls
 
