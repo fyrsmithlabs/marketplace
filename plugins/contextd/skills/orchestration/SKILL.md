@@ -1,17 +1,20 @@
 ---
 name: orchestration
-description: Use when executing multi-task plans with parallel agents, dependency management, and consensus reviews. Triggers on "orchestrate this plan", "execute phase 2", "run the orchestration", or complex multi-feature development phases.
+description: Use when executing multi-task work from GitHub issues or epics with parallel agents, dependency management, and consensus reviews. Triggers on "orchestrate issues", "execute epic", "run the orchestration", or complex multi-feature development phases.
 ---
 
 # Multi-Task Orchestration
 
-Execute orchestration plans with parallel agents, dependency resolution, consensus reviews, and automatic remediation using contextd for memory, checkpoints, and context folding.
+Execute orchestration from GitHub issues or epics with parallel agents, dependency resolution, consensus reviews, and automatic remediation using contextd for memory, checkpoints, and context folding.
 
 ## Orchestration Flow
 
 ```dot
 digraph orchestration {
-    "Parse plan" -> "Resolve dependencies";
+    "Issues provided?" -> "Prompt user" [label="no"];
+    "Issues provided?" -> "Fetch issues" [label="yes"];
+    "Prompt user" -> "Fetch issues";
+    "Fetch issues" -> "Resolve dependencies";
     "Resolve dependencies" -> "For each group";
     "For each group" -> "Create context branch" [label="parallel"];
     "Create context branch" -> "Launch task agents";
@@ -43,54 +46,108 @@ digraph orchestration {
 **Remediation:** `remediation_record`, `remediation_search`
 **Reflection:** `reflect_analyze`, `reflect_report`
 
-## Phase 0: Initialization
+## Phase 0: Input Resolution
+
+**If no issues provided, prompt the user:**
+
+```
+AskUserQuestion(
+  questions: [{
+    question: "Which issues or epic would you like to orchestrate?",
+    header: "Issues",
+    options: [
+      { label: "Enter issue numbers", description: "Comma-separated list (e.g., 42,43,44)" },
+      { label: "Select an epic", description: "Epic issue that contains sub-issues" },
+      { label: "Current milestone", description: "All open issues in current milestone" }
+    ],
+    multiSelect: false
+  }]
+)
+```
+
+**For "Current milestone":**
+```
+gh issue list --milestone "$(gh api repos/:owner/:repo/milestones --jq '.[0].title')" --json number,title
+→ Present list for confirmation
+```
+
+## Phase 1: Issue Discovery
+
+```
+1. Fetch issue details:
+   gh issue view <number> --json number,title,body,labels,milestone
+
+2. For epics (single issue with sub-issues):
+   gh api graphql -f query='{ repository(owner:"X", name:"Y") {
+     issue(number: N) { trackedIssues(first: 50) { nodes { number title } } }
+   }}'
+
+3. Extract task information:
+   - number → Task ID
+   - title → Task name
+   - body → Agent prompt (look for ## Agent Prompt or ## Description)
+   - labels → Priority (P0, P1, P2), type (feature, bug, etc.)
+   - "Depends On: #XX" in body → Dependencies
+
+4. Record to memory:
+   memory_record(title: "Orchestration: Issues #{list}", ...)
+```
+
+## Phase 2: Initialization
 
 ```
 1. Read engineering practices:
    Read("CLAUDE.md"), Read("engineering-practices.md")
 
 2. Search past orchestrations:
-   memory_search(project_id, "orchestration <plan>", limit: 5)
+   memory_search(project_id, "orchestration", limit: 5)
 
 3. If resuming:
-   checkpoint_list(session_id: "orchestrate-<plan>")
+   checkpoint_list(session_id: "orchestrate-{issue_ids}")
    checkpoint_resume(checkpoint_id)
 
 4. Create main context branch:
-   branch_create(description: "Orchestration: <plan>", budget: 16384)
+   branch_create(description: "Orchestration: #{issue_ids}", budget: 16384)
 
 5. Save initial checkpoint:
    checkpoint_save(name: "orchestrate-start")
 ```
 
-## Phase 1: Plan Discovery
+## Phase 3: Dependency Resolution
 
 ```
-1. Read plan file (or glob for *-PLAN.md)
-2. Extract: tasks, dependencies, groups, success criteria
-3. Record plan analysis to memory
-```
-
-## Phase 2: Dependency Resolution
-
-```
-1. Build dependency graph
+1. Build dependency graph from issue relationships
 2. Generate parallel groups (topological sort)
 3. Validate no circular dependencies
+
+Example:
+  #42 depends on nothing → Group 1
+  #43 depends on nothing → Group 1
+  #44 depends on #42 → Group 2
+  #45 depends on #43, #44 → Group 3
 ```
 
-## Phase 3: Group Execution
+## Phase 4: Group Execution
 
 For each group:
 
 ```
 1. Create context branch (budget: 8192)
-   branch_create(description: "Group {n}")
+   branch_create(description: "Group {n}: #{issue_numbers}")
 
 2. Launch parallel task agents:
    Task(
      subagent_type: "contextd:task-agent",
-     prompt: "{task.prompt}\n\n## Contextd Integration\n- Record decisions with memory_record\n- Record fixes with remediation_record",
+     prompt: |
+       # Issue #{number}: {title}
+
+       {issue_body}
+
+       ## Contextd Integration
+       - Record decisions with memory_record
+       - Record fixes with remediation_record
+       - Update issue with progress comments
+     description: "Issue #{number}: {title}",
      run_in_background: true
    )
 
@@ -102,7 +159,7 @@ For each group:
    branch_return(message: "Group complete: {summary}")
 ```
 
-## Phase 4: Consensus Review
+## Phase 5: Consensus Review
 
 After each group:
 
@@ -119,7 +176,7 @@ After each group:
    - advisory: Log only, continue
 ```
 
-## Phase 5: Remediation
+## Phase 6: Remediation
 
 If findings require fixes:
 
@@ -135,18 +192,18 @@ If findings require fixes:
 4. Re-run review if needed
 ```
 
-## Phase 6: Checkpoint
+## Phase 7: Checkpoint
 
 After each group passes review:
 
 ```
 checkpoint_save(
   name: "group-{n}-complete",
-  summary: "Completed: {tasks}, Remaining: {remaining}"
+  summary: "Completed: #{issues}, Remaining: #{remaining}"
 )
 ```
 
-## Phase 7: RALPH Reflection
+## Phase 8: RALPH Reflection
 
 After all groups complete:
 
@@ -161,42 +218,39 @@ After all groups complete:
    reflect_report(format: "markdown")
 ```
 
-## Phase 8: Final Summary
+## Phase 9: Final Summary
 
 ```
 1. Return from main branch:
    branch_return(message: "Orchestration complete: {metrics}")
 
-2. Record final memory:
+2. Close/update issues:
+   gh issue close <number> --comment "Completed via orchestration"
+
+3. Record final memory:
    memory_record(title: "Orchestration Complete", outcome: "success")
 
-3. Save final checkpoint:
+4. Save final checkpoint:
    checkpoint_save(name: "orchestrate-complete")
 ```
 
-## Plan File Format
+## Issue Body Format
+
+Issues should include an agent prompt section:
 
 ```markdown
-# Phase X Orchestration Plan
+## Description
+Brief description of what this issue accomplishes.
 
-**Agents:** contextd:orchestrator + contextd:task-agent
+## Agent Prompt
+Detailed instructions for the task agent.
 
-## Tasks
+## Acceptance Criteria
+- [ ] Criterion 1
+- [ ] Criterion 2
 
-### Task 1: Feature Name
-**Priority:** P0
-**Depends On:** None
-
-#### Agent Prompt
-[Task instructions with RALPH requirements]
-
-### Task 2: Another Feature
-**Depends On:** Task 1
-...
-
-## Parallel Groups
-- **Group 1:** Task 1, Task 2 (parallel)
-- **Group 2:** Task 3 (after Group 1)
+## Dependencies
+Depends On: #42, #43
 ```
 
 ## Review Thresholds
@@ -210,7 +264,7 @@ After all groups complete:
 ## Resume Capability
 
 ```
-/orchestrate --resume "group-2-complete"
+/contextd:orchestrate --resume "group-2-complete"
 
 → Loads checkpoint state
 → Skips completed groups
@@ -221,6 +275,7 @@ After all groups complete:
 
 | Pattern | Problem | Solution |
 |---------|---------|----------|
+| Skip input prompt | User confusion | ALWAYS use AskUserQuestion if no issues |
 | Skip pre-flight | Miss past learnings | ALWAYS search memory first |
 | Monolith execution | No isolation | Use context branches per group |
 | Skip remediation recording | Knowledge lost | ALWAYS record fixes |
