@@ -42,8 +42,8 @@ marketplace/
 │   ├── contextd/              # Cross-session memory plugin
 │   │   ├── .claude-plugin/    # Plugin manifest
 │   │   ├── agents/            # 2 contextd agents
-│   │   ├── skills/            # 5 contextd skills
-│   │   └── commands/          # 9 contextd commands
+│   │   ├── skills/            # 6 contextd skills
+│   │   └── commands/          # 10 contextd commands
 │   └── fs-design/     # Design system plugin
 │       ├── .claude-plugin/    # Plugin manifest
 │       ├── agents/            # 2 design agents
@@ -127,6 +127,7 @@ Cross-session memory and learning via the contextd MCP server.
 | `contextd:setup` | Project onboarding and CLAUDE.md management |
 | `contextd:workflow` | Session lifecycle management |
 | `contextd:consensus-review` | Multi-agent parallel review |
+| `contextd:orchestration` | Multi-task execution with parallel agents |
 | `contextd:self-reflection` | Behavior pattern analysis |
 
 ### Agents
@@ -148,6 +149,7 @@ Cross-session memory and learning via the contextd MCP server.
 | `/contextd:init` | Initialize contextd for project |
 | `/contextd:reflect` | Analyze patterns, improve policies |
 | `/contextd:consensus-review` | Multi-agent code review |
+| `/contextd:orchestrate` | Execute multi-task orchestration plans |
 | `/contextd:help` | List available commands |
 
 ---

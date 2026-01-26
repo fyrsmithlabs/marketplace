@@ -21,6 +21,7 @@
   ],
   "skills": [
     "./skills/consensus-review/SKILL.md",
+    "./skills/orchestration/SKILL.md",
     "./skills/self-reflection/SKILL.md",
     "./skills/setup/SKILL.md",
     "./skills/workflow/SKILL.md",
@@ -32,6 +33,7 @@
     "./commands/diagnose.md",
     "./commands/help.md",
     "./commands/init.md",
+    "./commands/orchestrate.md",
     "./commands/reflect.md",
     "./commands/remember.md",
     "./commands/search.md",
