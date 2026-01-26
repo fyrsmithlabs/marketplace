@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-01-26
+
+### Added
+- **Health monitoring documentation** in `using-contextd` skill - HTTP endpoints for vectorstore integrity
+- **Health status** in `contextd-status` command - Shows healthy/degraded state with collection counts
+- **Graceful degradation** documentation - P0 production hardening for corrupt collection handling
+- **Reflection tools** in Core Tools table - `reflect_analyze`, `reflect_report` for behavior analysis
+
+### Changed
+- `contextd-status` now checks HTTP health endpoint before displaying status
+- Updated health check examples with curl commands
+
+### Security
+- Documents CVE-2024-3078 Qdrant upgrade requirement (v1.7.4 → v1.8.3)
+- Health endpoint security note for production deployments
+
 ## [1.2.0] - 2026-01-19
 
 ### Added

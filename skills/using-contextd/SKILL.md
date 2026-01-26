@@ -23,6 +23,24 @@ Skipping this is a protocol violation.
 | **Checkpoint** | `checkpoint_save`, `checkpoint_list`, `checkpoint_resume` | Context preservation |
 | **Remediation** | `remediation_search`, `remediation_record`, `troubleshoot_diagnose` | Error pattern tracking |
 | **Context Folding** | `branch_create`, `branch_return`, `branch_status` | Isolated sub-tasks |
+| **Reflection** | `reflect_analyze`, `reflect_report` | Behavior pattern analysis |
+
+## Health Monitoring (HTTP)
+
+contextd exposes HTTP health endpoints for monitoring vectorstore integrity:
+
+| Endpoint | Purpose | Status Codes |
+|----------|---------|--------------|
+| `GET /health` | Basic health with metadata summary | 200 OK, 503 Degraded |
+| `GET /api/v1/health/metadata` | Detailed per-collection status | 200 OK |
+
+**Graceful Degradation (P0)**: If corrupt collections are detected, contextd quarantines them and continues operating with healthy collections. Check health status to detect degraded state.
+
+**Example health check**:
+```bash
+curl -s http://localhost:9090/health | jq
+# {"status":"ok","metadata":{"status":"healthy","healthy_count":22,"corrupt_count":0}}
+```
 
 ## Search Priority
 
