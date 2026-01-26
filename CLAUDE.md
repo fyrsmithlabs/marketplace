@@ -25,7 +25,7 @@ A Claude Code plugin marketplace providing skills, commands, and agents for fyrs
 marketplace/
 ├── .claude-plugin/      # Root marketplace manifest
 │   ├── marketplace.json # Multi-plugin registry
-│   └── plugin.json      # fyrsmithlabs plugin manifest
+│   └── plugin.json      # fs-dev plugin manifest
 ├── commands/            # 10 slash commands (core workflow)
 ├── agents/              # 6 subagents (5 reviewers + 1 product-owner)
 ├── skills/              # 9 skills (standards, workflows, planning)
@@ -44,7 +44,7 @@ marketplace/
 │   │   ├── agents/            # 2 contextd agents
 │   │   ├── skills/            # 5 contextd skills
 │   │   └── commands/          # 9 contextd commands
-│   └── terminal-elegance/     # Design system plugin
+│   └── fs-design/     # Design system plugin
 │       ├── .claude-plugin/    # Plugin manifest
 │       ├── agents/            # 2 design agents
 │       ├── skills/            # 1 skill (design-check)
@@ -61,13 +61,13 @@ This marketplace contains three plugins:
 
 | Plugin | Version | Category | Description |
 |--------|---------|----------|-------------|
-| `fyrsmithlabs` | v1.5.0 | development | Core standards, workflows, planning |
+| `fs-dev` | v1.5.0 | development | Core standards, workflows, planning |
 | `contextd` | v1.0.0 | memory | Cross-session memory and learning |
-| `terminal-elegance` | v1.0.0 | design | Design system compliance |
+| `fs-design` | v1.0.0 | design | Design system compliance |
 
 ---
 
-## fyrsmithlabs Plugin
+## fs-dev Plugin
 
 Core development standards, workflows, and GitHub integration.
 
@@ -152,7 +152,7 @@ Cross-session memory and learning via the contextd MCP server.
 
 ---
 
-## terminal-elegance Plugin
+## fs-design Plugin
 
 Terminal Elegance design system compliance checking.
 
@@ -160,20 +160,20 @@ Terminal Elegance design system compliance checking.
 
 | Skill | Purpose |
 |-------|---------|
-| `terminal-elegance:check` | Design system compliance checking and reporting |
+| `fs-design:check` | Design system compliance checking and reporting |
 
 ### Agents
 
 | Agent | Purpose |
 |-------|---------|
-| `terminal-elegance:consistency-reviewer` | Audit files for design system compliance |
-| `terminal-elegance:task-executor` | Execute design system refactoring |
+| `fs-design:consistency-reviewer` | Audit files for design system compliance |
+| `fs-design:task-executor` | Execute design system refactoring |
 
 ### Commands
 
 | Command | Purpose |
 |---------|---------|
-| `/terminal-elegance:check [path]` | Audit files for design system violations |
+| `/fs-design:check [path]` | Audit files for design system violations |
 
 ### Capabilities
 

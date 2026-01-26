@@ -9,7 +9,7 @@
   },
   "plugins": [
     {
-      "name": "fyrsmithlabs",
+      "name": "fs-dev",
       "description": "Claude Code plugins for fyrsmithlabs project standards and workflows. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and GitHub planning integration.",
       "version": "1.5.0",
       "author": {
@@ -29,13 +29,13 @@
       "category": "memory"
     },
     {
-      "name": "terminal-elegance",
+      "name": "fs-design",
       "description": "Terminal Elegance design system compliance checking for FyrsmithLabs products. Audits CSS, templates, and documentation for hardcoded values, accessibility issues, and brand consistency.",
       "version": "1.0.0",
       "author": {
         "name": "fyrsmithlabs"
       },
-      "source": "./plugins/terminal-elegance/",
+      "source": "./plugins/fs-design/",
       "category": "design"
     }
   ]
