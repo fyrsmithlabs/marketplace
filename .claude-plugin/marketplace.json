@@ -1,8 +1,8 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "fyrsmithlabs",
-  "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, development practices, and contextd cross-session memory",
-  "version": "1.3.0",
+  "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, development practices, and design system compliance",
+  "version": "1.4.0",
   "owner": {
     "name": "fyrsmithlabs",
     "email": "plugins@fyrsmithlabs.com"
@@ -10,13 +10,23 @@
   "plugins": [
     {
       "name": "fyrsmithlabs",
-      "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, development practices, and contextd cross-session memory. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, Terminal Elegance design system compliance checking, and contextd integration for semantic search, memory, checkpoints, and error remediation.",
-      "version": "1.3.0",
+      "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, development practices, and contextd cross-session memory. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and contextd integration for semantic search, memory, checkpoints, and error remediation.",
+      "version": "1.4.0",
       "author": {
         "name": "fyrsmithlabs"
       },
       "source": "./",
       "category": "development"
+    },
+    {
+      "name": "terminal-elegance",
+      "description": "Terminal Elegance design system compliance checking for FyrsmithLabs products. Audits CSS, templates, and documentation for hardcoded values, accessibility issues, and brand consistency.",
+      "version": "1.0.0",
+      "author": {
+        "name": "fyrsmithlabs"
+      },
+      "source": "./plugins/terminal-elegance/",
+      "category": "design"
     }
   ]
 }

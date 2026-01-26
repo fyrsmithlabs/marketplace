@@ -1,0 +1,27 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "terminal-elegance",
+  "description": "Terminal Elegance design system compliance checking for FyrsmithLabs products. Audits CSS, templates, and documentation for hardcoded values, accessibility issues, and brand consistency.",
+  "version": "1.0.0",
+  "author": {
+    "name": "fyrsmithlabs"
+  },
+  "keywords": [
+    "design-system",
+    "css",
+    "accessibility",
+    "compliance",
+    "terminal-elegance",
+    "fyrsmithlabs"
+  ],
+  "agents": [
+    "./agents/design-consistency-reviewer.md",
+    "./agents/design-task-executor.md"
+  ],
+  "skills": [
+    "./skills/design-check/SKILL.md"
+  ],
+  "commands": [
+    "./commands/design-check.md"
+  ]
+}

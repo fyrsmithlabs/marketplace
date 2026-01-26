@@ -1,6 +1,6 @@
 {
   "name": "fyrsmithlabs",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, development practices, and contextd cross-session memory",
   "author": {
     "name": "fyrsmithlabs",
@@ -19,7 +19,6 @@
     "semantic-search",
     "git-workflows",
     "code-review",
-    "design-system",
     "yagni"
   ],
   "commands": [
@@ -51,9 +50,7 @@
     "./agents/documentation-reviewer.md",
     "./agents/product-owner.md",
     "./agents/contextd-task-agent.md",
-    "./agents/contextd-orchestrator.md",
-    "./agents/design-consistency-reviewer.md",
-    "./agents/design-task-executor.md"
+    "./agents/contextd-orchestrator.md"
   ],
   "hooks": "./hooks/hooks.json"
 }

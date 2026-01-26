@@ -1,8 +1,8 @@
 # CLAUDE.md - Marketplace
 
 **Status**: Active Development
-**Version**: 1.3.0
-**Last Updated**: 2026-01-22
+**Version**: 1.4.0
+**Last Updated**: 2026-01-26
 
 ---
 
@@ -17,16 +17,18 @@
 
 ## Project Overview
 
-A Claude Code plugin marketplace providing skills, commands, and agents for fyrsmithlabs project standards and workflows.
+A Claude Code plugin marketplace providing skills, commands, and agents for fyrsmithlabs project standards and workflows. Contains multiple plugins that can be installed independently.
 
 ## Architecture
 
 ```
 marketplace/
-├── .claude-plugin/      # Plugin manifests
+├── .claude-plugin/      # Root marketplace manifest
+│   ├── marketplace.json # Multi-plugin registry
+│   └── plugin.json      # fyrsmithlabs plugin manifest
 ├── commands/            # 19 slash commands (10 core + 9 contextd)
-├── agents/              # 10 subagents (5 reviewers + 1 product-owner + 2 contextd + 2 design)
-├── skills/              # 15 skills
+├── agents/              # 8 subagents (5 reviewers + 1 product-owner + 2 contextd)
+├── skills/              # 14 skills
 │   ├── git-repo-standards/    # Repo naming, structure, docs
 │   ├── git-workflows/         # Consensus review, PRs, branching
 │   ├── init/                  # Project setup
@@ -36,13 +38,31 @@ marketplace/
 │   ├── roadmap-discovery/     # Codebase analysis
 │   ├── product-owner/         # Standups, priorities
 │   └── contextd-*/            # 6 contextd skills
+├── plugins/             # Additional plugins
+│   └── terminal-elegance/     # Design system plugin
+│       ├── .claude-plugin/    # Plugin manifest
+│       ├── agents/            # 2 design agents
+│       ├── skills/            # 1 skill (design-check)
+│       └── commands/          # 1 command (/design-check)
 ├── includes/            # Shared includes for hooks
 │   └── yagni/           # Pattern detection
 └── hooks/               # Claude Code hooks
     └── hooks.json       # Enforcement hooks
 ```
 
-## Plugin Components
+## Plugins
+
+This marketplace contains two plugins:
+
+### fyrsmithlabs (v1.4.0)
+Core development standards, workflows, and contextd integration.
+
+### terminal-elegance (v1.0.0)
+Terminal Elegance design system compliance checking.
+
+---
+
+## fyrsmithlabs Plugin
 
 ### Core Skills
 
@@ -56,7 +76,6 @@ marketplace/
 | `github-planning` | GitHub Issues/Projects integration |
 | `roadmap-discovery` | Codebase analysis with lens filtering |
 | `product-owner` | Daily standups, priority synthesis, cross-project dependencies |
-| `design-check` | Terminal Elegance design system compliance checking and reporting |
 
 ### Review Agents
 
@@ -73,8 +92,6 @@ marketplace/
 | Agent | Purpose |
 |-------|---------|
 | `product-owner` | Priority analysis, cross-project dependencies, strategic recommendations |
-| `design-consistency-reviewer` | Audit files for Terminal Elegance design system compliance |
-| `design-task-executor` | Execute design system refactoring with user permission |
 
 ### Key Commands
 
@@ -86,6 +103,38 @@ marketplace/
 | `/standup` | Daily standup with GitHub + contextd synthesis |
 | `/test-skill` | Run pressure tests |
 | `/contextd-*` | 9 contextd commands |
+
+---
+
+## terminal-elegance Plugin
+
+### Skills
+
+| Skill | Purpose |
+|-------|---------|
+| `design-check` | Terminal Elegance design system compliance checking and reporting |
+
+### Agents
+
+| Agent | Purpose |
+|-------|---------|
+| `design-consistency-reviewer` | Audit files for Terminal Elegance design system compliance |
+| `design-task-executor` | Execute design system refactoring with user permission |
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/design-check [path]` | Audit files for design system violations |
+
+### Capabilities
+
+- Reports hardcoded colors, spacing, fonts, z-index values
+- Checks accessibility (alt text, ARIA labels, focus states)
+- Validates brand name consistency in documentation
+- Report-only tool, does not auto-fix issues
+
+---
 
 ## Code Standards
 
@@ -130,14 +179,6 @@ Daily standups and priority synthesis:
 - Priority classification: CRITICAL → HIGH → DEPENDENCY ALERT → MEDIUM → CARRIED OVER
 - Cross-project dependency detection
 - Velocity tracking via checkpoint comparison
-
-### design-check
-Terminal Elegance design system compliance checking:
-- `/design-check [path]` - Audit files for design system violations
-- Reports hardcoded colors, spacing, fonts, z-index values
-- Checks accessibility (alt text, ARIA labels, focus states)
-- Validates brand name consistency in documentation
-- Report-only tool, does not auto-fix issues
 
 ## Known Pitfalls
 
