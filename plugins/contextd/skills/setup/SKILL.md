@@ -1,5 +1,5 @@
 ---
-name: project-setup
+name: setup
 description: Use when onboarding to a project or creating/updating CLAUDE.md - covers codebase analysis, documentation generation, and policy management
 ---
 

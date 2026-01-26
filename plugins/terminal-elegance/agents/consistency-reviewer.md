@@ -1,5 +1,5 @@
 ---
-name: fyrsmithlabs:design-consistency-reviewer
+name: consistency-reviewer
 description: |
   Use this agent when reviewing PRs touching CSS, templates, or brand documentation for design system compliance. Also use for auditing new FyrsmithLabs products or checking design token usage. This agent performs read-only analysis and reports violations without making modifications. Triggers: "review design consistency", "audit design tokens", "check CSS compliance", "design system review", "find design violations".
 tools:

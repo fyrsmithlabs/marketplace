@@ -1,5 +1,5 @@
 ---
-name: contextd-workflow
+name: workflow
 description: Use for session lifecycle management - covers session start/end protocols, checkpoint workflow, and error remediation flow
 ---
 

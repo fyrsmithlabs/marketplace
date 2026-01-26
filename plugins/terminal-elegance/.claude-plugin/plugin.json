@@ -15,13 +15,13 @@
     "fyrsmithlabs"
   ],
   "agents": [
-    "./agents/design-consistency-reviewer.md",
-    "./agents/design-task-executor.md"
+    "./agents/consistency-reviewer.md",
+    "./agents/task-executor.md"
   ],
   "skills": [
-    "./skills/design-check/SKILL.md"
+    "./skills/check/SKILL.md"
   ],
   "commands": [
-    "./commands/design-check.md"
+    "./commands/check.md"
   ]
 }

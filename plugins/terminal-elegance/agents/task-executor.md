@@ -1,5 +1,5 @@
 ---
-name: fyrsmithlabs:design-task-executor
+name: task-executor
 description: |
   Use this agent when building new UI components following the FyrsmithLabs design system, refactoring existing CSS to use design tokens, or creating pages using Terminal Elegance style. This agent can both GENERATE new components and REFACTOR existing code. Wraps the frontend-design agent for high-quality UI output. Triggers: "build component following design system", "refactor CSS to design tokens", "create page with FyrsmithLabs style", "make component design-system compliant", "generate UI with design tokens".
 tools:

@@ -123,32 +123,32 @@ Cross-session memory and learning via the contextd MCP server.
 
 | Skill | Purpose |
 |-------|---------|
-| `using-contextd` | Core tools introduction |
-| `contextd-setup` | Project onboarding and CLAUDE.md management |
-| `contextd-workflow` | Session lifecycle management |
-| `contextd-consensus-review` | Multi-agent parallel review |
-| `contextd-self-reflection` | Behavior pattern analysis |
+| `contextd:using-contextd` | Core tools introduction |
+| `contextd:setup` | Project onboarding and CLAUDE.md management |
+| `contextd:workflow` | Session lifecycle management |
+| `contextd:consensus-review` | Multi-agent parallel review |
+| `contextd:self-reflection` | Behavior pattern analysis |
 
 ### Agents
 
 | Agent | Purpose |
 |-------|---------|
-| `contextd-task-agent` | Unified debugging, refactoring, architecture analysis |
-| `contextd-orchestrator` | Multi-agent workflow with context-folding |
+| `contextd:task-agent` | Unified debugging, refactoring, architecture analysis |
+| `contextd:orchestrator` | Multi-agent workflow with context-folding |
 
 ### Commands
 
 | Command | Purpose |
 |---------|---------|
-| `/contextd-search` | Semantic search across memories |
-| `/contextd-remember` | Record learnings from session |
-| `/contextd-checkpoint` | Save session state |
-| `/contextd-diagnose` | Error analysis with AI |
-| `/contextd-status` | Show contextd status |
-| `/contextd-init` | Initialize contextd for project |
-| `/contextd-reflect` | Analyze patterns, improve policies |
-| `/contextd-consensus-review` | Multi-agent code review |
-| `/contextd-help` | List available commands |
+| `/contextd:search` | Semantic search across memories |
+| `/contextd:remember` | Record learnings from session |
+| `/contextd:checkpoint` | Save session state |
+| `/contextd:diagnose` | Error analysis with AI |
+| `/contextd:status` | Show contextd status |
+| `/contextd:init` | Initialize contextd for project |
+| `/contextd:reflect` | Analyze patterns, improve policies |
+| `/contextd:consensus-review` | Multi-agent code review |
+| `/contextd:help` | List available commands |
 
 ---
 
@@ -160,20 +160,20 @@ Terminal Elegance design system compliance checking.
 
 | Skill | Purpose |
 |-------|---------|
-| `design-check` | Design system compliance checking and reporting |
+| `terminal-elegance:check` | Design system compliance checking and reporting |
 
 ### Agents
 
 | Agent | Purpose |
 |-------|---------|
-| `design-consistency-reviewer` | Audit files for design system compliance |
-| `design-task-executor` | Execute design system refactoring |
+| `terminal-elegance:consistency-reviewer` | Audit files for design system compliance |
+| `terminal-elegance:task-executor` | Execute design system refactoring |
 
 ### Commands
 
 | Command | Purpose |
 |---------|---------|
-| `/design-check [path]` | Audit files for design system violations |
+| `/terminal-elegance:check [path]` | Audit files for design system violations |
 
 ### Capabilities
 

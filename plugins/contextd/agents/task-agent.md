@@ -1,5 +1,5 @@
 ---
-name: contextd-task-agent
+name: task-agent
 description: Unified agent for debugging, refactoring, architecture analysis, and general contextd-enforced work. Automatically detects task mode based on keywords and applies the appropriate workflow.
 model: inherit
 ---

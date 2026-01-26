@@ -1,5 +1,5 @@
 ---
-name: design-check
+name: check
 description: |
   This skill should be used when the user asks to "check design system compliance", "audit CSS for design tokens", "find hardcoded colors", "check accessibility", "validate design consistency", "run design check", or "check files against the design system". Use this skill to scan CSS, template (.templ, .html), and documentation (.md) files for violations of the FyrsmithLabs Terminal Elegance design system. Reports violations without auto-fixing. Say "design check", "audit styles", "check design tokens", or "find design violations".
 version: 1.0.0

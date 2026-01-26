@@ -1,5 +1,5 @@
 ---
-name: contextd-orchestrator
+name: orchestrator
 description: Multi-agent workflow orchestrator using context-folding for parallel sub-agent execution, ReasoningBank for learning capture, and checkpoints for progress tracking. Use for complex tasks requiring multiple specialized agents.
 model: inherit
 ---
