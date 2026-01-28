@@ -22,23 +22,8 @@ WORKDIR /home/testuser
 # Set up Claude config directory
 RUN mkdir -p /home/testuser/.claude
 
-# Default command: validate plugins
-CMD ["bash", "-c", "\
-    echo '=== Plugin Validation ===' && \
-    cd /home/testuser/marketplace && \
-    echo '' && \
-    echo '--- fs-dev plugin ---' && \
-    claude plugin validate . 2>&1 && \
-    echo '' && \
-    echo '--- contextd plugin ---' && \
-    claude plugin validate ./plugins/contextd 2>&1 && \
-    echo '' && \
-    echo '--- fs-design plugin ---' && \
-    claude plugin validate ./plugins/fs-design 2>&1 && \
-    echo '' && \
-    echo '=== Loading Plugins (dry run) ===' && \
-    echo 'Testing plugin loading with --plugin-dir...' && \
-    claude --plugin-dir /home/testuser/marketplace --plugin-dir /home/testuser/marketplace/plugins/contextd --plugin-dir /home/testuser/marketplace/plugins/fs-design --version 2>&1 && \
-    echo '' && \
-    echo '=== All Tests Passed ===' \
-"]
+# Copy and prepare validation script
+RUN chmod +x /home/testuser/marketplace/tests/run-validation.sh
+
+# Default command: run validation tests
+CMD ["/home/testuser/marketplace/tests/run-validation.sh"]
