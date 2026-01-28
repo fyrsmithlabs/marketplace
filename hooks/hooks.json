@@ -27,7 +27,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "## YAGNI Pattern Check\n\nAnalyze the Write/Edit for over-engineering.\n\n**Patterns:**\n- abstraction: Filename contains Factory/Manager/Provider/Handler/Helper/Utils/Base/Abstract/Wrapper/Builder/Coordinator/Orchestrator\n- config-addiction: Feature flag/env var for single-use behavior\n- dead-code: 10+ commented lines or unused imports\n\n**Skip:** generated/, vendor/, node_modules/, migrations/, test files, .claude/yagni.local.md exclusions\n\n**If detected, output:**\n```\nYAGNI: [pattern]\n- Trigger: [what]\n- Concern: [why]\n- Simpler: [alternative]\n```\n\n**If no pattern:** Silent."
+            "prompt": "## YAGNI Pattern Check\n\nAnalyze the Write/Edit for potential over-engineering.\n\n**Patterns:**\n- abstraction: Unnecessary Factory/Manager/Provider/Handler/Helper/Utils/Base/Abstract/Wrapper/Builder/Coordinator/Orchestrator\n- config-addiction: Feature flag/env var for single-use behavior\n- dead-code: 10+ commented lines or unused imports\n\n**Skip:** generated/, vendor/, node_modules/, migrations/, test files, .claude/yagni.local.md exclusions\n\n**If pattern detected, you MUST choose ONE:**\n\n**Option A - Simplify:** The pattern is unnecessary. Refactor to the simpler alternative and ALLOW.\n\n**Option B - Justify:** The pattern IS needed because [specific reason]. Document why in a brief code comment, then ALLOW.\n\n**Decision format:**\n```\nYAGNI: [pattern]\nDecision: [A: Simplify | B: Justify]\nReason: [why this choice]\nAction: [what you will do]\n```\n\nThen execute your choice and ALLOW continuation.\n\n**If no pattern:** Silent, ALLOW."
           }
         ]
       }
