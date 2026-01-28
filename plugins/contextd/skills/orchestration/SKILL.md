@@ -14,7 +14,8 @@ digraph orchestration {
     "Issues provided?" -> "Prompt user" [label="no"];
     "Issues provided?" -> "Fetch issues" [label="yes"];
     "Prompt user" -> "Fetch issues";
-    "Fetch issues" -> "Resolve dependencies";
+    "Fetch issues" -> "Create feature branch";
+    "Create feature branch" -> "Resolve dependencies";
     "Resolve dependencies" -> "For each group";
     "For each group" -> "Create context branch" [label="parallel"];
     "Create context branch" -> "Launch task agents";
@@ -27,7 +28,8 @@ digraph orchestration {
     "Save checkpoint" -> "More groups?" [shape=diamond];
     "More groups?" -> "For each group" [label="yes"];
     "More groups?" -> "RALPH reflection" [label="no"];
-    "RALPH reflection" -> "Final summary";
+    "RALPH reflection" -> "Create PR";
+    "Create PR" -> "Final summary";
 }
 ```
 
@@ -92,6 +94,34 @@ gh issue list --milestone "$(gh api repos/:owner/:repo/milestones --jq '.[0].tit
 4. Record to memory:
    memory_record(title: "Orchestration: Issues #{list}", ...)
 ```
+
+## Phase 1.5: Branch Setup (MANDATORY)
+
+**NEVER push directly to main. ALWAYS create a feature branch first.**
+
+```
+1. Generate branch name from epic/issue:
+   branch_name = "feature/issue-{epic_number}-{sanitized_title}"
+   Example: "feature/issue-123-locomo-benchmark"
+
+2. Create and checkout feature branch:
+   git checkout -b {branch_name}
+
+3. Verify branch:
+   git branch --show-current
+   → Must NOT be "main" or "master"
+
+4. If already on main with uncommitted changes:
+   git stash
+   git checkout -b {branch_name}
+   git stash pop
+```
+
+**Why this matters:**
+- Enables code review before merge
+- Provides rollback capability
+- Maintains audit trail
+- Allows CI/CD validation
 
 ## Phase 2: Initialization
 
@@ -218,21 +248,43 @@ After all groups complete:
    reflect_report(format: "markdown")
 ```
 
-## Phase 9: Final Summary
+## Phase 9: Final Summary & PR Creation
+
+**NEVER push directly to main. ALWAYS create a pull request.**
 
 ```
 1. Return from main branch:
    branch_return(message: "Orchestration complete: {metrics}")
 
-2. Close/update issues:
-   gh issue close <number> --comment "Completed via orchestration"
+2. Push feature branch to remote:
+   git push -u origin {branch_name}
 
-3. Record final memory:
+3. Create pull request:
+   gh pr create \
+     --title "feat: {epic_title}" \
+     --body "## Summary
+   Orchestrated implementation of #{epic_number}.
+
+   ## Issues Completed
+   - #{issue_list}
+
+   ## Consensus Review
+   All groups passed {threshold} review.
+
+   ## Test Results
+   {test_summary}"
+
+4. Update issues with PR link:
+   gh issue comment <number> --body "Implementation PR: #{pr_url}"
+
+5. Record final memory:
    memory_record(title: "Orchestration Complete", outcome: "success")
 
-4. Save final checkpoint:
+6. Save final checkpoint:
    checkpoint_save(name: "orchestrate-complete")
 ```
+
+**Do NOT close issues until PR is merged.**
 
 ## Issue Body Format
 
@@ -275,8 +327,10 @@ Depends On: #42, #43
 
 | Pattern | Problem | Solution |
 |---------|---------|----------|
+| Push directly to main | Bypasses review, no rollback | ALWAYS create feature branch + PR |
 | Skip input prompt | User confusion | ALWAYS use AskUserQuestion if no issues |
 | Skip pre-flight | Miss past learnings | ALWAYS search memory first |
 | Monolith execution | No isolation | Use context branches per group |
 | Skip remediation recording | Knowledge lost | ALWAYS record fixes |
 | Over-budget branches | Context overflow | Monitor with branch_status |
+| Close issues before merge | Premature closure | Wait for PR merge to close issues |
