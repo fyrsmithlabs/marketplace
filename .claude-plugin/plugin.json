@@ -1,6 +1,6 @@
 {
   "name": "fs-dev",
-  "version": "1.6.0",
+  "version": "1.6.7",
   "description": "Claude Code plugins for fyrsmithlabs project standards and workflows",
   "author": {
     "name": "fyrsmithlabs",
@@ -36,6 +36,5 @@
     "./agents/user-persona-reviewer.md",
     "./agents/documentation-reviewer.md",
     "./agents/product-owner.md"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }

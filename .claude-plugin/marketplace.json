@@ -11,7 +11,7 @@
     {
       "name": "fs-dev",
       "description": "Claude Code plugins for fyrsmithlabs project standards and workflows. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and GitHub planning integration.",
-      "version": "1.6.0",
+      "version": "1.6.7",
       "author": {
         "name": "fyrsmithlabs"
       },
