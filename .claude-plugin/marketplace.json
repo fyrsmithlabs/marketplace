@@ -1,11 +1,12 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "fyrsmithlabs",
-  "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, cross-session memory, and design system compliance",
-  "version": "1.6.0",
   "owner": {
     "name": "fyrsmithlabs",
     "email": "plugins@fyrsmithlabs.com"
+  },
+  "metadata": {
+    "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, cross-session memory, and design system compliance",
+    "version": "1.6.7"
   },
   "plugins": [
     {
