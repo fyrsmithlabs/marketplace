@@ -22,25 +22,23 @@ WORKDIR /home/testuser
 # Set up Claude config directory
 RUN mkdir -p /home/testuser/.claude
 
-# Default command: validate plugins and show status
+# Default command: validate plugins
 CMD ["bash", "-c", "\
     echo '=== Plugin Validation ===' && \
     cd /home/testuser/marketplace && \
     echo '' && \
     echo '--- fs-dev plugin ---' && \
-    claude plugin validate . 2>&1 || true && \
+    claude plugin validate . 2>&1 && \
     echo '' && \
     echo '--- contextd plugin ---' && \
-    claude plugin validate ./plugins/contextd 2>&1 || true && \
+    claude plugin validate ./plugins/contextd 2>&1 && \
     echo '' && \
     echo '--- fs-design plugin ---' && \
-    claude plugin validate ./plugins/fs-design 2>&1 || true && \
+    claude plugin validate ./plugins/fs-design 2>&1 && \
     echo '' && \
-    echo '=== Checking for Errors ===' && \
-    echo 'Installing plugins locally for error check...' && \
-    claude plugin install /home/testuser/marketplace --scope local 2>&1 || true && \
-    claude plugin install /home/testuser/marketplace/plugins/contextd --scope local 2>&1 || true && \
-    claude plugin install /home/testuser/marketplace/plugins/fs-design --scope local 2>&1 || true && \
+    echo '=== Loading Plugins (dry run) ===' && \
+    echo 'Testing plugin loading with --plugin-dir...' && \
+    claude --plugin-dir /home/testuser/marketplace --plugin-dir /home/testuser/marketplace/plugins/contextd --plugin-dir /home/testuser/marketplace/plugins/fs-design --version 2>&1 && \
     echo '' && \
-    echo '=== Test Complete ===' \
+    echo '=== All Tests Passed ===' \
 "]
