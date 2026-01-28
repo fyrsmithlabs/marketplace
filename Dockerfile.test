@@ -12,11 +12,12 @@ RUN npm install -g @anthropic-ai/claude-code
 
 # Create test user (Claude Code doesn't like running as root)
 RUN useradd -m -s /bin/bash testuser
+
+# Copy marketplace files
+COPY --chown=testuser:testuser . /home/testuser/marketplace
+
 USER testuser
 WORKDIR /home/testuser
-
-# Clone the marketplace repo
-RUN git clone https://github.com/fyrsmithlabs/marketplace.git /home/testuser/marketplace
 
 # Set up Claude config directory
 RUN mkdir -p /home/testuser/.claude
@@ -26,14 +27,20 @@ CMD ["bash", "-c", "\
     echo '=== Plugin Validation ===' && \
     cd /home/testuser/marketplace && \
     echo '' && \
-    echo 'Validating fs-dev plugin...' && \
+    echo '--- fs-dev plugin ---' && \
     claude plugin validate . 2>&1 || true && \
     echo '' && \
-    echo 'Validating contextd plugin...' && \
+    echo '--- contextd plugin ---' && \
     claude plugin validate ./plugins/contextd 2>&1 || true && \
     echo '' && \
-    echo 'Validating fs-design plugin...' && \
+    echo '--- fs-design plugin ---' && \
     claude plugin validate ./plugins/fs-design 2>&1 || true && \
+    echo '' && \
+    echo '=== Checking for Errors ===' && \
+    echo 'Installing plugins locally for error check...' && \
+    claude plugin install /home/testuser/marketplace --scope local 2>&1 || true && \
+    claude plugin install /home/testuser/marketplace/plugins/contextd --scope local 2>&1 || true && \
+    claude plugin install /home/testuser/marketplace/plugins/fs-design --scope local 2>&1 || true && \
     echo '' && \
     echo '=== Test Complete ===' \
 "]
