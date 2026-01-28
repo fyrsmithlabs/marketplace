@@ -16,25 +16,5 @@
     "git-workflows",
     "code-review",
     "yagni"
-  ],
-  "commands": [
-    "./commands/app-interview.md",
-    "./commands/brainstorm.md",
-    "./commands/comp-analysis.md",
-    "./commands/discover.md",
-    "./commands/init.md",
-    "./commands/plan.md",
-    "./commands/spec-refinement.md",
-    "./commands/standup.md",
-    "./commands/test-skill.md",
-    "./commands/yagni.md"
-  ],
-  "agents": [
-    "./agents/security-reviewer.md",
-    "./agents/vulnerability-reviewer.md",
-    "./agents/code-quality-reviewer.md",
-    "./agents/user-persona-reviewer.md",
-    "./agents/documentation-reviewer.md",
-    "./agents/product-owner.md"
   ]
 }
