@@ -83,17 +83,20 @@ Interactive design interview with complexity assessment, requirements gathering,
 
 ### /consensus-review - Multi-Agent Code Review
 
-Run parallel code review with 6 specialized agents. Security, vulnerability, and Go reviewers have veto power.
+Run parallel code review with 6 specialized agents. All agents have veto power by default. Features adaptive token budgets, context-folding isolation for large scopes, and progressive summarization.
 
 ```bash
 # Review staged changes
 /consensus-review
 
-# Strict mode - all findings must pass
-/consensus-review --strict
+# Review specific path
+/consensus-review src/auth/
 
 # Ignore veto power (advisory only)
 /consensus-review --ignore-vetos
+
+# Run subset of agents
+/consensus-review --agents security,code-quality,go
 ```
 
 ### /contextd:checkpoint - Session State Management
