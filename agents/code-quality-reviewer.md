@@ -61,13 +61,33 @@ Analyze all code changes for:
    - Inconsistent error types
    - Missing retry logic for transient failures
 
+## Budget Awareness
+
+See `includes/consensus-review/progressive.md` for the full progressive summarization protocol.
+
+**Budget Thresholds:**
+- **0-80%**: Full analysis - all severities, detailed evidence
+- **80-95%**: High severity only - CRITICAL/HIGH, concise evidence
+- **95%+**: Force return - stop immediately, set `partial: true`
+
+**Priority Order (when budget constrained):**
+1. Logic errors and edge cases
+2. Test coverage gaps
+3. Error handling issues
+4. Complexity and patterns
+5. Code duplication
+
 ## Output Format
 
 Return findings as structured JSON:
 
 ```json
 {
-  "agent": "code-quality",
+  "agent": "code-quality-reviewer",
+  "partial": false,
+  "cutoff_reason": null,
+  "files_reviewed": 12,
+  "files_skipped": 0,
   "verdict": "APPROVE" | "REQUEST_CHANGES",
   "findings": [
     {

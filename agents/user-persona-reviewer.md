@@ -73,13 +73,33 @@ Review public interfaces from user perspective:
 - Error types
 - CLI arguments
 
+## Budget Awareness
+
+See `includes/consensus-review/progressive.md` for the full progressive summarization protocol.
+
+**Budget Thresholds:**
+- **0-80%**: Full analysis - all severities, detailed UX assessment
+- **80-95%**: High impact only - breaking changes, critical UX issues
+- **95%+**: Force return - stop immediately, set `partial: true`
+
+**Priority Order (when budget constrained):**
+1. Breaking API changes
+2. Migration path issues
+3. Error message quality
+4. Configuration complexity
+5. General ergonomics
+
 ## Output Format
 
 Return findings as structured JSON:
 
 ```json
 {
-  "agent": "user-persona",
+  "agent": "user-persona-reviewer",
+  "partial": false,
+  "cutoff_reason": null,
+  "files_reviewed": 10,
+  "files_skipped": 0,
   "verdict": "APPROVE" | "REQUEST_CHANGES",
   "findings": [
     {
@@ -166,4 +186,3 @@ Error [E1042]: Configuration file 'config.yaml' not found.
 3. **Fail Fast** - Validate early with clear messages
 4. **Discoverability** - Easy to explore and learn
 5. **Consistency** - Similar things work similarly
-
