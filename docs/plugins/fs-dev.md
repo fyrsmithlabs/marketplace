@@ -104,24 +104,6 @@ Agents adapt analysis based on budget consumption:
 
 ---
 
-## Recordings
-
-Demo recordings for each command (placeholder links):
-
-- [`/init`](../recordings/init.cast)
-- [`/yagni`](../recordings/yagni.cast)
-- [`/plan`](../recordings/plan.cast)
-- [`/standup`](../recordings/standup.cast)
-- [`/test-skill`](../recordings/test-skill.cast)
-- [`/discover`](../recordings/discover.cast)
-- [`/brainstorm`](../recordings/brainstorm.cast)
-- [`/consensus-review`](../recordings/consensus-review.cast)
-- [`/app-interview`](../recordings/app-interview.cast)
-- [`/comp-analysis`](../recordings/comp-analysis.cast)
-- [`/spec-refinement`](../recordings/spec-refinement.cast)
-
----
-
 ## Integration with contextd
 
 The fs-dev plugin optionally integrates with the contextd MCP server for enhanced functionality:
