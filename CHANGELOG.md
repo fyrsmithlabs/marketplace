@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-01-29
+
+### Added
+- **effective-go skill** - Comprehensive Go development guide with Go 1.22+ features (Generics, Iterators, PGO)
+- **go-reviewer agent** - Specialized reviewer for Go code quality and idioms
+- **consensus-review command** - `/consensus-review` for multi-agent code review with veto power
+- **41 test scenarios** with 46 pressure tests across 5 skills
+- **Industry standards integration**:
+  - OWASP Top 10 coverage in security and roadmap-discovery
+  - WCAG 2.2 compliance in fs-design:check and roadmap-discovery
+  - DORA metrics in product-owner skill
+  - OpenSSF Best Practices in git-repo-standards
+  - SBOM requirements in git-repo-standards
+  - W3C Design Tokens (2025.10) in fs-design:check
+  - WSJF prioritization in product-owner
+
+### Changed
+- **All 17 skills modernized** with Claude Code 2.1 features (+8,483 lines, +215% avg)
+- **Claude Code 2.1 integration**:
+  - Task tool with `run_in_background` (7 skills)
+  - Task dependencies with `addBlockedBy` (7 skills)
+  - PreToolUse/PostToolUse hooks (8 skills)
+- **contextd integration** expanded to 14/17 skills (82%)
+- **git-workflows** - Added git worktrees, all-agent veto power, `--ignore-vetos` flag
+- **git-repo-standards** - Added SECURITY.md, CODEOWNERS, monorepo patterns, GitHub Actions templates
+- **init** - Interactive wizard, language-specific bootstrap, staleness detection
+- **yagni** - Complexity metrics, design pattern library, severity scoring, technical debt dashboard
+- **complexity-assessment** - Testing dimension, risk multipliers, confidence scoring, JSON output
+- **github-planning** - Native sub-issues, Projects v2 GraphQL, YAML issue forms, label taxonomy
+- **product-owner** - AI risk scoring, velocity tracking, cross-project dependencies, Slack/Teams/Jira integration
+- **context-folding** - Observability, adaptive budgets, dependency DAG, graceful degradation
+- **roadmap-discovery** - DX/compliance/a11y lenses, complexity scoring, trend analysis, JIRA export
+- **fs-design:check** - Stylelint integration, axe-core accessibility, CI pipeline integration
+- **contextd:using-contextd** - Memory lifecycle, temporal decay, query expansion, hierarchical namespaces
+- **contextd:setup** - Tech stack database, policy enforcement, setup checksums
+- **contextd:workflow** - Checkpoint compression, checkpoint branching, auto-error capture hooks
+- **contextd:consensus-review** - Dynamic reviewer selection, finding relationships, incremental review
+- **contextd:orchestration** - Resource monitoring, concurrency limits, dead letter queue
+- **contextd:self-reflection** - Causal chain analysis, comparative benchmarks, behavioral prediction
+
+### Fixed
+- contextd skills now work without MCP server (file-based fallback)
+- Unified memory types across all contextd skills (learning, remediation, decision, failure, pattern, policy)
+- Event-driven state sharing between skills
+- Audit logging fields (created_by, created_at, usage_count) standardized
+
 ## [1.3.0] - 2026-01-26
 
 ### Added
@@ -66,6 +112,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PostToolUse hooks for YAGNI/KISS detection and scope creep checks
 - PreToolUse hooks for artifact placement, secrets check, and conventional commits
 
+[1.7.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.3.0...v1.7.0
+[1.3.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.0.0...v1.2.0
 [1.0.0]: https://github.com/fyrsmithlabs/marketplace/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/fyrsmithlabs/marketplace/releases/tag/v0.1.0
