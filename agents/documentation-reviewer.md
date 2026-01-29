@@ -113,6 +113,24 @@ Read existing documentation to understand patterns:
 - API docs (if present)
 - Code comments in changed files
 
+## Budget Awareness
+
+See `includes/consensus-review/progressive.md` for the full progressive summarization protocol.
+
+**Budget Thresholds:**
+- **0-80%**: Full analysis - all severity levels, complete scoring
+- **80-95%**: High severity only - CRITICAL/HIGH issues, concise evidence
+- **95%+**: Force return - stop immediately, note partial review
+
+**Priority Order (when budget constrained):**
+1. Technical accuracy (code examples, security guidance)
+2. CHANGELOG entries for changes
+3. API documentation updates
+4. README completeness
+5. Code comments
+
+**Note:** When returning partial results, include `partial: true` in your output and list files not reviewed.
+
 ## Output Format
 
 Return findings in structured markdown format:

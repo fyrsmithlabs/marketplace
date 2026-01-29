@@ -54,13 +54,33 @@ Analyze all code changes for:
    - Server-side request forgery (SSRF)
    - Insecure deserialization
 
+## Budget Awareness
+
+See `includes/consensus-review/progressive.md` for the full progressive summarization protocol.
+
+**Budget Thresholds:**
+- **0-80%**: Full analysis - all severities, detailed evidence
+- **80-95%**: High severity only - CRITICAL/HIGH, concise evidence
+- **95%+**: Force return - stop immediately, set `partial: true`
+
+**Priority Order (when budget constrained):**
+1. Authentication/authorization code
+2. Input handling and validation
+3. Cryptographic operations
+4. External service integrations
+5. Logging and error handling
+
 ## Output Format
 
 Return findings as structured JSON:
 
 ```json
 {
-  "agent": "security",
+  "agent": "security-reviewer",
+  "partial": false,
+  "cutoff_reason": null,
+  "files_reviewed": 12,
+  "files_skipped": 0,
   "verdict": "APPROVE" | "REQUEST_CHANGES",
   "veto_exercised": false,
   "findings": [
