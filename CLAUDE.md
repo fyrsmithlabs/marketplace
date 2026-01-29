@@ -1,7 +1,7 @@
 # CLAUDE.md - Marketplace
 
 **Status**: Active Development
-**Version**: 1.7.0
+**Version**: 1.8.0
 **Last Updated**: 2026-01-29
 
 ---

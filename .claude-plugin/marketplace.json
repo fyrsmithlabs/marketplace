@@ -6,13 +6,13 @@
   },
   "metadata": {
     "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, cross-session memory, and design system compliance",
-    "version": "1.7.0"
+    "version": "1.8.0"
   },
   "plugins": [
     {
       "name": "fs-dev",
       "description": "Claude Code plugins for fyrsmithlabs project standards and workflows. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and GitHub planning integration.",
-      "version": "1.7.0",
+      "version": "1.8.0",
       "author": {
         "name": "fyrsmithlabs"
       },
@@ -23,7 +23,7 @@
     {
       "name": "contextd",
       "description": "Cross-session memory and learning for Claude Code. Provides semantic search, memory recording, checkpoints, error remediation, and multi-agent orchestration via the contextd MCP server.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": {
         "name": "fyrsmithlabs"
       },

@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-01-29
+
+### Added
+- **Research agent orchestration** - Multi-agent research system with 7 specialized agents (technical, security, UX, competitive, architectural, synthesis, orchestrator) for comprehensive feature research
+- **Adaptive token budgets** - Dynamic budget allocation for consensus review based on scope size with formula `scale = min(4.0, 1.0 + total_tokens / 16384)`
+- **Progressive summarization** - Graceful degradation for consensus review: full analysis (0-80%), high-severity only (80-95%), force return (95%+)
+- **Context-folding isolation** - Branch mode for large scopes (>16K tokens) with automatic context isolation per agent
+- **Comprehensive plugin documentation** - Full documentation for fs-dev, contextd, and fs-design plugins with examples and integration guides
+- **Consensus review testing** - Runtime-validated test scenarios for small and medium scope reviews
+
+### Changed
+- **contextd input validation** - Documented new security hardening requirements (path validation, ID format, glob pattern validation) from contextd v1.5+
+- **Shared orchestration patterns** - Consolidated orchestration patterns into `includes/orchestration/` for reuse across skills
+
+### Removed
+- **ASCII recordings** - Removed synthetic terminal recordings (placeholder demos)
+
+### Security
+- **contextd v1.5 hardening** - Documents CWE-22 (Path Traversal), CWE-287 (Auth Bypass), CWE-20 (Input Validation) mitigations
+
 ## [1.7.0] - 2026-01-29
 
 ### Added
