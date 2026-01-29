@@ -21,10 +21,26 @@
 
 Choose ONE installation method:
 
-### Option A: Homebrew (Recommended)
+### Option A: Automated Plugin Setup (Easiest)
+
+If you already have the marketplace plugin installed:
 
 ```bash
-# Step 1: Install via Homebrew (includes ONNX runtime)
+# Run auto-setup in Claude Code
+/contextd:init
+```
+
+This automatically:
+- Downloads contextd binary (or uses Docker if binary unavailable)
+- Configures MCP settings in `~/.claude/settings.json`
+- Validates the connection
+
+Restart Claude Code and verify with `/contextd:status`.
+
+### Option B: Homebrew (macOS/Linux)
+
+```bash
+# Step 1: Install via Homebrew
 brew tap fyrsmithlabs/contextd https://github.com/fyrsmithlabs/contextd
 brew install contextd
 
@@ -35,7 +51,7 @@ ctxd mcp install
 /contextd:status
 ```
 
-### Option B: Direct Download
+### Option C: Direct Download
 
 Download pre-built binaries from [GitHub Releases](https://github.com/fyrsmithlabs/contextd/releases):
 - macOS Apple Silicon: `contextd_*_darwin_arm64.tar.gz`
@@ -48,27 +64,21 @@ Download pre-built binaries from [GitHub Releases](https://github.com/fyrsmithla
 tar xzf contextd_*.tar.gz
 sudo mv contextd /usr/local/bin/
 
-# Step 2: Download ONNX runtime (required for embeddings)
-ctxd init
-
-# Step 3: Auto-configure MCP
+# Step 2: Auto-configure MCP
 ctxd mcp install
 
-# Step 4: Restart Claude Code, then verify
+# Step 3: Restart Claude Code, then verify
 /contextd:status
 ```
 
-### Option C: Build from Source (Advanced)
+### Option D: Build from Source (Advanced)
 
-> **Note:** Building from source requires Go 1.21+, CGO enabled, and ONNX runtime libraries.
+> **Note:** Building from source requires Go 1.21+, CGO enabled.
 > Most users should use Homebrew or direct download instead.
 
 ```bash
-# Prerequisites: Go 1.21+, CGO, ONNX runtime
+# Prerequisites: Go 1.21+, CGO
 go install github.com/fyrsmithlabs/contextd@v1.5.0
-
-# Download ONNX runtime
-ctxd init
 
 # Auto-configure MCP
 ctxd mcp install
@@ -77,7 +87,7 @@ ctxd mcp install
 /contextd:status
 ```
 
-### Option D: Manual MCP Configuration
+### Option E: Manual MCP Configuration
 
 If `ctxd mcp install` doesn't work, manually add to `~/.claude/settings.json`:
 
@@ -108,6 +118,20 @@ Or for project-scoped config, create `.mcp.json` in your project root:
 ```
 
 Then restart Claude Code and run `/contextd:status` to verify.
+
+---
+
+## First Run Behavior
+
+On first run, contextd automatically downloads required dependencies:
+
+```
+ONNX runtime not found. Downloading v1.23.0...
+Downloaded to ~/.config/contextd/lib/libonnxruntime.so
+Downloading fast-bge-small-en-v1.5...
+```
+
+This one-time download (~100MB) happens automatically. Subsequent runs start instantly.
 
 ---
 

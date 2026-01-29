@@ -228,47 +228,36 @@ marketplace/
 > **⚠️ REQUIRED:** The contextd plugin requires the contextd MCP server.
 > Without it, all `/contextd:*` commands will fail. Setup takes ~2 minutes.
 
-### Option A: Homebrew (Recommended)
+### Option A: Automated Setup (Easiest)
 
+Already have the marketplace? Just run in Claude Code:
 ```bash
-# Step 1: Install contextd
-brew tap fyrsmithlabs/contextd https://github.com/fyrsmithlabs/contextd
-brew install contextd
-
-# Step 2: Auto-configure MCP
-ctxd mcp install
-
-# Step 3: Restart Claude Code, then verify
-/contextd:status
+/contextd:init
 ```
 
-### Option B: Direct Download
+This auto-downloads the binary, configures MCP, and validates setup.
+
+### Option B: Homebrew (macOS/Linux)
+
+```bash
+brew tap fyrsmithlabs/contextd https://github.com/fyrsmithlabs/contextd
+brew install contextd
+ctxd mcp install
+# Restart Claude Code, then: /contextd:status
+```
+
+### Option C: Direct Download
 
 Download from [GitHub Releases](https://github.com/fyrsmithlabs/contextd/releases), then:
 
 ```bash
-# Extract and install binary
 tar xzf contextd_*.tar.gz
 sudo mv contextd /usr/local/bin/
-
-# Download ONNX runtime (required)
-ctxd init
-
-# Auto-configure MCP
 ctxd mcp install
-
-# Restart Claude Code, then verify
-/contextd:status
+# Restart Claude Code, then: /contextd:status
 ```
 
-### Option C: Build from Source
-
-> Requires Go 1.21+, CGO, and ONNX runtime. Most users should use Homebrew or direct download.
-
-```bash
-go install github.com/fyrsmithlabs/contextd@v1.5.0
-ctxd init && ctxd mcp install
-```
+> **Note:** On first run, contextd auto-downloads ONNX runtime (~100MB). This is one-time only.
 
 ### Troubleshooting
 
