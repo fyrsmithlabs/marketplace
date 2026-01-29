@@ -21,6 +21,16 @@ Orchestration depends on:
 2. Suggest: "Run `/contextd:init` to configure contextd"
 3. NO FALLBACK - this skill is inoperable without contextd
 
+## Shared Orchestration Patterns
+
+This skill builds on shared orchestration patterns. See:
+- `includes/orchestration/parallel-execution.md` - Agent dispatch and concurrency
+- `includes/orchestration/result-synthesis.md` - Collecting and merging results
+- `includes/orchestration/context-management.md` - Context folding and memory
+- `includes/orchestration/checkpoint-patterns.md` - Save/resume workflows
+
+The patterns below are **contextd-specific** extensions for issue-driven orchestration.
+
 ## Orchestration Flow
 
 ```dot
@@ -28,7 +38,8 @@ digraph orchestration {
     "Issues provided?" -> "Prompt user" [label="no"];
     "Issues provided?" -> "Fetch issues" [label="yes"];
     "Prompt user" -> "Fetch issues";
-    "Fetch issues" -> "Resolve dependencies";
+    "Fetch issues" -> "Create feature branch";
+    "Create feature branch" -> "Resolve dependencies";
     "Resolve dependencies" -> "For each group";
     "For each group" -> "Create context branch" [label="parallel"];
     "Create context branch" -> "Launch task agents";
@@ -41,7 +52,8 @@ digraph orchestration {
     "Save checkpoint" -> "More groups?" [shape=diamond];
     "More groups?" -> "For each group" [label="yes"];
     "More groups?" -> "RALPH reflection" [label="no"];
-    "RALPH reflection" -> "Final summary";
+    "RALPH reflection" -> "Create PR";
+    "Create PR" -> "Final summary";
 }
 ```
 
@@ -107,6 +119,34 @@ gh issue list --milestone "$(gh api repos/:owner/:repo/milestones --jq '.[0].tit
    memory_record(title: "Orchestration: Issues #{list}", ...)
 ```
 
+## Phase 1.5: Branch Setup (MANDATORY)
+
+**NEVER push directly to main. ALWAYS create a feature branch first.**
+
+```
+1. Generate branch name from epic/issue:
+   branch_name = "feature/issue-{epic_number}-{sanitized_title}"
+   Example: "feature/issue-123-locomo-benchmark"
+
+2. Create and checkout feature branch:
+   git checkout -b {branch_name}
+
+3. Verify branch:
+   git branch --show-current
+   → Must NOT be "main" or "master"
+
+4. If already on main with uncommitted changes:
+   git stash
+   git checkout -b {branch_name}
+   git stash pop
+```
+
+**Why this matters:**
+- Enables code review before merge
+- Provides rollback capability
+- Maintains audit trail
+- Allows CI/CD validation
+
 ## Phase 2: Initialization
 
 ```
@@ -143,13 +183,15 @@ Example:
 
 ## Phase 4: Group Execution
 
-For each group:
+See `includes/orchestration/parallel-execution.md` for agent dispatch patterns.
+
+For each dependency group:
 
 ```
 1. Create context branch (budget: 8192)
    branch_create(description: "Group {n}: #{issue_numbers}")
 
-2. Launch parallel task agents:
+2. Launch parallel task agents for issues in group:
    Task(
      subagent_type: "contextd:task-agent",
      prompt: |
@@ -160,7 +202,7 @@ For each group:
        ## Contextd Integration
        - Record decisions with memory_record
        - Record fixes with remediation_record
-       - Update issue with progress comments
+       - Update issue with progress comments via `gh issue comment`
      description: "Issue #{number}: {title}",
      run_in_background: true
    )
@@ -175,19 +217,53 @@ For each group:
 
 ## Phase 5: Consensus Review
 
+See `includes/orchestration/result-synthesis.md` for result collection and conflict resolution.
+See `includes/orchestration/consensus-review.md` for consensus patterns and thresholds.
+
+### 100% Consensus Requirement
+
+Task orchestration requires **100% consensus** from all reviewers:
+
+| Requirement | Threshold |
+|-------------|-----------|
+| Consensus Score | 100% |
+| Vetoes | 0 (any veto blocks) |
+| Critical/High | 0 |
+
+If any reviewer vetoes or finds critical/high issues:
+1. Create remediation task
+2. Fix the issues
+3. Re-run full review
+4. Continue until 100% consensus
+
 After each group:
 
 ```
 1. Launch review agents in parallel:
    Task(subagent_type: "fs-dev:security-reviewer", ...)
+   Task(subagent_type: "fs-dev:vulnerability-reviewer", ...)
    Task(subagent_type: "fs-dev:code-quality-reviewer", ...)
+   Task(subagent_type: "fs-dev:documentation-reviewer", ...)
+   Task(subagent_type: "fs-dev:go-reviewer", ...)  # if Go code
 
-2. Collect verdicts, record to memory
+2. Collect verdicts using result synthesis patterns
+   - Parse findings from each reviewer
+   - Detect conflicts between reviewers
+   - Record to memory_record
 
-3. Check threshold:
-   - strict: ALL findings must be fixed
-   - standard: CRITICAL/HIGH must be fixed (veto power)
+3. Calculate consensus:
+   consensus_score = (approvals / total_reviewers) * 100
+
+4. Apply veto threshold:
+   - strict: ALL findings must be fixed (100% consensus required)
+   - standard: CRITICAL/HIGH must be fixed (security/vulnerability have veto power)
    - advisory: Log only, continue
+
+5. If consensus < 100% OR any veto:
+   - Create remediation tasks for all blocking findings
+   - Fix issues
+   - Re-run full review
+   - Loop until 100% consensus
 ```
 
 ## Phase 6: Remediation
@@ -208,11 +284,13 @@ If findings require fixes:
 
 ## Phase 7: Checkpoint
 
+See `includes/orchestration/checkpoint-patterns.md` for checkpoint naming and retention.
+
 After each group passes review:
 
 ```
 checkpoint_save(
-  name: "group-{n}-complete",
+  name: "orchestrate-group-{n}-complete",
   summary: "Completed: #{issues}, Remaining: #{remaining}"
 )
 ```
@@ -232,21 +310,43 @@ After all groups complete:
    reflect_report(format: "markdown")
 ```
 
-## Phase 9: Final Summary
+## Phase 9: Final Summary & PR Creation
+
+**NEVER push directly to main. ALWAYS create a pull request.**
 
 ```
 1. Return from main branch:
    branch_return(message: "Orchestration complete: {metrics}")
 
-2. Close/update issues:
-   gh issue close <number> --comment "Completed via orchestration"
+2. Push feature branch to remote:
+   git push -u origin {branch_name}
 
-3. Record final memory:
+3. Create pull request:
+   gh pr create \
+     --title "feat: {epic_title}" \
+     --body "## Summary
+   Orchestrated implementation of #{epic_number}.
+
+   ## Issues Completed
+   - #{issue_list}
+
+   ## Consensus Review
+   All groups passed {threshold} review.
+
+   ## Test Results
+   {test_summary}"
+
+4. Update issues with PR link:
+   gh issue comment <number> --body "Implementation PR: #{pr_url}"
+
+5. Record final memory:
    memory_record(title: "Orchestration Complete", outcome: "success")
 
-4. Save final checkpoint:
+6. Save final checkpoint:
    checkpoint_save(name: "orchestrate-complete")
 ```
+
+**Do NOT close issues until PR is merged.**
 
 ## Issue Body Format
 
@@ -287,53 +387,48 @@ Depends On: #42, #43
 
 ## Anti-Patterns
 
+See shared anti-patterns in `includes/orchestration/` files.
+
+**Issue-specific anti-patterns:**
+
 | Pattern | Problem | Solution |
 |---------|---------|----------|
+| Push directly to main | Bypasses review, no rollback | ALWAYS create feature branch + PR |
 | Skip input prompt | User confusion | ALWAYS use AskUserQuestion if no issues |
 | Skip pre-flight | Miss past learnings | ALWAYS search memory first |
 | Monolith execution | No isolation | Use context branches per group |
 | Skip remediation recording | Knowledge lost | ALWAYS record fixes |
 | Over-budget branches | Context overflow | Monitor with branch_status |
+| No GitHub comments | Lost visibility | Update issues with progress |
+| Ignore dependencies | Execution order wrong | Parse "Depends On" in issue body |
+| Close issues before merge | Premature closure | Wait for PR merge to close issues |
 
 ---
 
 ## Resource Monitoring
 
-### Budget Tracking
+See `includes/orchestration/context-management.md` for base budget patterns.
 
-Monitor token usage across orchestration:
+### Issue Group Budget Tracking
+
+Track budget per dependency group using `branch_status`:
 
 ```json
 {
-  "orchestration_budget": {
-    "total_tokens": 50000,
-    "used_tokens": 32000,
-    "remaining_tokens": 18000,
-    "threshold_warning": 0.7,
-    "threshold_critical": 0.9
-  },
   "per_group_budget": {
-    "group_1": { "allocated": 10000, "used": 8500 },
-    "group_2": { "allocated": 10000, "used": 6200 },
-    "group_3": { "allocated": 10000, "used": 0 }
+    "group_1": { "allocated": 10000, "used": 8500, "issues": [42, 43] },
+    "group_2": { "allocated": 10000, "used": 6200, "issues": [44] },
+    "group_3": { "allocated": 10000, "used": 0, "issues": [45] }
   }
 }
 ```
 
-### Resource Alerts
-
-| Alert | Trigger | Action |
-|-------|---------|--------|
-| `budget_warning` | 70% used | Checkpoint + notify user |
-| `budget_critical` | 90% used | Checkpoint + pause + ask to continue |
-| `branch_overflow` | Branch > limit | Force return, split work |
-
-### Monitoring Loop
+### Branch-Based Monitoring
 
 ```
 Every 5 minutes OR after each task:
   1. branch_status(branch_id) -> get token usage
-  2. Compare to thresholds
+  2. Compare to thresholds (70% warning, 90% critical)
   3. If warning: checkpoint_save(auto_created: true)
   4. If critical: pause, notify, wait for user
 ```
@@ -342,61 +437,35 @@ Every 5 minutes OR after each task:
 
 ## Concurrency Limits
 
-### Agent Pool Management
+See `includes/orchestration/parallel-execution.md` for base concurrency patterns.
 
-Control parallel agent execution:
+### Issue-Driven Concurrency
+
+For GitHub issue orchestration, concurrency is managed per dependency group:
 
 ```json
 {
-  "concurrency": {
+  "issue_concurrency": {
     "max_parallel_agents": 4,
     "max_per_group": 2,
     "queue_overflow": "wait",
-    "timeout_minutes": 30
+    "timeout_minutes": 30,
+    "priority_labels": ["P0", "P1", "P2"]
   }
 }
 ```
 
-### Concurrency Strategies
-
-| Strategy | Behavior | Use Case |
-|----------|----------|----------|
-| `unlimited` | No limits | Small orchestrations |
-| `fixed` | Max N parallel | Resource constrained |
-| `adaptive` | Scale based on load | Large orchestrations |
-
-### Queue Management
-
-When at capacity:
-
-```
-1. New tasks enter wait queue
-2. FIFO by default, priority override available
-3. Notify user if queue > 5 tasks
-4. Timeout tasks stuck > 30 minutes
-```
-
-### Adaptive Scaling
-
-```json
-{
-  "adaptive": {
-    "min_agents": 1,
-    "max_agents": 6,
-    "scale_up_threshold": "queue > 3",
-    "scale_down_threshold": "queue == 0 for 5 minutes",
-    "cooldown_seconds": 60
-  }
-}
-```
+**Priority override:** Issues with `P0` label execute before `P1`/`P2` when queue is full.
 
 ---
 
 ## Dead Letter Queue for Failed Tasks
 
-### Failed Task Handling
+See `includes/orchestration/parallel-execution.md` for base retry and error handling patterns.
 
-Tasks that fail are moved to dead letter queue (DLQ):
+### Issue-Specific DLQ
+
+Failed issues are tracked with GitHub integration:
 
 ```json
 {
@@ -407,60 +476,25 @@ Tasks that fail are moved to dead letter queue (DLQ):
     "error_message": "Agent did not complete within budget",
     "retry_count": 2,
     "max_retries": 3,
-    "added_at": "2026-01-28T10:00:00Z",
-    "last_retry_at": "2026-01-28T10:35:00Z"
+    "github_comment": true
   }
 }
 ```
 
-### DLQ Operations
+### DLQ Escalation
 
-| Operation | Purpose |
-|-----------|---------|
-| `dlq_list()` | View failed tasks |
-| `dlq_retry(task_id)` | Manual retry |
-| `dlq_discard(task_id)` | Remove from queue |
-| `dlq_analyze()` | Pattern analysis on failures |
+| Failures | Action |
+|----------|--------|
+| 3+ | Notify user |
+| 5+ | Pause orchestration, await confirmation |
+| 10+ | Abort, add comment to epic issue |
 
-### Automatic Retry Policy
-
-```json
-{
-  "retry_policy": {
-    "max_retries": 3,
-    "backoff": "exponential",
-    "initial_delay_seconds": 60,
-    "max_delay_seconds": 900,
-    "retry_on": ["timeout", "budget_exceeded"],
-    "no_retry_on": ["validation_failed", "user_cancelled"]
-  }
-}
-```
-
-### DLQ Alerts
-
-```json
-{
-  "dlq_alerts": {
-    "notify_user_after": 3,
-    "auto_pause_orchestration_after": 5,
-    "escalation": {
-      "5_failures": "pause_and_notify",
-      "10_failures": "abort_orchestration"
-    }
-  }
-}
-```
-
-### Failure Analysis
-
-Analyze DLQ patterns:
+### Issue Failure Correlation
 
 ```
-dlq_analyze() returns:
-  - Most common failure reasons
+dlq_analyze() for issues:
   - Correlated issues (same dependency failing)
-  - Time-based patterns (failures during high load)
+  - Label patterns (bug issues failing more)
   - Recommendations (increase budget, split issues)
 ```
 
@@ -521,47 +555,27 @@ All orchestration records include:
 
 ## Claude Code 2.1 Patterns
 
-### Background Task Execution
+See `includes/orchestration/parallel-execution.md` for base Task tool patterns.
 
-Launch tasks without blocking orchestrator:
+### Issue-to-Task Mapping
 
-```
-task_42 = Task(
-  subagent_type: "contextd:task-agent",
-  prompt: "Execute issue #42",
-  run_in_background: true,
-  description: "Issue #42: Add user authentication"
-)
-
-task_43 = Task(
-  subagent_type: "contextd:task-agent",
-  prompt: "Execute issue #43",
-  run_in_background: true,
-  description: "Issue #43: Add role-based access"
-)
-
-// Orchestrator continues monitoring...
-```
-
-### Task Dependencies with addBlockedBy
-
-Chain dependent tasks:
+Map GitHub issue dependencies to Task dependencies:
 
 ```
-# Group 1 (parallel - no dependencies)
-task_42 = Task(prompt: "Issue #42")
-task_43 = Task(prompt: "Issue #43")
+# Group 1 (parallel - no issue dependencies)
+task_42 = Task(prompt: "Execute issue #42", run_in_background: true)
+task_43 = Task(prompt: "Execute issue #43", run_in_background: true)
 
-# Group 2 (depends on #42)
-task_44 = Task(prompt: "Issue #44", addBlockedBy: [task_42.id])
+# Group 2 (issue #44 depends on #42)
+task_44 = Task(prompt: "Execute issue #44", addBlockedBy: [task_42.id])
 
-# Group 3 (depends on #43 and #44)
-task_45 = Task(prompt: "Issue #45", addBlockedBy: [task_43.id, task_44.id])
+# Group 3 (issue #45 depends on #43 and #44)
+task_45 = Task(prompt: "Execute issue #45", addBlockedBy: [task_43.id, task_44.id])
 ```
 
-### PreToolUse Hook for Orchestration Safety
+### Orchestration Safety Hooks
 
-Prevent dangerous operations during orchestration:
+Prevent dangerous operations during issue execution:
 
 ```json
 {
@@ -572,16 +586,16 @@ Prevent dangerous operations during orchestration:
 }
 ```
 
-### PostToolUse Hook for Task Completion
+### Issue Completion Hook
 
-Auto-record task completions:
+Auto-record task completions and update GitHub:
 
 ```json
 {
   "hook_type": "PostToolUse",
   "tool_name": "Task",
   "condition": "task_completed AND orchestration_active",
-  "prompt": "Task completed. Record to memory_record and update orchestration progress."
+  "prompt": "Task completed. Record to memory_record, update issue with progress comment."
 }
 ```
 

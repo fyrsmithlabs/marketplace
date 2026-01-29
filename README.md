@@ -1,166 +1,226 @@
 # Marketplace
 
-![Version](https://img.shields.io/badge/version-1.3.0-green)
+![Version](https://img.shields.io/badge/version-1.7.0-green)
 ![Build](https://github.com/fyrsmithlabs/marketplace/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![Gitleaks](https://img.shields.io/badge/gitleaks-enabled-blue)
 
-A Claude Code plugin providing skills, commands, and agents for fyrsmithlabs project standards and workflows.
+A Claude Code plugin marketplace providing skills, commands, and agents for fyrsmithlabs project standards and workflows.
 
-## Overview
+---
 
-This plugin provides:
-- **Repository Standards** - Naming conventions, structure, documentation requirements
-- **Git Workflows** - Multi-agent consensus review, PR requirements, branching strategy
-- **Project Init** - Set up projects to follow fyrsmithlabs standards
-- **YAGNI/KISS Enforcement** - Structured nudges against over-engineering
-- **Complexity Assessment** - Right-size workflows based on task complexity
-- **GitHub Planning** - Native GitHub Issues/Projects instead of local markdown
-- **Roadmap Discovery** - Autonomous codebase analysis for improvements
+## Quick Start
+
+### Installation
+
+Add the marketplace to your Claude Code settings:
+
+```bash
+# Install via Claude Code plugin marketplace
+claude plugin install fyrsmithlabs/marketplace
+```
+
+### First Commands to Try
+
+```bash
+# Initialize a project with standards
+/init
+
+# Run a brainstorm session for a new feature
+/brainstorm "Add user authentication"
+
+# Check your daily standup
+/standup
+
+# Run multi-agent code review
+/consensus-review
+```
+
+---
+
+## Plugins
+
+This marketplace contains three plugins that can be installed independently:
+
+| Plugin | Version | Components | Purpose |
+|--------|---------|------------|---------|
+| [fs-dev](docs/plugins/fs-dev.md) | 1.6.8 | 10 skills, 7 agents, 11 commands | Development standards, workflows, planning |
+| [contextd](docs/plugins/contextd.md) | 1.1.0 | 6 skills, 2 agents, 10 commands | Cross-session memory via MCP |
+| [fs-design](docs/plugins/fs-design.md) | 1.0.0 | 1 skill, 2 agents, 1 command | Design system compliance |
+
+---
+
+## Featured Commands
+
+### /init - Project Setup
+
+Set up a project to follow fyrsmithlabs standards with interactive wizard, auto-detection, and compliance checking.
+
+```bash
+# Full interactive wizard
+/init
+
+# Audit compliance without making changes
+/init --check
+
+# Quick setup (skip wizard)
+/init --quick
+
+# Check for drift from standards
+/init --validate
+```
+
+### /brainstorm - Feature Design
+
+Interactive design interview with complexity assessment, requirements gathering, and GitHub planning.
+
+```bash
+# Start a brainstorm session
+/brainstorm "Add OAuth support"
+
+# Brainstorm creates GitHub Issues automatically in Phase 6
+```
+
+### /consensus-review - Multi-Agent Code Review
+
+Run parallel code review with 6 specialized agents. Security, vulnerability, and Go reviewers have veto power.
+
+```bash
+# Review staged changes
+/consensus-review
+
+# Strict mode - all findings must pass
+/consensus-review --strict
+
+# Ignore veto power (advisory only)
+/consensus-review --ignore-vetos
+```
+
+### /contextd:checkpoint - Session State Management
+
+Save your session state for later resumption. Essential before clearing context or ending a session.
+
+```bash
+# Save current session state
+/contextd:checkpoint
+
+# Checkpoints capture:
+# - Accomplishments
+# - In-progress work
+# - Next steps
+```
+
+### /fs-design:check - Design Compliance Audit
+
+Audit CSS, templates, and documentation for Terminal Elegance design system compliance.
+
+```bash
+# Scan default locations
+/fs-design:check
+
+# Check specific file
+/fs-design:check static/css/main.css
+
+# Check directory
+/fs-design:check internal/templates/
+```
+
+---
+
+## Common Workflows
+
+### New Feature Development
+
+```bash
+# 1. Design the feature
+/brainstorm "Add user authentication"
+
+# 2. Create GitHub issues (automatic from brainstorm Phase 6)
+# or manually:
+/plan "Add user authentication"
+
+# 3. Code implementation...
+
+# 4. Multi-agent code review
+/consensus-review
+
+# 5. Commit with standards
+git commit -m "feat: add user authentication"
+```
+
+### Session Management (with contextd)
+
+```bash
+# 1. Check current state
+/contextd:status
+
+# 2. Search for relevant past learnings
+/contextd:search authentication patterns
+
+# 3. Work on tasks...
+
+# 4. Save progress before clearing context
+/contextd:checkpoint
+
+# 5. Record what you learned
+/contextd:remember
+```
+
+### Codebase Discovery
+
+```bash
+# Full codebase analysis
+/discover
+
+# Security-focused analysis
+/discover --lens security
+
+# Performance-focused analysis
+/discover --lens performance
+```
+
+### Daily Standup
+
+```bash
+# Today's status with GitHub PR/Issue synthesis
+/standup
+
+# Weekly summary
+/standup --week
+```
+
+---
 
 ## Prerequisites
 
-- Claude Code CLI
-- contextd MCP server (see [contextd Setup](#contextd-setup))
-- GitHub CLI (`gh`) for planning features
+- **Claude Code CLI** - Required for all plugins
+- **GitHub CLI (`gh`)** - Required for planning features
+- **contextd MCP server** - Required for contextd plugin (see [contextd Setup](#contextd-setup))
+
+---
 
 ## Structure
 
 ```
 marketplace/
 ├── .claude-plugin/           # Plugin manifests (plugin.json, marketplace.json)
-├── commands/                 # Slash commands (18 total)
-│   ├── init.md               # /init - project setup
-│   ├── yagni.md              # /yagni - YAGNI settings
-│   ├── brainstorm.md         # /brainstorm - design interview
-│   ├── plan.md               # /plan - planning workflow
-│   ├── discover.md           # /discover - codebase discovery
-│   ├── test-skill.md         # /test-skill - pressure tests
-│   ├── contextd-*.md         # 9 contextd commands
-│   └── ...
-├── agents/                   # Subagents (7 total)
-│   ├── security-reviewer.md
-│   ├── vulnerability-reviewer.md
-│   ├── code-quality-reviewer.md
-│   ├── documentation-reviewer.md
-│   ├── user-persona-reviewer.md
-│   ├── contextd-task-agent.md
-│   └── contextd-orchestrator.md
-├── skills/                   # Skills (13 total)
-│   ├── git-repo-standards/   # Repo naming, structure, docs
-│   ├── git-workflows/        # Consensus review, PRs, branching
-│   ├── init/                 # Project setup
-│   ├── yagni/                # YAGNI/KISS enforcement
-│   ├── complexity-assessment/
-│   ├── github-planning/
-│   ├── roadmap-discovery/
-│   └── contextd-*/           # 6 contextd skills
+├── commands/                 # Slash commands (22 total)
+├── agents/                   # Subagents (9 total)
+├── skills/                   # Skills (17 total)
+├── plugins/                  # Additional plugins
+│   ├── contextd/             # Cross-session memory plugin
+│   └── fs-design/            # Design system plugin
 ├── includes/                 # Shared includes
-│   └── yagni/                # Pattern detection
-└── hooks/
-    └── hooks.json            # Enforcement hooks
+├── hooks/                    # Claude Code hooks
+└── docs/                     # Documentation
+    └── plugins/              # Plugin-specific docs
 ```
 
-## Skills
-
-### Core Skills
-
-| Skill | Description |
-|-------|-------------|
-| `git-repo-standards` | Repository naming, structure, README, CHANGELOG, LICENSE, gitleaks |
-| `git-workflows` | 5-agent consensus review, PR requirements, trunk-based branching |
-| `init` | Set up projects to follow fyrsmithlabs standards |
-| `yagni` | YAGNI/KISS enforcement with structured nudges |
-| `complexity-assessment` | Assess task complexity (SIMPLE/STANDARD/COMPLEX) across 5 dimensions |
-| `github-planning` | Create tier-appropriate GitHub Issues, epics, and project boards |
-| `roadmap-discovery` | Autonomous codebase analysis with lens filtering (security, quality, perf, docs) |
-
-### contextd Skills
-
-| Skill | Description |
-|-------|-------------|
-| `using-contextd` | Core tools for cross-session memory, semantic search, and error remediation |
-| `context-folding` | Create context-isolated branches with token budgets for sub-tasks |
-| `contextd-setup` | Codebase analysis, CLAUDE.md generation, policy management |
-| `contextd-workflow` | Session lifecycle - start/end protocols, checkpoints, error remediation |
-| `contextd-consensus-review` | Multi-agent parallel review with Security, Correctness, Architecture, UX agents |
-| `contextd-self-reflection` | Mine memories for poor behaviors, pressure-test CLAUDE.md improvements |
-
-## Agents
-
-| Agent | Description | Veto Power |
-|-------|-------------|------------|
-| `security-reviewer` | Injection, auth, secrets, OWASP Top 10 | Yes |
-| `vulnerability-reviewer` | CVEs, dependencies, supply chain | Yes |
-| `code-quality-reviewer` | Logic, complexity, patterns, tests | No |
-| `documentation-reviewer` | README, comments, API docs, CHANGELOG | No |
-| `user-persona-reviewer` | UX impact, breaking changes, API ergonomics | No |
-| `contextd-task-agent` | Debugging, refactoring, architecture analysis | N/A |
-| `contextd-orchestrator` | Multi-agent workflows with context folding | N/A |
-
-## Commands
-
-### Core Commands
-
-| Command | Description |
-|---------|-------------|
-| `/init` | Set up project to follow fyrsmithlabs standards |
-| `/init --check` | Audit compliance without changes |
-| `/yagni` | Manage YAGNI/KISS enforcement settings |
-| `/brainstorm` | Interactive design interview with complexity-aware questioning |
-| `/plan` | Full planning workflow - assess, brainstorm, create GitHub Issues |
-| `/discover` | Run codebase discovery with optional lens filtering |
-| `/test-skill` | Run pressure test scenarios against marketplace skills |
-| `/comp-analysis` | Generate executive summary of competitor analysis |
-| `/spec-refinement` | Deep-dive interview to refine specification documents |
-| `/app-interview` | Comprehensive app ideation with competitor analysis |
-
-### contextd Commands
-
-| Command | Description |
-|---------|-------------|
-| `/contextd-search` | Semantic search across memories, remediations, and indexed code |
-| `/contextd-remember` | Record a learning or insight from the current session |
-| `/contextd-checkpoint` | Save session state (accomplishments, in-progress, next steps) |
-| `/contextd-diagnose` | Diagnose errors using AI analysis and past fixes |
-| `/contextd-status` | Show contextd status for current session and project |
-| `/contextd-init` | Initialize contextd for a project (CLAUDE.md, indexing) |
-| `/contextd-reflect` | Analyze memories for behavior patterns and policy compliance |
-| `/contextd-consensus-review` | Run multi-agent consensus review on files/directories |
-| `/contextd-help` | List all available contextd skills and commands |
-
-## Installation
-
-Add to your Claude Code plugins or install via the marketplace.
-
-## Usage
-
-```bash
-# Set up project to follow fyrsmithlabs standards
-/init
-
-# Check compliance only (no changes)
-/init --check
-
-# Plan a new feature (full workflow)
-/plan "add user authentication"
-
-# Interactive design session
-/brainstorm "plugin search feature"
-
-# Run codebase discovery
-/discover --lens security
-
-# Refine a spec document
-/spec-refinement path/to/spec.md
-
-# Start app ideation interview
-/app-interview
-```
+---
 
 ## contextd Setup
 
-This plugin requires the contextd MCP server for cross-session memory, learning, and context management.
+The contextd plugin requires the contextd MCP server for cross-session memory and learning.
 
 ### Installation
 
@@ -171,13 +231,7 @@ go install github.com/fyrsmithlabs/contextd@latest
 
 ### Configuration
 
-Copy the example MCP configuration to your project or home directory:
-
-```bash
-cp .mcp.json.example ~/.mcp.json
-```
-
-Or add contextd to your existing `.mcp.json`:
+Add contextd to your `.mcp.json`:
 
 ```json
 {
@@ -185,18 +239,13 @@ Or add contextd to your existing `.mcp.json`:
     "contextd": {
       "type": "stdio",
       "command": "contextd",
-      "args": ["serve"],
-      "env": {
-        "CONTEXTD_DATA_DIR": "${HOME}/.contextd"
-      }
+      "args": ["--mcp", "--no-http"]
     }
   }
 }
 ```
 
-### contextd Integration
-
-This plugin integrates deeply with contextd:
+### contextd Features
 
 | Feature | Tools | Purpose |
 |---------|-------|---------|
@@ -206,6 +255,62 @@ This plugin integrates deeply with contextd:
 | State preservation | `checkpoint_save`, `checkpoint_resume` | Resume interrupted work |
 | Semantic search | `semantic_search`, `repository_index` | Smart codebase search |
 | Self-reflection | `reflect_analyze`, `reflect_report` | Identify behavioral patterns |
+
+---
+
+## Documentation
+
+- **Plugin Documentation**
+  - [fs-dev Plugin](docs/plugins/fs-dev.md) - Development standards and workflows
+  - [contextd Plugin](docs/plugins/contextd.md) - Cross-session memory
+  - [fs-design Plugin](docs/plugins/fs-design.md) - Design system compliance
+
+- **Project Documentation**
+  - [CHANGELOG](CHANGELOG.md) - Version history and release notes
+  - [LICENSE](LICENSE) - Apache-2.0 license
+
+---
+
+## All Commands Reference
+
+### Core Commands (fs-dev)
+
+| Command | Purpose |
+|---------|---------|
+| `/init` | Set up project to follow fyrsmithlabs standards |
+| `/yagni` | Manage YAGNI/KISS enforcement settings |
+| `/brainstorm` | Interactive design interview with complexity-aware questioning |
+| `/plan` | Full planning workflow - assess, brainstorm, create GitHub Issues |
+| `/discover` | Run codebase discovery with optional lens filtering |
+| `/standup` | Daily standup with GitHub PR/Issue synthesis |
+| `/consensus-review` | Multi-agent code review with veto power |
+| `/test-skill` | Run pressure test scenarios against marketplace skills |
+| `/comp-analysis` | Generate executive summary of competitor analysis |
+| `/spec-refinement` | Deep-dive interview to refine specification documents |
+| `/app-interview` | Comprehensive app ideation with competitor analysis |
+
+### contextd Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/contextd:search` | Semantic search across memories, remediations, and code |
+| `/contextd:remember` | Record a learning or insight from the current session |
+| `/contextd:checkpoint` | Save session state (accomplishments, in-progress, next steps) |
+| `/contextd:diagnose` | Diagnose errors using AI analysis and past fixes |
+| `/contextd:status` | Show contextd status for current session and project |
+| `/contextd:init` | Initialize contextd for a project (CLAUDE.md, indexing) |
+| `/contextd:reflect` | Analyze memories for behavior patterns and policy compliance |
+| `/contextd:consensus-review` | Run multi-agent consensus review on files/directories |
+| `/contextd:orchestrate` | Execute multi-task orchestration from GitHub issues |
+| `/contextd:help` | List all available contextd skills and commands |
+
+### Design Commands (fs-design)
+
+| Command | Purpose |
+|---------|---------|
+| `/fs-design:check` | Audit files for Terminal Elegance design system compliance |
+
+---
 
 ## License
 
