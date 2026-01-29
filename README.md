@@ -14,7 +14,7 @@ A Claude Code plugin marketplace providing skills, commands, and agents for fyrs
 Before installing, ensure you have:
 
 - **Claude Code CLI** - Required for all plugins
-- **GitHub CLI (`gh`)** - Required for planning features ([install](https://cli.github.com/))
+- **GitHub CLI (`gh`) 2.0+** - Required for planning features ([install](https://cli.github.com/))
 - **contextd MCP server** - Required for contextd plugin (see [contextd Setup](#contextd-setup))
 
 ---
@@ -230,8 +230,8 @@ The contextd plugin requires the contextd MCP server for cross-session memory an
 ### Installation
 
 ```bash
-# Install contextd (check fyrsmithlabs/contextd for latest)
-go install github.com/fyrsmithlabs/contextd@latest
+# Install contextd v1.5.0+ (required for security hardening)
+go install github.com/fyrsmithlabs/contextd@v1.5.0
 ```
 
 ### Configuration
