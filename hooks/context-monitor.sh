@@ -116,6 +116,29 @@ calculate_and_output() {
         percent=100
     fi
 
+    # Validate percent is numeric (defense against injection)
+    if ! [[ "$percent" =~ ^[0-9]+$ ]]; then
+        echo "Error: Invalid percent value" >&2
+        exit 1
+    fi
+
+    # Validate tokens and usable are numeric
+    if ! [[ "$tokens" =~ ^[0-9]+$ ]] || ! [[ "$usable" =~ ^[0-9]+$ ]] || ! [[ "$window_size" =~ ^[0-9]+$ ]]; then
+        echo "Error: Invalid numeric values" >&2
+        exit 1
+    fi
+
+    # Sanitize source for safe output (remove any special characters)
+    source=$(echo "$source" | tr -cd '[:alnum:][:space:]()+-_.')
+
+    # Capture and sanitize pwd (escape special chars for safe embedding)
+    local safe_pwd
+    safe_pwd=$(pwd | sed 's/[\"]/\\&/g')
+
+    # Capture timestamp safely
+    local timestamp
+    timestamp=$(date +%H%M)
+
     # Determine action based on threshold
     if [ "$percent" -ge "$THRESHOLD_HIGH" ]; then
         cat << EOF
@@ -129,8 +152,8 @@ You MUST run \`checkpoint_save()\` immediately. Auto-compact is imminent.
 \`\`\`
 mcp__contextd__checkpoint_save(
   session_id: "\${SESSION_ID}",
-  project_path: "$(pwd)",
-  name: "context-${percent}pct-$(date +%H%M)",
+  project_path: "${safe_pwd}",
+  name: "context-${percent}pct-${timestamp}",
   description: "Checkpoint at ${percent}% context usage",
   summary: "[FILL: Current task state]",
   context: "[FILL: Key context to preserve]",

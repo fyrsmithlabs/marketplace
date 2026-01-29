@@ -61,8 +61,13 @@ fi
 # Fallback: Download binary from GitHub releases
 log_info "Downloading latest release from GitHub..."
 
-# Get latest release version
-LATEST=$(curl -sL "https://api.github.com/repos/fyrsmithlabs/contextd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+# Get latest release version (use jq for secure JSON parsing)
+if ! command -v jq &> /dev/null; then
+    log_error "jq is required for secure JSON parsing. Install with: brew install jq"
+    exit 1
+fi
+
+LATEST=$(curl -sL "https://api.github.com/repos/fyrsmithlabs/contextd/releases/latest" | jq -r '.tag_name // empty')
 if [ -z "$LATEST" ]; then
     log_error "Failed to get latest release version"
     exit 1
