@@ -1,17 +1,17 @@
 # CLAUDE.md - Marketplace
 
 **Status**: Active Development
-**Version**: 1.6.0
-**Last Updated**: 2026-01-26
+**Version**: 1.6.8
+**Last Updated**: 2026-01-28
 
 ---
 
 ## Critical Rules
 
 **ALWAYS** follow Claude Code plugin conventions
-**ALWAYS** use contextd for cross-session memory and learning
 **ALWAYS** apply git-repo-standards and git-workflows skills to projects
 **NEVER** commit credentials or API keys to the repository
+**OPTIONAL** use contextd for cross-session memory (if MCP server available)
 
 ---
 
@@ -24,11 +24,10 @@ A Claude Code plugin marketplace providing skills, commands, and agents for fyrs
 ```
 marketplace/
 ├── .claude-plugin/      # Root marketplace manifest
-│   ├── marketplace.json # Multi-plugin registry
-│   └── plugin.json      # fs-dev plugin manifest
-├── commands/            # 10 slash commands (core workflow)
-├── agents/              # 6 subagents (5 reviewers + 1 product-owner)
-├── skills/              # 9 skills (standards, workflows, planning)
+│   └── marketplace.json # Multi-plugin registry (strict: false)
+├── commands/            # 11 slash commands (core workflow)
+├── agents/              # 7 subagents (6 reviewers + 1 product-owner)
+├── skills/              # 10 skills (standards, workflows, planning)
 │   ├── git-repo-standards/    # Repo naming, structure, docs
 │   ├── git-workflows/         # Consensus review, PRs, branching
 │   ├── init/                  # Project setup
@@ -61,8 +60,8 @@ This marketplace contains three plugins:
 
 | Plugin | Version | Category | Description |
 |--------|---------|----------|-------------|
-| `fs-dev` | v1.5.0 | development | Core standards, workflows, planning |
-| `contextd` | v1.0.0 | memory | Cross-session memory and learning |
+| `fs-dev` | v1.6.8 | development | Core standards, workflows, planning |
+| `contextd` | v1.1.0 | memory | Cross-session memory and learning |
 | `fs-design` | v1.0.0 | design | Design system compliance |
 
 ---
@@ -76,7 +75,7 @@ Core development standards, workflows, and GitHub integration.
 | Skill | Purpose |
 |-------|---------|
 | `git-repo-standards` | Repository naming, structure, README, CHANGELOG, LICENSE, gitleaks |
-| `git-workflows` | 5-agent consensus review, PR requirements, branching |
+| `git-workflows` | Multi-agent consensus review, PR requirements, branching |
 | `init` | Set up projects to follow fyrsmithlabs standards |
 | `yagni` | YAGNI/KISS enforcement with structured nudges |
 | `complexity-assessment` | Task complexity evaluation (SIMPLE/STANDARD/COMPLEX) |
@@ -84,6 +83,7 @@ Core development standards, workflows, and GitHub integration.
 | `roadmap-discovery` | Codebase analysis with lens filtering |
 | `product-owner` | Daily standups, priority synthesis, cross-project dependencies |
 | `context-folding` | Context isolation for complex sub-tasks |
+| `effective-go` | Idiomatic Go development based on Effective Go |
 
 ### Review Agents
 
@@ -91,9 +91,10 @@ Core development standards, workflows, and GitHub integration.
 |-------|-------|------|
 | `security-reviewer` | Injection, auth, secrets, OWASP | Yes |
 | `vulnerability-reviewer` | CVEs, deps, supply chain | Yes |
-| `code-quality-reviewer` | Logic, complexity, patterns | No |
-| `documentation-reviewer` | README, API docs, CHANGELOG | No |
-| `user-persona-reviewer` | UX, breaking changes, ergonomics | No |
+| `code-quality-reviewer` | Logic, complexity, patterns | Yes |
+| `documentation-reviewer` | README, API docs, CHANGELOG | Yes |
+| `user-persona-reviewer` | UX, breaking changes, ergonomics | Yes |
+| `go-reviewer` | Effective Go, concurrency, error handling | Yes |
 
 ### Other Agents
 
@@ -112,6 +113,7 @@ Core development standards, workflows, and GitHub integration.
 | `/test-skill` | Run pressure tests |
 | `/discover` | Codebase analysis |
 | `/brainstorm` | Feature design workflow |
+| `/consensus-review` | Multi-agent code review with veto power |
 
 ---
 
@@ -190,8 +192,9 @@ Terminal Elegance design system compliance checking.
 
 - Plugin artifacts follow Claude Code conventions
 - Use kebab-case for all component names
-- Skills must integrate with contextd (memory, remediation, checkpoints)
+- Skills can optionally integrate with contextd (memory, remediation, checkpoints)
 - Templates go in `skills/<skill-name>/templates/`
+- Agents output structured JSON for consensus review integration
 
 ## Known Pitfalls
 

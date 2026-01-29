@@ -13,35 +13,41 @@ Comprehensive app ideation interview that reads existing specs, conducts competi
 
 ## Execution
 
-**Agent:** `contextd:contextd-task-executor`
-**Context Folding:** Yes - isolate competitor research and interview phases
+**Agent:** Task tool or direct execution
+**Context Folding:** If contextd available
 **Output:** Interview artifacts in `.claude/interviews/<generated-title>/`
+
+## Contextd Integration (Optional)
+
+If contextd MCP is available:
+- `memory_search` for past interview insights
+- `checkpoint_resume` for `--reuse` flag
+- `branch_create/return` for isolated phases
+
+If contextd is NOT available:
+- Fresh interview (no cross-session context)
+- `--reuse` flag ignored with warning
+- Artifacts still saved to `.claude/interviews/`
 
 ## Workflow
 
 ### Phase 1: Context Gathering (Pre-Flight)
 
 ```
-1. mcp__contextd__memory_search(
-     project_id: "<project>",
-     query: "app interview competitor analysis"
-   )
-   → Load past interview insights
+1. Check contextd availability (look for mcp__contextd__* tools)
 
-2. Glob for existing specs:
+2. If contextd_available:
+   - memory_search for past interview insights
+   - If --reuse: checkpoint_resume
+
+3. Glob for existing specs:
    - docs/**/*.spec.md
    - docs/**/spec*.md
    - **/*.spec.md
    - **/SPEC.md
    - **/spec.md
 
-3. Read all found specs to understand current app vision
-
-4. If --reuse flag:
-   mcp__contextd__checkpoint_resume(
-     checkpoint_id: "<previous-interview>",
-     level: "context"
-   )
+4. Read all found specs to understand current app vision
 ```
 
 ### Phase 2: Initial App Understanding

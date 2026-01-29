@@ -2,18 +2,23 @@
 # Copy to ~/.claude/yagni.yaml to customize globally
 # Or use .claude/yagni.local.md for project overrides
 
-version: 1
+version: 2
 
 # Sensitivity levels:
-# - conservative: Only fire on obvious over-engineering (fewer nudges)
-# - moderate: Balanced detection (recommended starting point)
-# - aggressive: Fire early and often (more nudges, faster feedback)
-sensitivity: moderate
+# - strict: Fire on any pattern match (fewer false negatives, more nudges)
+# - standard: Balanced detection (recommended starting point)
+# - relaxed: Only fire on high-severity patterns (fewer nudges, faster work)
+sensitivity: standard
 
+# Master toggle for session
+enabled: true
+
+# --- Pattern Detection ---
 patterns:
   # The Cynic watches for unnecessary abstraction layers
   abstraction_creep:
     enabled: true
+    severity_weight: 2
     triggers:
       - "*Factory*"
       - "*Manager*"
@@ -25,46 +30,57 @@ patterns:
       - "*Abstract*"
       - "*Wrapper*"
       - "*Adapter*"
+      - "*Builder*"
+      - "*Coordinator*"
+      - "*Orchestrator*"
 
   # The Executive watches for enterprise-brain config addiction
   config_driven:
     enabled: true
+    severity_weight: 2
     # Triggers when adding feature flags, env vars, or config
     # for behavior that only exists in one place
 
   # The Insecure Dev watches for premature generalization
   speculative_generality:
     enabled: true
+    severity_weight: 2
     # Triggers on interfaces with single implementation,
     # unused generic type parameters, abstract classes with one subclass
 
   # The Perfectionist watches for optimizing without evidence
   premature_optimization:
     enabled: true
+    severity_weight: 2
     # Triggers on caching, memoization, lazy loading
     # before profiling shows a bottleneck
 
   # The Minimalist watches for dead weight
   dead_code:
     enabled: true
+    severity_weight: 1
+    commented_lines_threshold: 10
     # Triggers on commented-out code blocks, unused imports,
     # functions that are never called
 
   # The Bro watches for building NASA when you need a bicycle
   swiss_army_knife:
     enabled: true
+    severity_weight: 3
     # Triggers on plugin systems, extensibility layers,
     # elaborate architectures for simple features
 
   # The Realist watches for scope creep
   scope_creep:
     enabled: true
-    file_threshold: 5        # Files touched before nudge (moderate)
+    severity_weight: 3
+    file_threshold: 5        # Files touched before nudge (standard)
     new_file_threshold: 3    # New files created before nudge
 
   # The Confused notices when things get confusing
   file_explosion:
     enabled: true
+    severity_weight: 2
     threshold: 5             # New files in single session
 
   # The Supporter checks in when sessions run long
@@ -74,7 +90,70 @@ patterns:
     tool_call_threshold: 30  # Tool calls before check-in
     backoff_multiplier: 1.5  # Each subsequent trigger waits longer
 
-# Individual characters can be disabled
+# --- Complexity Metrics ---
+# Enhanced detection via code analysis
+complexity_metrics:
+  cyclomatic_complexity:
+    enabled: true
+    threshold: 10            # Max per function
+    severity_weight: 2
+  
+  cognitive_complexity:
+    enabled: true
+    threshold: 15            # Max per function
+    severity_weight: 2
+  
+  nesting_depth:
+    enabled: true
+    threshold: 4             # Max levels
+    severity_weight: 1
+  
+  parameter_count:
+    enabled: true
+    threshold: 5             # Max per function
+    severity_weight: 1
+  
+  file_length:
+    enabled: true
+    threshold: 300           # Max lines
+    severity_weight: 1
+  
+  method_count:
+    enabled: true
+    threshold: 20            # Max per class
+    severity_weight: 2
+
+# --- Code Smell Detection ---
+code_smells:
+  god_object:
+    enabled: true
+    dependency_threshold: 10
+    severity_weight: 3
+  
+  feature_envy:
+    enabled: true
+    severity_weight: 2
+  
+  data_clump:
+    enabled: true
+    param_threshold: 3
+    severity_weight: 1
+  
+  primitive_obsession:
+    enabled: true
+    severity_weight: 1
+  
+  long_method:
+    enabled: true
+    line_threshold: 20
+    severity_weight: 2
+  
+  shotgun_surgery:
+    enabled: true
+    file_threshold: 5
+    severity_weight: 3
+
+# --- Individual characters can be disabled ---
 # (if you really can't handle The Supporter's earnest concern)
 characters:
   the_cynic: true
@@ -87,11 +166,81 @@ characters:
   the_perfectionist: true
   the_confused: true
 
-# Paths to ignore (legitimate complexity zones)
-allowlist:
-  - "**/generated/**"
-  - "**/vendor/**"
-  - "**/node_modules/**"
-  - "**/*.generated.*"
-  - "**/*.g.dart"
-  - "**/migrations/**"
+# --- Whitelist (legitimate complexity zones) ---
+whitelist:
+  patterns: []
+  # Example:
+  # - "*Factory*"      # DI framework requirement
+  # - "*Repository*"   # Project architecture standard
+  
+  paths:
+    - "**/generated/**"
+    - "**/vendor/**"
+    - "**/node_modules/**"
+    - "**/*.generated.*"
+    - "**/*.g.dart"
+    - "**/migrations/**"
+
+# --- Escalation (always flag these) ---
+escalate:
+  patterns: []
+  # Example:
+  # - "*Manager*"      # Discouraged naming in this codebase
+
+# --- Severity Scoring ---
+severity:
+  # Impact scope multipliers
+  scope_multipliers:
+    local: 1.0           # Single function/component
+    module: 1.3          # Affects multiple files in module
+    cross_cutting: 1.5   # Spans multiple modules
+    architectural: 2.0   # System-wide implications
+  
+  # Thresholds for severity levels
+  thresholds:
+    low: 3               # Score <= 3
+    medium: 6            # Score <= 6
+    high: 9              # Score <= 9
+    # critical: > 9
+
+  # Technical debt time estimates (hours)
+  debt_estimates:
+    low: 0.5             # 15-30 minutes
+    medium: 1.5          # 1-2 hours
+    high: 6              # 4-8 hours
+    critical: 16         # 1-3 days
+
+# --- contextd Integration ---
+contextd:
+  enabled: true          # Enable contextd integration if available
+  record_violations: true
+  track_false_positives: true
+  learn_patterns: true   # Auto-suggest whitelist based on false positive rate
+  
+  # Thresholds for pattern learning
+  learning:
+    min_occurrences: 3   # Minimum violations before suggesting whitelist
+    false_positive_rate: 0.5  # 50% false positive rate triggers suggestion
+
+# --- Hook Configuration ---
+hooks:
+  pretooluse:
+    enabled: true
+    # Only fire on these operations
+    matcher: "Write|Edit"
+    # Relaxed mode only fires on High/Critical
+    severity_gate: false  # Set true for relaxed behavior
+
+# --- Nudge Display ---
+display:
+  # Format: standard (full box), minimal (one-line)
+  format: standard
+  
+  # Show debt estimate in nudges
+  show_debt_estimate: true
+  
+  # Link to refactoring examples for High/Critical
+  show_refactoring_guide: true
+  
+  # Show complexity-assessment tier if available
+  show_complexity_tier: true

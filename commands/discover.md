@@ -19,9 +19,21 @@ Run non-interactive codebase analysis to identify improvement opportunities.
 
 ## Execution
 
-**Agent:** `contextd:contextd-task-executor`
-**Context Folding:** Yes - isolate each lens analysis
-**Output:** Terminal summary + contextd storage + optional GitHub Issues
+**Agent:** Task tool with Explore subagent
+**Context Folding:** If contextd available
+**Output:** Terminal summary + optional storage + optional GitHub Issues
+
+## Contextd Integration (Optional)
+
+If contextd MCP is available, this command uses:
+- `memory_search` for past discovery results
+- `branch_create/return` for context isolation
+- `memory_record` for persisting findings
+
+If contextd is NOT available:
+- Skip memory search (start fresh)
+- Run analysis sequentially (no context branches)
+- Output to `.claude/discovery/<date>.md` instead of memory
 
 ## Usage
 
@@ -47,25 +59,25 @@ Run non-interactive codebase analysis to identify improvement opportunities.
 ### Phase 1: Pre-Flight
 
 ```
-1. mcp__contextd__memory_search(
+1. Check contextd availability:
+   - Look for mcp__contextd__* tools
+   - Set contextd_available = true/false
+
+2. If contextd_available:
+   mcp__contextd__memory_search(
      project_id: "<project>",
      query: "discovery analysis findings"
    )
    → Load past discovery results
-
-2. Check repository index:
-   - If missing or stale: mcp__contextd__repository_index(path: ".")
-   - Note: reindex if HEAD changed since last index
 
 3. Determine lenses to run:
    - Default: all
    - If --lens specified: parse comma-separated list
 ```
 
-### Phase 2: Lens Analysis (Context Folded)
+### Phase 2: Lens Analysis
 
-For each enabled lens, create isolated branch:
-
+**If contextd_available:** Create isolated branch per lens:
 ```
 mcp__contextd__branch_create(
   session_id: "<session>",
@@ -75,6 +87,8 @@ mcp__contextd__branch_create(
 )
 ```
 
+**If NOT contextd_available:** Run sequentially without isolation.
+
 **Execute analyzer from `skills/roadmap-discovery/includes/analyzers/`:**
 
 1. Run pattern searches (Grep, Glob)
@@ -83,6 +97,7 @@ mcp__contextd__branch_create(
 4. Apply confidence scoring
 5. Cap findings (top 10 per category)
 
+**If contextd_available:**
 ```
 mcp__contextd__branch_return(
   branch_id: "<branch>",
@@ -162,8 +177,9 @@ EOF
 )"
 ```
 
-### Phase 5: Memory Recording
+### Phase 5: Persist Results
 
+**If contextd_available:**
 ```
 mcp__contextd__memory_record(
   project_id: "<project>",
@@ -175,6 +191,19 @@ mcp__contextd__memory_record(
   outcome: "success",
   tags: ["discovery", "<lens>", "<date>"]
 )
+```
+
+**If NOT contextd_available:**
+Write to `.claude/discovery/<date>-<lens>.md`:
+```markdown
+# Discovery Results: <date>
+
+## Summary
+Lenses: <list>
+Total: <n> findings
+
+## Findings
+...
 ```
 
 ## Lens Details

@@ -1,9 +1,30 @@
 ---
 name: using-contextd
-description: Use when starting any session with contextd - introduces core tools for cross-session memory, semantic code search, and error remediation
+description: Use when starting any session with contextd - introduces core tools for cross-session memory, semantic code search, and error remediation. REQUIRES contextd MCP server.
 ---
 
 # Using contextd
+
+## Prerequisites: contextd MCP Server
+
+**This skill REQUIRES the contextd MCP server.**
+
+Before using any contextd tools, verify availability:
+1. Check for `mcp__contextd__*` tools (use ToolSearch if needed)
+2. If tools are NOT available:
+   - Inform user: "contextd MCP server not configured"
+   - Suggest: "Run `/contextd:init` to configure contextd"
+   - Alternative: Use standard Read/Grep/Glob (no cross-session memory)
+
+## Error Handling
+
+| Error | Meaning | Fix |
+|-------|---------|-----|
+| `Unknown tool: mcp__contextd__*` | MCP not configured | Run `/contextd:init` |
+| `Connection refused on port 9090` | Server not running | Run `contextd serve` |
+| `Tenant not found` | First use | Will auto-create |
+
+---
 
 ## Pre-Flight Protocol (MANDATORY)
 
@@ -126,3 +147,190 @@ Conversations are scrubbed for secrets before processing.
 | Forgetting to record learnings | `memory_record` at task completion |
 | Re-solving fixed errors | `remediation_search` when errors occur |
 | Context bloat from sub-tasks | Use `branch_create` for isolation |
+
+---
+
+## Memory Lifecycle
+
+### Temporal Decay & Expiration
+
+Memories have a confidence score (0-1) that decays over time without reinforcement:
+
+| Age | Decay Factor | Result |
+|-----|--------------|--------|
+| < 7 days | 1.0 | Full confidence |
+| 7-30 days | 0.9 | Slight decay |
+| 30-90 days | 0.7 | Moderate decay |
+| > 90 days | 0.5 | Significant decay (but never deleted) |
+
+**Boost confidence via:**
+- `memory_feedback(memory_id, helpful=true)` - Resets decay timer
+- Memory reuse in solutions - Auto-boosted when applied
+
+**Expiration policies:**
+- `ttl_days: 365` - Auto-archive after 1 year without activity
+- `never_expire: true` - For ADRs and critical decisions
+
+### Memory Types
+
+| Type | Purpose | Default TTL |
+|------|---------|-------------|
+| `learning` | General knowledge gained | 180 days |
+| `remediation` | Error -> fix mappings | 365 days |
+| `decision` | ADR/architecture choices | Never |
+| `failure` | What NOT to do | 365 days |
+| `pattern` | Reusable code patterns | 180 days |
+| `policy` | STRICT constraints | Never |
+
+Tag memories with type: `tags: ["type:learning", "category:testing"]`
+
+---
+
+## Query Expansion & Fuzzy Matching
+
+### Automatic Query Expansion
+
+`semantic_search` and `memory_search` automatically expand queries:
+
+| Original Query | Expanded To |
+|----------------|-------------|
+| "auth error" | "auth error", "authentication failure", "login issue", "401", "403" |
+| "test fails" | "test fails", "test failure", "assertion error", "spec broken" |
+| "slow query" | "slow query", "performance", "N+1", "timeout", "latency" |
+
+Disable expansion: `expand_query: false`
+
+### Fuzzy Matching
+
+Handles typos and variations:
+
+```json
+{
+  "query": "authetication",
+  "fuzzy_threshold": 0.8,  // 0-1, higher = stricter
+  "fuzzy_max_edits": 2     // Levenshtein distance
+}
+```
+
+Results include match quality:
+- `exact` - Literal match
+- `semantic` - Meaning match
+- `fuzzy` - Typo-tolerant match
+
+---
+
+## Hierarchical Namespaces
+
+Structure project IDs for multi-team organizations:
+
+```
+org/team/project/module
+
+Examples:
+  fyrsmithlabs/platform/contextd/api
+  fyrsmithlabs/platform/contextd/vectorstore
+  fyrsmithlabs/marketplace/fs-dev
+```
+
+**Search scopes:**
+- `fyrsmithlabs/*` - All org memories
+- `fyrsmithlabs/platform/*` - All platform team
+- `fyrsmithlabs/platform/contextd` - Specific project
+
+---
+
+## Audit Fields
+
+All memory operations record:
+
+| Field | Description | Auto-set |
+|-------|-------------|----------|
+| `created_by` | Agent/session that created | Yes |
+| `created_at` | ISO timestamp | Yes |
+| `updated_at` | Last modification | Yes |
+| `usage_count` | Times retrieved in searches | Yes |
+| `last_used_at` | Last retrieval timestamp | Yes |
+
+Query audit data:
+```json
+{
+  "query": "authentication",
+  "include_audit": true
+}
+```
+
+---
+
+## Claude Code 2.1 Patterns
+
+### Background Task Execution
+
+Use `run_in_background: true` for long-running searches:
+
+```
+Task(
+  subagent_type: "general-purpose",
+  prompt: "Search memories for authentication patterns across all projects",
+  run_in_background: true
+)
+
+// Continue other work...
+
+// Later, collect results:
+TaskOutput(task_id, block: true)
+```
+
+### Task Dependencies with addBlockedBy
+
+Chain dependent memory operations:
+
+```
+task1 = Task(prompt: "Index repository")
+task2 = Task(prompt: "Search indexed code", addBlockedBy: [task1.id])
+task3 = Task(prompt: "Record findings", addBlockedBy: [task2.id])
+```
+
+### PreToolUse Hook Example
+
+Auto-search memories before any Read operation:
+
+```json
+{
+  "hook_type": "PreToolUse",
+  "tool_name": "Read",
+  "prompt": "Before reading {{tool_input.file_path}}, search memories for relevant context about this file or module."
+}
+```
+
+### PostToolUse Hook Example
+
+Auto-record learnings after successful operations:
+
+```json
+{
+  "hook_type": "PostToolUse",
+  "tool_name": "Edit",
+  "condition": "tool_output.success == true",
+  "prompt": "If this edit fixed a bug or implemented a pattern worth remembering, call memory_record."
+}
+```
+
+---
+
+## Event-Driven State Sharing
+
+Skills can share state via memory events:
+
+```json
+{
+  "event": "memory_created",
+  "filter": {"tags": ["type:decision"]},
+  "notify": ["consensus-review", "self-reflection"]
+}
+```
+
+Subscribe to events:
+- `memory_created` - New memory recorded
+- `memory_feedback` - Feedback given
+- `remediation_recorded` - New fix documented
+- `checkpoint_saved` - State preserved

@@ -16,43 +16,49 @@ Interactive design refinement using interview format with complexity-aware quest
 
 ## Execution
 
-**Agent:** `contextd:contextd-task-executor`
-**Context Folding:** Yes - isolate complexity assessment and approach exploration
+**Agent:** Task tool or direct execution
+**Context Folding:** If contextd available
 **Output:**
 - Interview artifacts in `.claude/brainstorms/<generated-title>/`
 - GitHub Issues via github-planning skill
+
+## Contextd Integration (Optional)
+
+If contextd MCP is available:
+- `memory_search` for past brainstorm patterns
+- `semantic_search` for codebase context
+- `branch_create/return` for isolated complexity assessment
+- `checkpoint_save` for resumable sessions
+
+If contextd is NOT available:
+- Use Glob/Grep for codebase exploration
+- Run complexity assessment inline (no isolation)
+- No checkpoint resumption (`--reuse` flag ignored)
 
 ## Workflow
 
 ### Phase 1: Pre-Flight (Context Gathering)
 
 ```
-1. mcp__contextd__memory_search(
-     project_id: "<project>",
-     query: "brainstorm design planning"
-   )
-   → Load past brainstorm outcomes and patterns
+1. Check contextd availability (look for mcp__contextd__* tools)
 
-2. mcp__contextd__semantic_search(
-     project_path: ".",
-     query: "<topic or general codebase patterns>"
-   )
-   → Understand existing codebase context
+2. If contextd_available:
+   - memory_search for past brainstorm patterns
+   - semantic_search for codebase context
 
 3. Glob for existing specs/plans:
    - docs/**/*.md
    - .claude/brainstorms/**/*
    - **/*.spec.md
 
-4. If --reuse flag:
-   mcp__contextd__checkpoint_resume(
-     checkpoint_id: "<previous-brainstorm>",
-     level: "context"
-   )
+4. If --reuse flag AND contextd_available:
+   - Resume from previous checkpoint
+   - If NOT contextd_available: warn "--reuse requires contextd"
 ```
 
-### Phase 2: Complexity Assessment (Context Folded)
+### Phase 2: Complexity Assessment
 
+**If contextd_available:** Create isolated branch
 ```
 mcp__contextd__branch_create(
   session_id: "<session>",
@@ -61,6 +67,8 @@ mcp__contextd__branch_create(
   timeout_seconds: 120
 )
 ```
+
+**If NOT contextd_available:** Run inline without isolation.
 
 **Apply complexity-assessment skill:**
 
@@ -90,6 +98,7 @@ AskUserQuestion(
 
 3. Calculate tier: SIMPLE (5-8), STANDARD (9-12), COMPLEX (13-15)
 
+**If contextd_available:**
 ```
 mcp__contextd__branch_return(
   branch_id: "<branch>",

@@ -61,24 +61,6 @@ Analyze all code changes for:
    - Inconsistent error types
    - Missing retry logic for transient failures
 
-## Pre-Review Protocol
-
-Before analyzing, gather context:
-
-```
-1. mcp__contextd__semantic_search(
-     query: "code patterns conventions [area of change]",
-     project_path: "."
-   )
-   -> Understand project patterns
-
-2. mcp__contextd__memory_search(
-     project_id: "<project>",
-     query: "code quality issues patterns"
-   )
-   -> Load past quality learnings
-```
-
 ## Output Format
 
 Return findings as structured JSON:
@@ -142,16 +124,3 @@ Return findings as structured JSON:
 | Refactor | Existing tests still pass |
 | Config change | Validation test if applicable |
 
-## Integration Notes
-
-After review, consider recording patterns:
-
-```
-mcp__contextd__memory_record(
-  project_id: "<project>",
-  title: "Code quality pattern: [description]",
-  content: "Found [pattern] in [area]. Recommended [fix].",
-  outcome: "success",
-  tags: ["code-quality", "<category>"]
-)
-```

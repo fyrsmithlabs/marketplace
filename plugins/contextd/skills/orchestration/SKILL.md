@@ -1,11 +1,25 @@
 ---
 name: orchestration
-description: Use when executing multi-task work from GitHub issues or epics with parallel agents, dependency management, and consensus reviews. Triggers on "orchestrate issues", "execute epic", "run the orchestration", or complex multi-feature development phases.
+description: Use when executing multi-task work from GitHub issues or epics with parallel agents, dependency management, and consensus reviews. Triggers on "orchestrate issues", "execute epic", "run the orchestration", or complex multi-feature development phases. REQUIRES contextd MCP server.
 ---
 
 # Multi-Task Orchestration
 
 Execute orchestration from GitHub issues or epics with parallel agents, dependency resolution, consensus reviews, and automatic remediation using contextd for memory, checkpoints, and context folding.
+
+## Prerequisites: contextd REQUIRED
+
+**This skill CANNOT function without contextd.**
+
+Orchestration depends on:
+- `branch_create` / `branch_return` for context isolation (CRITICAL)
+- `checkpoint_save` / `checkpoint_resume` for state management
+- `memory_record` for learning capture
+
+**If contextd unavailable:**
+1. STOP - inform user: "Orchestration requires contextd for context isolation"
+2. Suggest: "Run `/contextd:init` to configure contextd"
+3. NO FALLBACK - this skill is inoperable without contextd
 
 ## Orchestration Flow
 
@@ -68,7 +82,7 @@ AskUserQuestion(
 **For "Current milestone":**
 ```
 gh issue list --milestone "$(gh api repos/:owner/:repo/milestones --jq '.[0].title')" --json number,title
-→ Present list for confirmation
+-> Present list for confirmation
 ```
 
 ## Phase 1: Issue Discovery
@@ -83,11 +97,11 @@ gh issue list --milestone "$(gh api repos/:owner/:repo/milestones --jq '.[0].tit
    }}'
 
 3. Extract task information:
-   - number → Task ID
-   - title → Task name
-   - body → Agent prompt (look for ## Agent Prompt or ## Description)
-   - labels → Priority (P0, P1, P2), type (feature, bug, etc.)
-   - "Depends On: #XX" in body → Dependencies
+   - number -> Task ID
+   - title -> Task name
+   - body -> Agent prompt (look for ## Agent Prompt or ## Description)
+   - labels -> Priority (P0, P1, P2), type (feature, bug, etc.)
+   - "Depends On: #XX" in body -> Dependencies
 
 4. Record to memory:
    memory_record(title: "Orchestration: Issues #{list}", ...)
@@ -121,10 +135,10 @@ gh issue list --milestone "$(gh api repos/:owner/:repo/milestones --jq '.[0].tit
 3. Validate no circular dependencies
 
 Example:
-  #42 depends on nothing → Group 1
-  #43 depends on nothing → Group 1
-  #44 depends on #42 → Group 2
-  #45 depends on #43, #44 → Group 3
+  #42 depends on nothing -> Group 1
+  #43 depends on nothing -> Group 1
+  #44 depends on #42 -> Group 2
+  #45 depends on #43, #44 -> Group 3
 ```
 
 ## Phase 4: Group Execution
@@ -153,7 +167,7 @@ For each group:
 
 3. Monitor and collect results:
    TaskOutput(task_id, block=false)
-   branch_status(branch_id) → check budget
+   branch_status(branch_id) -> check budget
 
 4. Return from branch:
    branch_return(message: "Group complete: {summary}")
@@ -266,9 +280,9 @@ Depends On: #42, #43
 ```
 /contextd:orchestrate --resume "group-2-complete"
 
-→ Loads checkpoint state
-→ Skips completed groups
-→ Continues from saved point
+-> Loads checkpoint state
+-> Skips completed groups
+-> Continues from saved point
 ```
 
 ## Anti-Patterns
@@ -280,3 +294,323 @@ Depends On: #42, #43
 | Monolith execution | No isolation | Use context branches per group |
 | Skip remediation recording | Knowledge lost | ALWAYS record fixes |
 | Over-budget branches | Context overflow | Monitor with branch_status |
+
+---
+
+## Resource Monitoring
+
+### Budget Tracking
+
+Monitor token usage across orchestration:
+
+```json
+{
+  "orchestration_budget": {
+    "total_tokens": 50000,
+    "used_tokens": 32000,
+    "remaining_tokens": 18000,
+    "threshold_warning": 0.7,
+    "threshold_critical": 0.9
+  },
+  "per_group_budget": {
+    "group_1": { "allocated": 10000, "used": 8500 },
+    "group_2": { "allocated": 10000, "used": 6200 },
+    "group_3": { "allocated": 10000, "used": 0 }
+  }
+}
+```
+
+### Resource Alerts
+
+| Alert | Trigger | Action |
+|-------|---------|--------|
+| `budget_warning` | 70% used | Checkpoint + notify user |
+| `budget_critical` | 90% used | Checkpoint + pause + ask to continue |
+| `branch_overflow` | Branch > limit | Force return, split work |
+
+### Monitoring Loop
+
+```
+Every 5 minutes OR after each task:
+  1. branch_status(branch_id) -> get token usage
+  2. Compare to thresholds
+  3. If warning: checkpoint_save(auto_created: true)
+  4. If critical: pause, notify, wait for user
+```
+
+---
+
+## Concurrency Limits
+
+### Agent Pool Management
+
+Control parallel agent execution:
+
+```json
+{
+  "concurrency": {
+    "max_parallel_agents": 4,
+    "max_per_group": 2,
+    "queue_overflow": "wait",
+    "timeout_minutes": 30
+  }
+}
+```
+
+### Concurrency Strategies
+
+| Strategy | Behavior | Use Case |
+|----------|----------|----------|
+| `unlimited` | No limits | Small orchestrations |
+| `fixed` | Max N parallel | Resource constrained |
+| `adaptive` | Scale based on load | Large orchestrations |
+
+### Queue Management
+
+When at capacity:
+
+```
+1. New tasks enter wait queue
+2. FIFO by default, priority override available
+3. Notify user if queue > 5 tasks
+4. Timeout tasks stuck > 30 minutes
+```
+
+### Adaptive Scaling
+
+```json
+{
+  "adaptive": {
+    "min_agents": 1,
+    "max_agents": 6,
+    "scale_up_threshold": "queue > 3",
+    "scale_down_threshold": "queue == 0 for 5 minutes",
+    "cooldown_seconds": 60
+  }
+}
+```
+
+---
+
+## Dead Letter Queue for Failed Tasks
+
+### Failed Task Handling
+
+Tasks that fail are moved to dead letter queue (DLQ):
+
+```json
+{
+  "dlq_entry": {
+    "task_id": "task_abc123",
+    "issue_number": 42,
+    "failure_reason": "timeout after 30 minutes",
+    "error_message": "Agent did not complete within budget",
+    "retry_count": 2,
+    "max_retries": 3,
+    "added_at": "2026-01-28T10:00:00Z",
+    "last_retry_at": "2026-01-28T10:35:00Z"
+  }
+}
+```
+
+### DLQ Operations
+
+| Operation | Purpose |
+|-----------|---------|
+| `dlq_list()` | View failed tasks |
+| `dlq_retry(task_id)` | Manual retry |
+| `dlq_discard(task_id)` | Remove from queue |
+| `dlq_analyze()` | Pattern analysis on failures |
+
+### Automatic Retry Policy
+
+```json
+{
+  "retry_policy": {
+    "max_retries": 3,
+    "backoff": "exponential",
+    "initial_delay_seconds": 60,
+    "max_delay_seconds": 900,
+    "retry_on": ["timeout", "budget_exceeded"],
+    "no_retry_on": ["validation_failed", "user_cancelled"]
+  }
+}
+```
+
+### DLQ Alerts
+
+```json
+{
+  "dlq_alerts": {
+    "notify_user_after": 3,
+    "auto_pause_orchestration_after": 5,
+    "escalation": {
+      "5_failures": "pause_and_notify",
+      "10_failures": "abort_orchestration"
+    }
+  }
+}
+```
+
+### Failure Analysis
+
+Analyze DLQ patterns:
+
+```
+dlq_analyze() returns:
+  - Most common failure reasons
+  - Correlated issues (same dependency failing)
+  - Time-based patterns (failures during high load)
+  - Recommendations (increase budget, split issues)
+```
+
+---
+
+## Unified Memory Type References
+
+Tag orchestration artifacts with standard types:
+
+| Artifact | Tag | Purpose |
+|----------|-----|---------|
+| Orchestration start | `type:decision`, `category:planning` | Track scope |
+| Task completion | `type:learning`, `category:execution` | What worked |
+| Task failure | `type:failure`, `category:execution` | What failed |
+| Remediation applied | `type:remediation`, `category:fix` | Error patterns |
+| Review findings | `type:pattern`, `category:quality` | Code patterns |
+
+---
+
+## Hierarchical Namespace Guidance
+
+### Orchestration Namespaces
+
+```
+<org>/<project>/orchestrations/<orchestration_id>
+
+Examples:
+  fyrsmithlabs/contextd/orchestrations/epic-42
+  fyrsmithlabs/marketplace/orchestrations/v1.6-release
+```
+
+### Nested Task Namespaces
+
+```
+<orchestration_namespace>/groups/<group_id>/tasks/<task_id>
+
+Example:
+  fyrsmithlabs/contextd/orchestrations/epic-42/groups/1/tasks/issue-43
+```
+
+---
+
+## Audit Fields
+
+All orchestration records include:
+
+| Field | Description | Auto-set |
+|-------|-------------|----------|
+| `created_by` | Orchestrator session | Yes |
+| `created_at` | Start timestamp | Yes |
+| `completed_at` | End timestamp | Yes |
+| `duration_seconds` | Total execution time | Yes |
+| `task_count` | Number of tasks | Yes |
+| `success_count` | Completed tasks | Yes |
+| `failure_count` | Failed tasks | Yes |
+
+---
+
+## Claude Code 2.1 Patterns
+
+### Background Task Execution
+
+Launch tasks without blocking orchestrator:
+
+```
+task_42 = Task(
+  subagent_type: "contextd:task-agent",
+  prompt: "Execute issue #42",
+  run_in_background: true,
+  description: "Issue #42: Add user authentication"
+)
+
+task_43 = Task(
+  subagent_type: "contextd:task-agent",
+  prompt: "Execute issue #43",
+  run_in_background: true,
+  description: "Issue #43: Add role-based access"
+)
+
+// Orchestrator continues monitoring...
+```
+
+### Task Dependencies with addBlockedBy
+
+Chain dependent tasks:
+
+```
+# Group 1 (parallel - no dependencies)
+task_42 = Task(prompt: "Issue #42")
+task_43 = Task(prompt: "Issue #43")
+
+# Group 2 (depends on #42)
+task_44 = Task(prompt: "Issue #44", addBlockedBy: [task_42.id])
+
+# Group 3 (depends on #43 and #44)
+task_45 = Task(prompt: "Issue #45", addBlockedBy: [task_43.id, task_44.id])
+```
+
+### PreToolUse Hook for Orchestration Safety
+
+Prevent dangerous operations during orchestration:
+
+```json
+{
+  "hook_type": "PreToolUse",
+  "tool_name": "Bash",
+  "condition": "orchestration_active AND command.matches('git push --force|rm -rf')",
+  "prompt": "Dangerous operation during orchestration. Checkpoint first and confirm with user."
+}
+```
+
+### PostToolUse Hook for Task Completion
+
+Auto-record task completions:
+
+```json
+{
+  "hook_type": "PostToolUse",
+  "tool_name": "Task",
+  "condition": "task_completed AND orchestration_active",
+  "prompt": "Task completed. Record to memory_record and update orchestration progress."
+}
+```
+
+---
+
+## Event-Driven State Sharing
+
+Orchestration emits events for other skills:
+
+```json
+{
+  "event": "orchestration_started",
+  "payload": {
+    "orchestration_id": "epic-42",
+    "issues": [42, 43, 44, 45],
+    "groups": 3,
+    "estimated_duration": "2 hours"
+  },
+  "notify": ["workflow", "consensus-review"]
+}
+```
+
+Subscribe to orchestration events:
+- `orchestration_started` - Orchestration began
+- `group_started` - Group execution began
+- `task_started` - Individual task began
+- `task_completed` - Task finished (success or failure)
+- `task_failed` - Task moved to DLQ
+- `group_completed` - All tasks in group done
+- `review_triggered` - Consensus review started
+- `orchestration_paused` - Budget/failure pause
+- `orchestration_completed` - All groups done

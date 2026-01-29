@@ -54,24 +54,6 @@ Analyze all code changes for:
    - Server-side request forgery (SSRF)
    - Insecure deserialization
 
-## Pre-Review Protocol
-
-Before analyzing, retrieve context:
-
-```
-1. mcp__contextd__remediation_search(
-     query: "security vulnerabilities [file types in PR]",
-     include_hierarchy: true
-   )
-   -> Load known security patterns
-
-2. mcp__contextd__semantic_search(
-     query: "authentication authorization patterns",
-     project_path: "."
-   )
-   -> Understand existing security model
-```
-
 ## Output Format
 
 Return findings as structured JSON:
@@ -120,17 +102,3 @@ Exercise veto when:
 - Secrets detected in code or history
 - Auth/authz bypass possible
 
-## Integration Notes
-
-After review, novel findings should be recorded:
-
-```
-mcp__contextd__remediation_record(
-  title: "[Security pattern title]",
-  problem: "[Exact vulnerability]",
-  root_cause: "[Why it's exploitable]",
-  solution: "[How to fix]",
-  category: "security",
-  scope: "org"
-)
-```

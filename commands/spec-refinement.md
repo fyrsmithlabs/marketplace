@@ -13,9 +13,19 @@ Conduct an in-depth interview about a specification file, refining it through no
 
 ## Execution
 
-**Agent:** `contextd:contextd-task-executor`
-**Context Folding:** Yes - isolate interview context
+**Agent:** Direct execution
+**Context Folding:** If contextd available
 **Output:** Refined spec written to original location; working drafts in `docs/.claude/specs/<spec-name>/`
+
+## Contextd Integration (Optional)
+
+If contextd MCP is available:
+- `memory_search` for past refinement learnings
+- `semantic_search` for related context
+
+If contextd is NOT available:
+- Use Glob/Grep for related context
+- Still produces refined spec output
 
 ## Workflow
 

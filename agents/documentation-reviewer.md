@@ -56,21 +56,11 @@ Analyze all changes for documentation needs:
 
 ## Pre-Review Protocol
 
-Before analyzing, gather context:
-
-```
-1. mcp__contextd__semantic_search(
-     query: "documentation patterns README",
-     project_path: "."
-   )
-   -> Understand documentation style
-
-2. Read existing documentation:
-   - README.md
-   - CHANGELOG.md
-   - API docs (if present)
-   - Code comments in changed files
-```
+Read existing documentation to understand patterns:
+- README.md
+- CHANGELOG.md
+- API docs (if present)
+- Code comments in changed files
 
 ## Output Format
 
@@ -172,16 +162,3 @@ new usage
 | Workarounds | Why the workaround exists, link to issue |
 | Regex patterns | Human-readable explanation |
 
-## Integration Notes
-
-Documentation findings rarely need remediation recording, but patterns can be captured in memories:
-
-```
-mcp__contextd__memory_record(
-  project_id: "<project>",
-  title: "Documentation pattern: [description]",
-  content: "Project uses [pattern] for docs. Expect [format].",
-  outcome: "success",
-  tags: ["documentation", "standards"]
-)
-```

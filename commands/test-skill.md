@@ -16,14 +16,22 @@ allowed-tools:
   - Read
   - Glob
   - Bash
-  - mcp__contextd__memory_record
-  - mcp__contextd__memory_search
   - TodoWrite
 ---
 
 # Test Skill
 
 Run TDD-style pressure test scenarios against marketplace skills.
+
+## Contextd Integration (Optional)
+
+If contextd MCP is available:
+- `memory_record` for test results persistence
+- `memory_search` for past test patterns
+
+If contextd is NOT available:
+- Test results output to terminal only
+- Results can be saved to `.claude/test-results/<skill>-<date>.md`
 
 ## Process
 

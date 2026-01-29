@@ -7,13 +7,159 @@ description: Use when working with git operations, PRs, or code reviews - enforc
 
 Modern agentic git workflow enforcement with multi-agent consensus review. Integrates deeply with contextd for cross-session learning, context folding, and remediation tracking.
 
+---
+
+## Parallel Development with Git Worktrees
+
+### Why Worktrees for AI Agents
+
+- Multiple agents can work simultaneously without file conflicts
+- Each agent gets isolated working directory
+- Shared .git folder = efficient storage
+- Industry standard for parallel AI development (2024-2025)
+
+### Directory Structure
+
+```
+~/projects/
+├── my-project/              # Main worktree (main branch)
+└── my-project-worktrees/    # All linked worktrees
+    ├── feature-auth/        # Agent A
+    ├── fix-database/        # Agent B
+    └── refactor-api/        # Agent C
+```
+
+### Core Commands
+
+| Task | Command |
+|------|---------|
+| Create worktree | `git worktree add -b <branch> <path>` |
+| List all | `git worktree list` |
+| Lock (portable storage) | `git worktree lock --reason "msg" <path>` |
+| Unlock | `git worktree unlock <path>` |
+| Remove properly | `git worktree remove <path>` |
+| Cleanup stale | `git worktree prune -v` |
+| Fix broken links | `git worktree repair [<path>...]` |
+
+### Worktree Lifecycle for Agents
+
+1. **Pre-work:** `git worktree add -b feature/task ../worktrees/task`
+2. **During:** Agent works in isolated directory
+3. **Completion:** `git worktree remove ../worktrees/task`
+4. **Cleanup:** `git worktree prune -v`
+
+### Worktree Quick Reference Card
+
+```bash
+# === SETUP ===
+git worktree add -b <branch> ../worktrees/<name>  # Create
+git worktree list                                   # List all
+git worktree list --porcelain                       # Machine-readable
+
+# === DURING WORK ===
+cd ../worktrees/<name>                              # Enter worktree
+git status                                          # Check state
+git worktree lock --reason "active" <path>          # Prevent removal
+
+# === COMPLETION ===
+git worktree unlock <path>                          # Unlock first
+git worktree remove <path>                          # Remove properly
+git worktree prune -v                               # Clean stale refs
+
+# === RECOVERY ===
+git worktree repair                                 # Fix broken links
+git worktree repair <path>...                       # Fix specific worktrees
+```
+
+### Dependency Management in Worktrees
+
+| Scenario | Solution |
+|----------|----------|
+| Shared node_modules | Use workspace root: `npm install` from main |
+| Go modules | `go work init` + `go work use <worktrees>` |
+| Python venv | Create per-worktree: `python -m venv .venv` |
+| Docker builds | Mount worktree as volume |
+
+### Anti-Patterns
+
+| Anti-Pattern | Why Bad | Correct Approach |
+|--------------|---------|------------------|
+| `rm -rf worktree` | Corrupts Git tracking | `git worktree remove` |
+| Two agents, same files | Merge conflicts | Scope to non-overlapping files |
+| Moving folder manually | Breaks gitdir link | `git worktree move` or `repair` |
+| 20+ simultaneous worktrees | Unmanageable | Create, complete, remove |
+
+### Official Git Warning
+
+> "Multiple checkout in general is still experimental, and the support for submodules is incomplete. It is NOT recommended to make multiple checkouts of a superproject."
+
+### File Overlap Prevention
+
+- Scope agent work to non-overlapping modules/directories
+- Two agents touching same files = guaranteed conflicts
+- Plan task decomposition before spawning agents
+
+### Worktree + Background Agent Pattern
+
+Combine worktrees with Task tool for true parallel development:
+
+```bash
+# 1. Create worktrees for each agent
+git worktree add -b feature/auth ../worktrees/auth
+git worktree add -b feature/api ../worktrees/api
+git worktree add -b feature/ui ../worktrees/ui
+
+# 2. Launch agents in parallel (each in own worktree)
+Task(
+  subagent_type: "general-purpose",
+  prompt: "cd ../worktrees/auth && implement auth module",
+  run_in_background: true
+)
+Task(
+  subagent_type: "general-purpose",
+  prompt: "cd ../worktrees/api && implement API layer",
+  run_in_background: true
+)
+Task(
+  subagent_type: "general-purpose",
+  prompt: "cd ../worktrees/ui && implement UI components",
+  run_in_background: true
+)
+
+# 3. Collect and merge
+TaskOutput(task_id: "auth-id", block: true)
+TaskOutput(task_id: "api-id", block: true)
+TaskOutput(task_id: "ui-id", block: true)
+
+# 4. Merge branches
+git merge feature/auth feature/api feature/ui
+
+# 5. Cleanup
+git worktree remove ../worktrees/auth
+git worktree remove ../worktrees/api
+git worktree remove ../worktrees/ui
+```
+
+### Worktree-Aware Consensus Review
+
+When reviewing changes across worktrees:
+
+```
+1. Each worktree gets its own review cycle
+2. Cross-worktree dependencies detected via git diff
+3. Integration review after individual passes
+4. Merge conflicts flagged before human review
+```
+
+---
+
 ## Core Principles
 
 1. **Flexible Trigger, Full Traceability** - Any work trigger acceptable, all changes traceable via commit/PR metadata
 2. **Agent-Assisted, Human-Owned** - Agents propose, humans approve; AI code never ships without human sign-off
 3. **Trunk-Based, Short-Lived** - Branches <24h encouraged, squash merge only, auto-delete after merge
 4. **Consensus Before Human Review** - Multi-agent consensus gate before human reviewers engaged
-5. **contextd-First** - ReasoningBank, context folding, and remediation are first-class citizens
+5. **Learning-Enhanced** - contextd integration optional; file-based fallback when MCP unavailable
 
 ---
 
@@ -25,16 +171,47 @@ Modern agentic git workflow enforcement with multi-agent consensus review. Integ
 |-------|-------|------------|--------|
 | **Security** | Auth, injection, secrets, OWASP | Yes | 8192 |
 | **Vulnerability** | CVEs, deps, supply chain | Yes | 8192 |
-| **Code Quality** | Logic, complexity, patterns, tests | No | 8192 |
-| **Documentation** | README, comments, API docs, CHANGELOG | No | 4096 |
-| **User Persona** | UX impact, breaking changes, API ergonomics | No | 4096 |
+| **Code Quality** | Logic, complexity, patterns, tests | Yes | 8192 |
+| **Documentation** | README, comments, API docs, CHANGELOG | Yes | 4096 |
+| **User Persona** | UX impact, breaking changes, API ergonomics | Yes | 4096 |
 
 ### Consensus Rules
 
-- Security/Vulnerability agents have **veto power** on security issues
-- Other agents use **weighted majority** for their domains
+- **All agents have veto power** on findings in their domain
+- Use `--ignore-vetos` flag to override (requires justification)
 - **100% consensus** required: all Critical/High/Medium resolved
 - Low findings: auto-create issues if <3, author triage if ≥3
+
+---
+
+## contextd Integration (Optional)
+
+### When contextd MCP is Available
+
+| Feature | Tool | Benefit |
+|---------|------|---------|
+| Pre-flight search | `semantic_search`, `memory_search` | Learn from past reviews |
+| Context isolation | `branch_create`, `branch_return` | Parallel agent execution |
+| Learning capture | `memory_record`, `remediation_record` | Cross-session knowledge |
+| Checkpoints | `checkpoint_save`, `checkpoint_resume` | Resumable sessions |
+
+### When contextd is NOT Available
+
+| Feature | Fallback | Location |
+|---------|----------|----------|
+| Review findings | JSON files | `.claude/consensus-reviews/PR-XXX.json` |
+| Past patterns | Local search | Grep/Glob on previous reviews |
+| Audit trail | Markdown logs | `.claude/consensus-reviews/audit.md` |
+
+### Detection
+
+```
+# Check for contextd
+ToolSearch("contextd")
+
+# If available: use mcp__contextd__* tools
+# If not: write to .claude/consensus-reviews/
+```
 
 ---
 
@@ -42,7 +219,7 @@ Modern agentic git workflow enforcement with multi-agent consensus review. Integ
 
 ### Phase 1: Pre-Flight (ReasoningBank)
 
-**MANDATORY before starting review:**
+**Optional: If contextd available, gather additional context:**
 
 ```
 1. mcp__contextd__semantic_search(
@@ -220,8 +397,8 @@ mcp__contextd__branch_return(
 3. Identify consensus (2+ agents = higher priority)
 4. De-duplicate similar findings
 5. Apply veto rules:
-   - Security/Vuln CRITICAL/HIGH on security → BLOCK regardless
-   - Other agents → weighted majority
+   - Any agent CRITICAL/HIGH → BLOCK regardless
+   - Use `--ignore-vetos` for advisory mode only
 ```
 
 **Findings Structure:**
@@ -274,7 +451,7 @@ IF all agents APPROVE (no Critical/High/Medium, Low handled):
 
 ### Phase 5: Post-Flight (Learning Capture)
 
-**MANDATORY after review completes:**
+**With contextd (recommended for cross-session learning):**
 
 ```
 # 1. Record review outcome
@@ -333,6 +510,154 @@ mcp__contextd__checkpoint_save(
 
 ---
 
+## Task Tool Orchestration (Claude Code 2.1+)
+
+### Parallel Agent Execution
+
+Launch all reviewers simultaneously using the Task tool:
+
+```
+# Launch 5+ agents in parallel (non-blocking)
+Task(subagent_type: "fs-dev:security-reviewer", run_in_background: true)
+Task(subagent_type: "fs-dev:vulnerability-reviewer", run_in_background: true)
+Task(subagent_type: "fs-dev:code-quality-reviewer", run_in_background: true)
+Task(subagent_type: "fs-dev:documentation-reviewer", run_in_background: true)
+Task(subagent_type: "fs-dev:user-persona-reviewer", run_in_background: true)
+Task(subagent_type: "fs-dev:go-reviewer", run_in_background: true)  # if Go files
+```
+
+### Task Tool Parameters
+
+| Parameter | Required | Purpose |
+|-----------|----------|---------|
+| `subagent_type` | Yes | Agent to spawn (e.g., "fs-dev:security-reviewer") |
+| `description` | Yes | 3-5 word task summary |
+| `prompt` | Yes | Detailed instructions |
+| `run_in_background` | No | `true` for async execution |
+| `model` | No | sonnet (default), opus, haiku |
+| `resume` | No | Resume previous agent by ID |
+
+### Background vs Foreground
+
+| Mode | When to Use |
+|------|-------------|
+| Foreground (default) | Tasks <30 seconds needing immediate results |
+| Background (`run_in_background: true`) | Tasks >1 minute, parallel work |
+
+### Collecting Results
+
+```
+# Check status
+/tasks
+
+# Read output
+TaskOutput(task_id: "<id>", block: true)
+
+# Monitor live
+tail -f /path/to/task.output
+```
+
+### Task Dependencies
+
+Use `addBlockedBy` for staged reviews:
+
+```
+# Create dependent tasks
+TaskCreate(subject: "Security review", ...)  # Returns #1
+TaskCreate(subject: "Quality review", ...)   # Returns #2
+TaskCreate(subject: "Final synthesis", ...)  # Returns #3
+
+# Set dependencies
+TaskUpdate(taskId: "3", addBlockedBy: ["1", "2"])
+
+# Task #3 auto-unblocks when #1 and #2 complete
+```
+
+---
+
+## Swarm Orchestration Patterns
+
+### Multi-Agent Review Swarm
+
+Coordinate multiple agents for comprehensive review:
+
+```
+# Pattern 1: Parallel Independent Review
+Launch all agents simultaneously, aggregate results
+
+# Pattern 2: Staged Review
+Security → Quality → Documentation (each gates the next)
+
+# Pattern 3: Specialist + Generalist
+Domain expert first, generalist validates
+```
+
+### Swarm Coordination
+
+| Pattern | When to Use | Example |
+|---------|-------------|---------|
+| **Fan-out** | Independent tasks | 5 reviewers in parallel |
+| **Pipeline** | Sequential dependencies | Security → then Quality |
+| **Map-reduce** | Aggregate findings | All agents → synthesizer |
+| **Supervisor** | Complex orchestration | Orchestrator manages workers |
+
+### Agent Handoff Protocol
+
+```
+1. Agent A completes work
+2. Writes summary to shared location
+3. Notifies orchestrator via TaskOutput
+4. Orchestrator assigns to Agent B
+5. Agent B reads context, continues
+```
+
+---
+
+## Agent Lifecycle Hooks (Claude Code 2.1+)
+
+### Available Hook Events
+
+| Event | Fires When | Use Case |
+|-------|------------|----------|
+| `PreToolUse` | Before any tool executes | Validate, block, inject context |
+| `PostToolUse` | After tool completes | Log, transform output, chain actions |
+| `Stop` | Session ends | Cleanup, final reports |
+
+### Hook Configuration
+
+```json
+// hooks/hooks.json
+{
+  "hooks": [
+    {
+      "event": "PreToolUse",
+      "command": "python3 hooks/validate-commit.py",
+      "matcher": { "tool_name": "Bash", "command_pattern": "git commit" }
+    },
+    {
+      "event": "PostToolUse",
+      "command": "python3 hooks/log-findings.py",
+      "matcher": { "tool_name": "Task", "subagent_pattern": "*-reviewer" }
+    },
+    {
+      "event": "Stop",
+      "command": "python3 hooks/generate-report.py"
+    }
+  ]
+}
+```
+
+### Review Workflow Hooks
+
+| Hook | Purpose |
+|------|---------|
+| `pre-review` | Load past patterns, check prerequisites |
+| `post-agent` | Aggregate findings as each agent completes |
+| `pre-commit` | Block commits without consensus |
+| `post-review` | Record learnings, update remediations |
+
+---
+
 ## Human Review Tiers (Label-Based)
 
 After agent consensus passes, human review is required:
@@ -387,11 +712,14 @@ main (protected)
 
 | Timeline | Action |
 |----------|--------|
-| 24h | Warning notification |
-| 48h | Auto-close PR |
-| 72h | Delete branch |
+| 7 days | Warning notification |
+| 14 days | Auto-close PR |
+| 21 days | Delete branch |
 
-**Exception:** `long-running` label exempts from auto-close.
+**Exceptions:**
+- `long-running` label exempts from auto-close
+- Active worktrees auto-extend deadline
+- Agent-assigned branches get 48h extension per activity
 
 ### Merge Requirements
 
@@ -540,16 +868,18 @@ consensus:
       budget: 8192
     code_quality:
       enabled: true
-      veto_power: false
+      veto_power: true
       budget: 8192
     documentation:
       enabled: true
-      veto_power: false
+      veto_power: true
       budget: 4096
     user_persona:
       enabled: true
-      veto_power: false
+      veto_power: true
       budget: 4096
+
+  ignore_vetos: false  # Set true or use --ignore-vetos flag
 
   thresholds:
     block_on: [critical, high, medium]
@@ -597,12 +927,23 @@ agent_commits:
 
 ## Quick Reference
 
-| Phase | contextd Tools | Purpose |
-|-------|----------------|---------|
-| Pre-flight | `semantic_search`, `memory_search`, `remediation_search`, `checkpoint_save` | Context loading |
-| Review | `branch_create` (x5), `branch_status` | Isolated agent execution |
-| Collect | `branch_return` (x5) | Gather findings |
-| Post-flight | `memory_record`, `remediation_record`, `memory_feedback`, `memory_outcome`, `checkpoint_save` | Learning capture |
+### With contextd MCP
+
+| Phase | Tools | Purpose |
+|-------|-------|---------|
+| Pre-flight | `semantic_search`, `memory_search`, `remediation_search` | Context loading |
+| Review | `Task(run_in_background: true)` x5 | Parallel agents |
+| Collect | `TaskOutput(task_id, block: true)` | Gather findings |
+| Post-flight | `memory_record`, `remediation_record` | Learning capture |
+
+### Without contextd (File Fallback)
+
+| Phase | Action | Location |
+|-------|--------|----------|
+| Pre-flight | Grep previous reviews | `.claude/consensus-reviews/` |
+| Review | `Task(run_in_background: true)` x5 | Same parallel agents |
+| Collect | `TaskOutput(task_id, block: true)` | Same collection |
+| Post-flight | Write JSON | `.claude/consensus-reviews/PR-XXX.json` |
 
 ---
 
@@ -610,10 +951,10 @@ agent_commits:
 
 | Mistake | Prevention |
 |---------|------------|
-| Skipping pre-flight memory search | Protocol violation - always search first |
+| Skipping pre-flight search (when contextd available) | Search first for past patterns |
 | Not using context folding for agents | Agents MUST run in isolated branches |
 | Forgetting post-flight learning capture | Record outcomes for every review |
-| Ignoring veto power | Security/Vuln vetoes are non-negotiable |
+| Ignoring veto power | All agent vetoes are non-negotiable (unless `--ignore-vetos`) |
 | Not creating issues for Low findings | All findings must be tracked |
 | Skipping remediation_record for novel issues | Novel patterns must be captured |
 

@@ -13,9 +13,17 @@ Generate a token-efficient executive summary of competitor analysis, output dire
 
 ## Execution
 
-**Agent:** `contextd:contextd-task-executor`
-**Context Folding:** Yes - minimize token usage
+**Agent:** Direct execution
+**Context Folding:** If contextd available
 **Output:** Terminal only (no files written)
+
+## Contextd Integration (Optional)
+
+If contextd MCP is available:
+- `branch_create/return` for token-efficient processing
+
+If contextd is NOT available:
+- Process analysis inline (still works)
 
 ## Workflow
 
@@ -44,8 +52,9 @@ ELSE:
      → Exit gracefully
 ```
 
-### Phase 2: Context-Folded Analysis
+### Phase 2: Analysis
 
+**If contextd_available:** Create context branch for efficiency
 ```
 mcp__contextd__branch_create(
   session_id: "<session>",

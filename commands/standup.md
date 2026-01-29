@@ -51,8 +51,20 @@ Runs automatically at 9:00 AM UTC, Monday-Friday.
 ## Execution
 
 **Skill:** `product-owner`
-**Context Folding:** Yes - isolate GitHub queries
+**Context Folding:** If contextd available
 **Output:** Prioritized work list with recommendations
+
+## Contextd Integration (Optional)
+
+If contextd MCP is available:
+- Load previous checkpoint for "yesterday" context
+- Search memories for blockers and carried-over items
+- Save checkpoint after standup
+
+If contextd is NOT available:
+- Query GitHub only (no cross-session history)
+- No checkpoint persistence
+- Standup still functional, just stateless
 
 ## Workflow
 
@@ -62,30 +74,24 @@ Runs automatically at 9:00 AM UTC, Monday-Friday.
 1. Derive project_id from git remote:
    project_id = git remote get-url origin | extract "owner/repo"
 
-2. Load yesterday's checkpoint:
-   mcp__contextd__checkpoint_list(
-     project_path: ".",
-     limit: 1
-   )
-   -> Get most recent checkpoint
+2. Check contextd availability:
+   - Look for mcp__contextd__* tools
+   - Set contextd_available = true/false
 
-3. If checkpoint exists, resume at summary level:
-   mcp__contextd__checkpoint_resume(
-     checkpoint_id: "<id>",
-     tenant_id: "<tenant>",
-     level: "summary"
-   )
+3. If contextd_available:
+   - Load yesterday's checkpoint:
+     mcp__contextd__checkpoint_list(project_path: ".", limit: 1)
+   - If checkpoint exists, resume at summary level
+   - Search memories for blockers/priorities
 
-4. Search for relevant memories:
-   mcp__contextd__memory_search(
-     project_id: "<project>",
-     query: "standup blockers priorities carried over",
-     limit: 5
-   )
+4. If NOT contextd_available:
+   - Skip to Phase 2 (GitHub queries only)
+   - Note: "No cross-session context (contextd unavailable)"
 ```
 
 ### Phase 2: Query GitHub State
 
+**If contextd_available:** Create isolated branch
 ```
 mcp__contextd__branch_create(
   session_id: "<session>",
@@ -94,7 +100,9 @@ mcp__contextd__branch_create(
 )
 ```
 
-Query via GitHub MCP:
+**If NOT contextd_available:** Run directly without isolation.
+
+Query via GitHub MCP (or gh CLI):
 
 ```
 1. Open PRs:
@@ -131,6 +139,7 @@ Query via GitHub MCP:
    -> Flag branches with no recent activity (>24h no PR)
 ```
 
+**If contextd_available:**
 ```
 mcp__contextd__branch_return(
   branch_id: "<branch>",
@@ -236,8 +245,9 @@ Recommendations:
 
 See `.github/workflows/daily-standup.yml` for automated org-wide standups posted to GitHub Discussions. This replaces the CLI `--platform` flag with a proper scheduled workflow.
 
-### Phase 6: Save Checkpoint
+### Phase 6: Persist State (Optional)
 
+**If contextd_available:**
 ```
 mcp__contextd__checkpoint_save(
   session_id: "<session>",
@@ -245,27 +255,22 @@ mcp__contextd__checkpoint_save(
   name: "standup-<date>",
   description: "Daily standup for <date>",
   summary: "CRIT:<n> HIGH:<m> MED:<k>. Focus: <top priority>",
-  context: "PRs: <list>. Issues: <list>. Blockers: <list>",
-  full_state: "<complete standup output>",
-  token_count: <estimate>,
-  threshold: 0.0,
-  auto_created: false
+  ...
 )
 ```
 
-### Phase 7: Record Memory (if notable)
-
-If blockers detected or patterns emerging:
-
+**If blockers detected and contextd_available:**
 ```
 mcp__contextd__memory_record(
   project_id: "<project>",
   title: "Standup blocker: <description>",
-  content: "Blocked on <item> since <date>. Impact: <description>",
-  outcome: "failure",
-  tags: ["standup", "blocker"]
+  ...
 )
 ```
+
+**If NOT contextd_available:**
+- Skip checkpoint/memory (standup is stateless)
+- Terminal output is the only record
 
 ## Org-Wide Standup (GitHub Actions)
 

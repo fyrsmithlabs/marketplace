@@ -67,21 +67,11 @@ Analyze all changes from a user perspective:
 
 ## Pre-Review Protocol
 
-Before analyzing, adopt the user perspective:
-
-```
-1. mcp__contextd__memory_search(
-     project_id: "<project>",
-     query: "user experience API ergonomics"
-   )
-   -> Load past UX learnings
-
-2. Review public interfaces:
-   - Exported functions/classes
-   - Configuration schemas
-   - Error types
-   - CLI arguments
-```
+Review public interfaces from user perspective:
+- Exported functions/classes
+- Configuration schemas
+- Error types
+- CLI arguments
 
 ## Output Format
 
@@ -177,16 +167,3 @@ Error [E1042]: Configuration file 'config.yaml' not found.
 4. **Discoverability** - Easy to explore and learn
 5. **Consistency** - Similar things work similarly
 
-## Integration Notes
-
-UX insights are valuable for project memory:
-
-```
-mcp__contextd__memory_record(
-  project_id: "<project>",
-  title: "UX pattern: [description]",
-  content: "Users expect [behavior]. Current implementation [does X].",
-  outcome: "success",
-  tags: ["user-experience", "ergonomics"]
-)
-```

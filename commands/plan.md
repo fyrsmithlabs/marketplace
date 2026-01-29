@@ -19,9 +19,21 @@ Unified planning command that orchestrates the full workflow from idea to implem
 
 ## Execution
 
-**Agent:** `contextd:contextd-task-executor`
-**Context Folding:** Yes - isolate complexity assessment
+**Agent:** Task tool or direct execution
+**Context Folding:** If contextd available
 **Output:** GitHub Issues + worktree (optional)
+
+## Contextd Integration (Optional)
+
+If contextd MCP is available:
+- `memory_search` for past plans
+- `branch_create/return` for isolated phases
+- `memory_record` for plan outcomes
+
+If contextd is NOT available:
+- Skip memory search (fresh context)
+- Run phases inline without isolation
+- Still creates GitHub Issues and worktrees
 
 ## Usage
 
@@ -41,13 +53,16 @@ Unified planning command that orchestrates the full workflow from idea to implem
 ### Phase 1: Pre-Flight
 
 ```
-1. mcp__contextd__memory_search(
+1. Check contextd availability (look for mcp__contextd__* tools)
+
+2. If contextd_available:
+   mcp__contextd__memory_search(
      project_id: "<project>",
      query: "planning <topic>"
    )
    → Load relevant past plans
 
-2. If --discover-first (MANDATORY when flag present):
+3. If --discover-first (MANDATORY when flag present):
    a. Run discovery analysis:
       mcp__contextd__branch_create(
         session_id: "<session>",
