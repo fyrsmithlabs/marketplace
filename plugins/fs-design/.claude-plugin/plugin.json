@@ -1,7 +1,6 @@
 {
   "name": "fs-design",
   "version": "1.0.0",
-  "category": "design",
   "description": "Terminal Elegance design system compliance checking for FyrsmithLabs products. Audits CSS, templates, and documentation for hardcoded values, accessibility issues, and brand consistency.",
   "author": {
     "name": "fyrsmithlabs"
