@@ -311,6 +311,18 @@ Examples:
   fyrsmithlabs/marketplace/fs-dev/skills
 \`\`\`
 
+### ID Format Requirements (contextd v1.5+)
+
+**IMPORTANT**: \`tenant_id\` and \`project_id\` must be lowercase alphanumeric with underscores:
+- **Valid**: \`my_project\`, \`contextd\`, \`org123\`, \`fyrsmithlabs_marketplace\`
+- **Invalid**: \`My-Project\`, \`org/repo\`, \`project..name\`
+- **Length**: 1-64 characters
+
+When deriving IDs from git remotes:
+- Replace hyphens with underscores: \`my-project\` → \`my_project\`
+- Remove invalid characters (slashes, dots)
+- Convert to lowercase
+
 ### Setup Namespace Detection
 
 Setup auto-detects namespace from:

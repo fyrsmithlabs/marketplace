@@ -24,6 +24,18 @@ Before using any contextd tools, verify availability:
 | `Connection refused on port 9090` | Server not running | Run `contextd serve` |
 | `Tenant not found` | First use | Will auto-create |
 
+### Input Validation Errors
+
+contextd v1.5+ enforces strict input validation. Common errors:
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `invalid project_path: path contains directory traversal` | Path contains `../` | Use absolute paths or paths within project |
+| `invalid tenant_id: must be lowercase alphanumeric with underscores` | Invalid characters in ID | Use format: `my_project`, `org123` (1-64 chars) |
+| `invalid project_id: must be lowercase alphanumeric with underscores` | Invalid characters in ID | Same as tenant_id format |
+| `invalid include_patterns: contains dangerous characters` | Shell injection chars in glob | Remove `;`, `\|`, `` ` ``, `$` from patterns |
+| `invalid patterns: excessive wildcards` | Pattern like `***` | Use standard globs: `*`, `**`, `*.go` |
+
 ---
 
 ## Pre-Flight Protocol (MANDATORY)
@@ -71,6 +83,13 @@ curl -s http://localhost:9090/health | jq
 | **2nd** | `memory_search` | Have I solved this before? |
 | **3rd** | Read/Grep/Glob | Fallback for exact matches only |
 
+### Path Validation (contextd v1.5+)
+
+All tools accepting `project_path` validate paths before use:
+- **No directory traversal**: Paths containing `../` are rejected
+- **Affected tools**: `semantic_search`, `repository_index`, `repository_search`, `reflect_report`
+- **Use absolute paths** or paths within the current project directory
+
 ## The Learning Loop
 
 ```
@@ -93,6 +112,14 @@ curl -s http://localhost:9090/health | jq
 **Tenant ID**: Derived from git remote (e.g., `github.com/fyrsmithlabs/contextd` -> `fyrsmithlabs`). Verify with: `git remote get-url origin | sed 's|.*github.com[:/]\([^/]*\).*|\1|'`
 
 **Project ID**: Scopes memories. Use repository name (e.g., `contextd`) or `org_repo` format for multi-org.
+
+### ID Format Requirements (contextd v1.5+)
+
+Both `tenant_id` and `project_id` must follow this format:
+- **Characters**: Lowercase alphanumeric and underscores only (`a-z`, `0-9`, `_`)
+- **Length**: 1-64 characters
+- **Valid**: `my_project`, `contextd`, `org123`, `fyrsmithlabs_marketplace`
+- **Invalid**: `My-Project` (uppercase, hyphen), `org/repo` (slash), `project..name` (dots)
 
 **Confidence**: Memories have scores (0-1) that adjust via feedback. Higher = ranks first.
 

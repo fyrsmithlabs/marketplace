@@ -299,3 +299,19 @@ Top findings:
 | Codebase too complex | Break into sections, analyze incrementally |
 | Conversation parsing fails | Log error, continue with remaining files |
 | CLAUDE.md already exists | Ask user if they want to regenerate or enhance |
+
+### Input Validation Errors (contextd v1.5+)
+
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| `invalid project_path: path contains directory traversal` | Path contains `../` | Use absolute paths or paths within project |
+| `invalid tenant_id: must be lowercase alphanumeric with underscores` | Git remote produced invalid ID | Transform: replace hyphens with underscores, lowercase |
+| `invalid project_id: must be lowercase alphanumeric with underscores` | Repository name has invalid chars | Transform: `my-project` → `my_project` |
+| `invalid include_patterns: contains dangerous characters` | Shell chars in glob patterns | Remove `;`, `\|`, `` ` ``, `$` from patterns |
+
+**ID Transformation Example:**
+```
+Git remote: github.com/My-Org/my-project
+Tenant ID: my_org (lowercase, hyphen → underscore)
+Project ID: my_project (lowercase, hyphen → underscore)
+```

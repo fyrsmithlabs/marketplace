@@ -171,6 +171,29 @@ Why: Captures changes for semantic search, updates branch metadata.
 | Not recording before `/clear` | Call `memory_record` first |
 | Skipping error diagnosis | `troubleshoot_diagnose` first, always |
 
+## Input Validation (contextd v1.5+)
+
+### ID Format Requirements
+
+`tenant_id` and `project_id` must be lowercase alphanumeric with underscores:
+- **Valid**: `my_project`, `contextd`, `org123`
+- **Invalid**: `My-Project`, `org/repo`, `project..name`
+- **Length**: 1-64 characters
+
+### Path Validation
+
+All `project_path` parameters are validated:
+- No directory traversal (`../` is rejected)
+- Use absolute paths or paths within the current project
+
+### Validation Errors
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `invalid tenant_id` | Invalid characters | Use lowercase, underscores only |
+| `invalid project_path` | Directory traversal | Use absolute or relative-to-project paths |
+| `invalid patterns` | Shell injection chars | Remove `;`, `\|`, `` ` ``, `$` |
+
 ---
 
 ## Checkpoint Compression (Deltas)
