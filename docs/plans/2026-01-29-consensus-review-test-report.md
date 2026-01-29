@@ -32,6 +32,29 @@ Budget allocation:
 
 **Command:** `/consensus-review agents/security-reviewer.md agents/vulnerability-reviewer.md agents/code-quality-reviewer.md`
 
+**Runtime Test Results:**
+```
+Verdict: APPROVED (no vetoes exercised)
+
+┌────────────────┬─────────────────┬────┬────┬────┬────┬──────────┐
+│ Agent          │ Verdict         │ C  │ H  │ M  │ L  │ Coverage │
+├────────────────┼─────────────────┼────┼────┼────┼────┼──────────┤
+│ Security       │ APPROVE         │ 0  │ 0  │ 0  │ 2  │ 100%     │
+│ Vulnerability  │ APPROVE         │ 0  │ 0  │ 3  │ 2  │ 100%     │
+│ Code Quality   │ REQUEST_CHANGES │ 0  │ 1  │ 3  │ 3  │ 100%     │
+│ Documentation  │ REQUEST_CHANGES │ 0  │ 0  │ 3  │ 3  │ 100%     │
+│ User Persona   │ REQUEST_CHANGES │ 0  │ 0  │ 3  │ 3  │ 100%     │
+├────────────────┼─────────────────┼────┼────┼────┼────┼──────────┤
+│ Total          │                 │ 0  │ 1  │ 12 │ 13 │          │
+└────────────────┴─────────────────┴────┴────┴────┴────┴──────────┘
+
+Key Observations:
+- All agents completed at 100% coverage (no budget exhaustion)
+- Shared mode confirmed (scope < 16K tokens)
+- No vetoes exercised despite REQUEST_CHANGES verdicts
+```
+**Status:** ✅ PASSED
+
 ---
 
 ### 2. Medium Scope (Scaled Budgets)
@@ -61,6 +84,31 @@ Budget allocation:
 - [x] Scaled budgets prevent exhaustion
 
 **Command:** `/consensus-review skills/`
+
+**Runtime Test Results (3 SKILL.md files: init, yagni, context-folding - ~55KB):**
+```
+Verdict: APPROVED (no vetoes exercised)
+
+┌────────────────┬─────────────────┬────┬────┬────┬────┬──────────┐
+│ Agent          │ Verdict         │ C  │ H  │ M  │ L  │ Coverage │
+├────────────────┼─────────────────┼────┼────┼────┼────┼──────────┤
+│ Security       │ APPROVE         │ 0  │ 0  │ 1  │ 3  │ 100%     │
+│ Vulnerability  │ APPROVE         │ 0  │ 0  │ 1  │ 3  │ 100%     │
+│ Code Quality   │ REQUEST_CHANGES │ 0  │ 2  │ 5  │ 3  │ 100%     │
+│ Documentation  │ REQUEST_CHANGES │ 0  │ 0  │ 3  │ 3  │ 100%     │
+│ User Persona   │ REQUEST_CHANGES │ 0  │ 0  │ 4  │ 3  │ 100%     │
+├────────────────┼─────────────────┼────┼────┼────┼────┼──────────┤
+│ Total          │                 │ 0  │ 2  │ 14 │ 15 │          │
+└────────────────┴─────────────────┴────┴────┴────┴────┴──────────┘
+
+Key Observations:
+- All agents completed at 100% coverage (larger scope, still no budget exhaustion)
+- Shared mode confirmed (scope ~13,800 tokens, < 16K threshold)
+- Budget scale factor applied: 1.84x
+- Code quality found 2 HIGH findings about skill complexity
+- No vetoes exercised despite multiple REQUEST_CHANGES verdicts
+```
+**Status:** ✅ PASSED
 
 ---
 
@@ -185,8 +233,8 @@ per_agent_budget = base_budget[agent] * scale
 
 | Scenario | Status | Notes |
 |----------|--------|-------|
-| Small scope (shared) | ✅ Verified | Documentation complete |
-| Medium scope (scaled) | ✅ Verified | Documentation complete |
+| Small scope (shared) | ✅ PASSED | Runtime test complete - 100% coverage, no budget exhaustion |
+| Medium scope (scaled) | ✅ PASSED | Runtime test complete - 100% coverage, scaled budgets working |
 | Large scope (branch) | ✅ Verified | Documentation complete |
 | Partial results | ✅ Verified | Schema and protocol documented |
 | contextd fallback | ✅ Verified | Fallback behavior documented |
