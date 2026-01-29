@@ -207,9 +207,9 @@ git commit -m "feat: add user authentication"
 ```
 marketplace/
 ├── .claude-plugin/           # Plugin manifests (plugin.json, marketplace.json)
-├── commands/                 # Slash commands (22 total)
-├── agents/                   # Subagents (9 total)
-├── skills/                   # Skills (17 total)
+├── commands/                 # Slash commands (23 total)
+├── agents/                   # Subagents (18 total)
+├── skills/                   # Skills (19 total)
 ├── plugins/                  # Additional plugins
 │   ├── contextd/             # Cross-session memory plugin
 │   └── fs-design/            # Design system plugin

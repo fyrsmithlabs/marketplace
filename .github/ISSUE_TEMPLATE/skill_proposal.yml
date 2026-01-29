@@ -1,0 +1,99 @@
+name: Skill Proposal
+description: Propose a new skill for the marketplace
+labels: ["type:feature", "skill"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Skill Proposal
+        Propose a new skill for the marketplace.
+
+  - type: input
+    id: name
+    attributes:
+      label: Skill Name
+      description: Proposed name (kebab-case)
+      placeholder: "my-skill-name"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: plugin
+    attributes:
+      label: Target Plugin
+      description: Which plugin should contain this skill?
+      options:
+        - fs-dev
+        - contextd
+        - fs-design
+        - New plugin
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What does this skill do?
+      placeholder: This skill helps users...
+    validations:
+      required: true
+
+  - type: textarea
+    id: triggers
+    attributes:
+      label: Trigger Phrases
+      description: When should this skill activate?
+      placeholder: |
+        - "create widget"
+        - "add component"
+        - "setup feature"
+    validations:
+      required: true
+
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Workflow
+      description: What steps does the skill perform?
+      placeholder: |
+        1. First, the skill...
+        2. Then it...
+        3. Finally...
+
+  - type: textarea
+    id: tools
+    attributes:
+      label: Tools Required
+      description: What tools/capabilities does this skill need?
+      placeholder: |
+        - Read/Write files
+        - GitHub CLI
+        - contextd MCP
+
+  - type: checkboxes
+    id: integration
+    attributes:
+      label: Integration
+      options:
+        - label: Requires contextd integration
+        - label: Requires GitHub integration
+        - label: Standalone skill
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Usage Examples
+      description: Show how this skill would be used
+      placeholder: |
+        User: "Create a new widget"
+        Skill: [workflow steps]
+        Result: [expected output]
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I'm willing to implement this skill
+        - label: I need help implementing this
