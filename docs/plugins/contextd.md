@@ -4,51 +4,52 @@
 **Category**: Memory
 **Author**: fyrsmithlabs
 
-Cross-session memory and learning for Claude Code. Provides semantic search, memory recording, checkpoints, error remediation, and multi-agent orchestration via the contextd MCP server.
+---
+
+> ## ⚠️ REQUIRED: MCP Server Installation
+>
+> **The contextd plugin CANNOT function without the contextd MCP server.**
+>
+> Before using ANY contextd features, you MUST complete the [Quick Setup](#quick-setup) below.
+> Without the MCP server, all `/contextd:*` commands will fail with "Unknown tool" errors.
+>
+> **Setup time: ~2 minutes**
 
 ---
 
-## Table of Contents
+## Quick Setup
 
-- [Prerequisites](#prerequisites)
-- [MCP Server Setup](#mcp-server-setup)
-- [Skills](#skills)
-- [Agents](#agents)
-- [Commands](#commands)
-- [Tool Reference](#tool-reference)
-- [Core Concepts](#core-concepts)
-- [Quick Start](#quick-start)
-- [Error Handling](#error-handling)
+Choose ONE installation method:
 
----
+### Option A: One-Command Setup (Recommended)
 
-## Prerequisites
+```bash
+# Step 1: Install contextd binary
+go install github.com/fyrsmithlabs/contextd@v1.5.0
 
-The contextd plugin **requires** the contextd MCP server to be installed and running.
+# Step 2: Add to Claude Code (this configures .mcp.json automatically)
+claude mcp add contextd -- contextd --mcp --no-http
 
-### Requirements
+# Step 3: Restart Claude Code, then verify
+/contextd:status
+```
 
-1. **contextd binary** - Install via Homebrew, binary download, or Docker
-2. **MCP configuration** - Claude Code must be configured to connect to contextd
-3. **Git repository** - Tenant ID is derived from git remote URL
+### Option B: Manual Configuration
 
-### Verification
+**Step 1: Install the contextd binary**
 
-Before using contextd tools, verify availability:
+```bash
+# macOS/Linux with Go 1.21+
+go install github.com/fyrsmithlabs/contextd@v1.5.0
 
-1. Check for `mcp__contextd__*` tools (use ToolSearch if needed)
-2. If tools are NOT available:
-   - Inform user: "contextd MCP server not configured"
-   - Suggest: "Run `/contextd:init` to configure contextd"
-   - Alternative: Use standard Read/Grep/Glob (no cross-session memory)
+# Verify installation
+contextd --version
+# Expected: contextd v1.5.0 or higher
+```
 
----
+**Step 2: Configure Claude Code MCP**
 
-## MCP Server Setup
-
-### Configuration
-
-Add to your Claude Code MCP configuration (`.mcp.json`):
+Create or edit `.mcp.json` in your project root:
 
 ```json
 {
@@ -62,44 +63,120 @@ Add to your Claude Code MCP configuration (`.mcp.json`):
 }
 ```
 
-### Starting the Server
+**Step 3: Restart Claude Code**
+
+Close and reopen Claude Code to load the MCP configuration.
+
+**Step 4: Verify Installation**
 
 ```bash
-# Start with MCP mode (stdio)
-contextd --mcp --no-http
+# In Claude Code, run:
+/contextd:status
 
-# Or start with HTTP endpoints for health monitoring
-contextd serve
+# Expected output:
+# ✓ contextd MCP server connected
+# ✓ Tenant: <your-org>
+# ✓ Project: <your-repo>
 ```
 
-### Health Monitoring (HTTP Mode)
+---
 
-When running with HTTP, contextd exposes health endpoints:
+## Troubleshooting Setup
 
-| Endpoint | Purpose | Status Codes |
-|----------|---------|--------------|
-| `GET /health` | Basic health with metadata summary | 200 OK, 503 Degraded |
-| `GET /api/v1/health/metadata` | Detailed per-collection status | 200 OK |
+### "Unknown tool: mcp__contextd__*"
+
+**Cause:** MCP server not configured or Claude Code not restarted.
+
+**Fix:**
+1. Verify `.mcp.json` exists and contains contextd config
+2. Restart Claude Code completely (not just the terminal)
+3. Run `/contextd:status` to verify
+
+### "contextd: command not found"
+
+**Cause:** contextd binary not installed or not in PATH.
+
+**Fix:**
+```bash
+# Check if installed
+which contextd
+
+# If not found, install:
+go install github.com/fyrsmithlabs/contextd@v1.5.0
+
+# Verify Go bin is in PATH
+echo $PATH | grep -q "$(go env GOPATH)/bin" && echo "OK" || echo "Add $(go env GOPATH)/bin to PATH"
+```
+
+### "Connection refused" or timeout errors
+
+**Cause:** MCP mode uses stdio, not HTTP. This error typically means wrong configuration.
+
+**Fix:** Ensure your `.mcp.json` uses these exact args:
+```json
+"args": ["--mcp", "--no-http"]
+```
+
+### Still not working?
+
+1. Check Claude Code logs: `claude --debug`
+2. Test contextd directly: `contextd --mcp --no-http` (should wait for input)
+3. File an issue: [fyrsmithlabs/contextd](https://github.com/fyrsmithlabs/contextd/issues)
+
+---
+
+## What is contextd?
+
+Cross-session memory and learning for Claude Code. Unlike standard Claude Code which starts fresh each session, contextd enables:
+
+| Feature | Without contextd | With contextd |
+|---------|------------------|---------------|
+| Remember past solutions | ❌ Lost each session | ✓ Searchable memory |
+| Learn from errors | ❌ Repeat mistakes | ✓ Remediation database |
+| Resume interrupted work | ❌ Start over | ✓ Checkpoints |
+| Search code semantically | ❌ Grep only | ✓ AI-powered search |
+| Complex multi-task work | ❌ Context overflow | ✓ Context folding |
+
+---
+
+## First Steps After Setup
+
+Once `/contextd:status` shows connected:
 
 ```bash
-# Check health
-curl -s http://localhost:9090/health | jq
-# {"status":"ok","metadata":{"status":"healthy","healthy_count":22,"corrupt_count":0}}
+# 1. Initialize contextd for this project
+/contextd:init --full
+
+# 2. Search for existing memories (may be empty on first use)
+/contextd:search <topic>
+
+# 3. After completing work, record what you learned
+/contextd:remember
+
+# 4. Before ending session, save a checkpoint
+/contextd:checkpoint
 ```
 
-### Common Errors
+---
 
-| Error | Meaning | Fix |
-|-------|---------|-----|
-| `Unknown tool: mcp__contextd__*` | MCP not configured | Run `/contextd:init` |
-| `Connection refused on port 9090` | Server not running | Run `contextd serve` |
-| `Tenant not found` | First use | Will auto-create |
+## Table of Contents
+
+- [Quick Setup](#quick-setup)
+- [Troubleshooting Setup](#troubleshooting-setup)
+- [What is contextd?](#what-is-contextd)
+- [Skills](#skills)
+- [Agents](#agents)
+- [Commands](#commands)
+- [Tool Reference](#tool-reference)
+- [Core Concepts](#core-concepts)
+- [Error Handling](#error-handling)
+- [Advanced Configuration](#advanced-configuration)
 
 ---
 
 ## Skills
 
-Skills are activated automatically based on context or can be referenced with `@contextd:<skill-name>`.
+Skills activate automatically based on context or can be referenced with `@contextd:<skill-name>`.
 
 | Skill | Purpose | Triggers |
 |-------|---------|----------|
@@ -188,7 +265,7 @@ Includes causal chain analysis, comparative benchmarks, and behavioral predictio
 
 ## Agents
 
-Agents are specialized sub-agents that can be dispatched for complex tasks.
+Agents are specialized sub-agents for complex tasks.
 
 | Agent | Capabilities |
 |-------|--------------|
@@ -219,35 +296,28 @@ Agents are specialized sub-agents that can be dispatched for complex tasks.
 
 Commands are invoked with `/contextd:<command>`.
 
-| Command | Purpose | Example Usage |
-|---------|---------|---------------|
-| `/contextd:search <query>` | Search across memories, remediations, and code | `/contextd:search authentication patterns` |
-| `/contextd:remember` | Record a learning or insight from current session | `/contextd:remember` (prompts for details) |
-| `/contextd:checkpoint` | Save a checkpoint of current session state | `/contextd:checkpoint` (auto-generates summary) |
-| `/contextd:diagnose <error>` | Diagnose an error using AI analysis and past fixes | `/contextd:diagnose "ENOENT: no such file"` |
-| `/contextd:status` | Show contextd status for current project | `/contextd:status` |
-| `/contextd:init [flags]` | Initialize contextd for a project | `/contextd:init --full --conversations` |
-| `/contextd:reflect [flags]` | Analyze behavior patterns and improve docs | `/contextd:reflect --health` |
-| `/contextd:consensus-review <path>` | Run multi-agent code review | `/contextd:consensus-review ./internal/api/` |
-| `/contextd:orchestrate [issues]` | Execute multi-task orchestration | `/contextd:orchestrate 42,43,44` |
-| `/contextd:help` | List all available skills and commands | `/contextd:help` |
+| Command | Purpose | Example |
+|---------|---------|---------|
+| `/contextd:status` | Check connection status | `/contextd:status` |
+| `/contextd:init [flags]` | Initialize contextd for project | `/contextd:init --full` |
+| `/contextd:search <query>` | Search memories, remediations, code | `/contextd:search auth patterns` |
+| `/contextd:remember` | Record a learning from session | `/contextd:remember` |
+| `/contextd:checkpoint` | Save session state | `/contextd:checkpoint` |
+| `/contextd:diagnose <error>` | AI-powered error diagnosis | `/contextd:diagnose "ENOENT"` |
+| `/contextd:reflect [flags]` | Analyze behavior patterns | `/contextd:reflect --health` |
+| `/contextd:consensus-review <path>` | Multi-agent code review | `/contextd:consensus-review ./api/` |
+| `/contextd:orchestrate [issues]` | Execute multi-task work | `/contextd:orchestrate 42,43,44` |
+| `/contextd:help` | List all commands | `/contextd:help` |
 
-### Command Details
-
-#### /contextd:search
-
-Combines results from three sources:
-- **Code**: `semantic_search` with auto grep fallback
-- **Memories**: `memory_search` for past learnings
-- **Remediations**: `remediation_search` for error fix patterns
+### Command Flags
 
 #### /contextd:init
 
 | Flag | Description |
 |------|-------------|
-| `--full` | Run full onboarding: analyze codebase, generate CLAUDE.md |
+| `--full` | Analyze codebase, generate CLAUDE.md |
 | `--conversations` | Index past Claude Code conversations |
-| `--batch` | Process offline via CLI (no context cost) |
+| `--batch` | Process offline via CLI |
 | `--skip-claude-md` | Skip CLAUDE.md generation |
 
 #### /contextd:reflect
@@ -259,15 +329,15 @@ Combines results from three sources:
 | `--apply` | Apply changes with tiered defaults |
 | `--scope=project\|global` | Limit to project or global docs |
 | `--behavior=<type>` | Filter by behavior type |
-| `--severity=CRITICAL\|HIGH\|MEDIUM\|LOW` | Filter by severity level |
-| `--since=<duration>` | Analyze memories from timeframe (e.g., `7d`) |
+| `--severity=CRITICAL\|HIGH\|MEDIUM\|LOW` | Filter by severity |
+| `--since=<duration>` | Timeframe (e.g., `7d`) |
 
 #### /contextd:orchestrate
 
 | Argument | Description |
 |----------|-------------|
 | `issues` | Comma-separated issue numbers or epic number |
-| `--review-threshold` | `strict` (100%), `standard` (no vetoes), `advisory` (report only) |
+| `--review-threshold` | `strict` / `standard` / `advisory` |
 | `--resume` | Resume from checkpoint name |
 
 ---
@@ -280,18 +350,18 @@ Low-level MCP tools available via `mcp__contextd__*`:
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `semantic_search` | Smart code search with semantic understanding + grep fallback | `query`, `project_path`, `limit` |
-| `repository_index` | Index repository for semantic search | `path` |
-| `repository_search` | Search over indexed code | `query`, `project_path`, `limit` |
+| `semantic_search` | Smart code search + grep fallback | `query`, `project_path`, `limit` |
+| `repository_index` | Index repository | `path` |
+| `repository_search` | Search indexed code | `query`, `project_path`, `limit` |
 
 ### Memory Tools
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `memory_search` | Find relevant past strategies | `project_id`, `query`, `limit` |
-| `memory_record` | Save new memory explicitly | `project_id`, `title`, `content`, `outcome`, `tags` |
-| `memory_feedback` | Rate memory helpfulness (adjusts confidence) | `memory_id`, `helpful` |
-| `memory_outcome` | Report task success/failure after using a memory | `memory_id`, `outcome` |
+| `memory_search` | Find past strategies | `project_id`, `query`, `limit` |
+| `memory_record` | Save new memory | `project_id`, `title`, `content`, `outcome`, `tags` |
+| `memory_feedback` | Rate memory helpfulness | `memory_id`, `helpful` |
+| `memory_outcome` | Report task result | `memory_id`, `outcome` |
 | `memory_consolidate` | Merge similar memories | `similarity_threshold` |
 
 ### Checkpoint Tools
@@ -299,7 +369,7 @@ Low-level MCP tools available via `mcp__contextd__*`:
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `checkpoint_save` | Save context snapshot | `session_id`, `tenant_id`, `project_path`, `name`, `summary`, `context` |
-| `checkpoint_list` | List available checkpoints | `tenant_id`, `project_path`, `limit` |
+| `checkpoint_list` | List checkpoints | `tenant_id`, `project_path`, `limit` |
 | `checkpoint_resume` | Resume from checkpoint | `checkpoint_id`, `tenant_id`, `level` |
 
 Resume levels: `summary` (minimal), `context` (balanced), `full` (complete)
@@ -310,7 +380,7 @@ Resume levels: `summary` (minimal), `context` (balanced), `full` (complete)
 |------|---------|----------------|
 | `remediation_search` | Find error fix patterns | `query`, `tenant_id`, `limit` |
 | `remediation_record` | Record new fix | `title`, `problem`, `root_cause`, `solution`, `category`, `tenant_id`, `scope` |
-| `troubleshoot_diagnose` | AI-powered error diagnosis | `error_message`, `error_context` |
+| `troubleshoot_diagnose` | AI error diagnosis | `error_message`, `error_context` |
 
 Categories: `syntax`, `runtime`, `logic`, `config`, `dependency`, `network`, `auth`, `data`, `performance`
 
@@ -318,9 +388,9 @@ Categories: `syntax`, `runtime`, `logic`, `config`, `dependency`, `network`, `au
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `branch_create` | Create isolated context branch with token budget | `session_id`, `description`, `prompt`, `budget` |
-| `branch_return` | Return from branch with scrubbed results | `branch_id`, `message` |
-| `branch_status` | Get branch status and budget usage | `branch_id` |
+| `branch_create` | Create isolated context branch | `session_id`, `description`, `prompt`, `budget` |
+| `branch_return` | Return from branch | `branch_id`, `message` |
+| `branch_status` | Get branch status | `branch_id` |
 
 ### Reflection Tools
 
@@ -337,16 +407,15 @@ Categories: `syntax`, `runtime`, `logic`, `config`, `dependency`, `network`, `au
 
 Derived from git remote URL. Example: `github.com/fyrsmithlabs/contextd` -> `fyrsmithlabs`
 
-Verify with:
 ```bash
 git remote get-url origin | sed 's|.*github.com[:/]\([^/]*\).*|\1|'
 ```
 
 ### Project ID
 
-Scopes memories to a specific project. Use repository name (e.g., `contextd`) or `org/repo` format for multi-org setups.
+Scopes memories to a specific project. Use repository name or `org/repo` format.
 
-Hierarchical namespaces supported:
+Hierarchical namespaces:
 ```
 <org>/<team>/<project>/<module>
 
@@ -366,14 +435,14 @@ Memories have confidence scores (0-1) that:
 
 | Type | Purpose | Default TTL |
 |------|---------|-------------|
-| `learning` | General knowledge gained | 180 days |
+| `learning` | General knowledge | 180 days |
 | `remediation` | Error -> fix mappings | 365 days |
 | `decision` | ADR/architecture choices | Never |
 | `failure` | What NOT to do | 365 days |
 | `pattern` | Reusable code patterns | 180 days |
 | `policy` | STRICT constraints | Never |
 
-Tag memories with type: `tags: ["type:learning", "category:testing"]`
+Tag memories: `tags: ["type:learning", "category:testing"]`
 
 ### The Learning Loop
 
@@ -394,64 +463,29 @@ Tag memories with type: `tags: ["type:learning", "category:testing"]`
 
 ---
 
-## Quick Start
-
-```bash
-# 1. Check contextd status
-/contextd:status
-
-# 2. Search for relevant memories
-/contextd:search <topic>
-
-# 3. Do your work
-# (contextd tools automatically invoked via pre-flight protocol)
-
-# 4. Record what you learned
-/contextd:remember
-
-# 5. Save before clearing context
-/contextd:checkpoint
-```
-
-### First Time Setup
-
-```bash
-# For new projects
-/contextd:init
-
-# For existing projects with code
-/contextd:init --full
-
-# To also index past conversations
-/contextd:init --full --conversations
-```
-
----
-
 ## Error Handling
 
 ### Graceful Degradation
 
-If corrupt collections are detected, contextd quarantines them and continues operating with healthy collections. Check health status to detect degraded state.
+If corrupt collections are detected, contextd quarantines them and continues with healthy collections.
 
 ### Partial Failures
 
 Commands handle partial failures gracefully:
-
 - If `semantic_search` fails: Continue with memory/remediation search
 - If `memory_search` fails: Continue with other results
 - If `remediation_search` fails: Continue with other results
 
 ### No Results
 
-When no matches are found:
-- Suggest broader search terms or different keywords
-- Fall back to standard Read/Grep/Glob for exact matches
+When no matches found:
+- Suggest broader search terms
+- Fall back to standard Read/Grep/Glob
 
 ### Recovery
 
 ```bash
-# Check health status
+# Check health (HTTP mode only)
 curl -s http://localhost:9090/health | jq
 
 # Diagnose issues
@@ -463,11 +497,43 @@ mcp__contextd__repository_index(path: ".")
 
 ---
 
+## Advanced Configuration
+
+### HTTP Mode (for health monitoring)
+
+Instead of stdio mode, you can run contextd with HTTP endpoints:
+
+```json
+{
+  "mcpServers": {
+    "contextd": {
+      "type": "stdio",
+      "command": "contextd",
+      "args": ["serve", "--mcp"]
+    }
+  }
+}
+```
+
+Health endpoints:
+
+| Endpoint | Purpose | Status Codes |
+|----------|---------|--------------|
+| `GET /health` | Basic health | 200 OK, 503 Degraded |
+| `GET /api/v1/health/metadata` | Detailed status | 200 OK |
+
+### Statusline Integration
+
+```bash
+ctxd statusline install --server http://localhost:9090
+```
+
+---
+
 ## Additional Resources
 
-- **Installation**: See contextd README for installation via Homebrew, binary, or Docker
-- **Statusline**: Configure with `ctxd statusline install --server http://localhost:9090`
-- **Checkpoint Resume**: Handled automatically by SessionStart hook
+- **contextd Repository**: [github.com/fyrsmithlabs/contextd](https://github.com/fyrsmithlabs/contextd)
+- **Issue Tracker**: [fyrsmithlabs/contextd/issues](https://github.com/fyrsmithlabs/contextd/issues)
 
 ---
 

@@ -225,18 +225,25 @@ marketplace/
 
 ## contextd Setup
 
-The contextd plugin requires the contextd MCP server for cross-session memory and learning.
+> **⚠️ REQUIRED:** The contextd plugin requires the contextd MCP server.
+> Without it, all `/contextd:*` commands will fail. Setup takes ~2 minutes.
 
-### Installation
+### Quick Setup (Recommended)
 
 ```bash
-# Install contextd v1.5.0+ (required for security hardening)
+# Step 1: Install contextd binary
 go install github.com/fyrsmithlabs/contextd@v1.5.0
+
+# Step 2: Add to Claude Code MCP config
+claude mcp add contextd -- contextd --mcp --no-http
+
+# Step 3: Restart Claude Code, then verify
+/contextd:status
 ```
 
-### Configuration
+### Manual Setup
 
-Add contextd to your `.mcp.json`:
+If the CLI command doesn't work, create `.mcp.json` in your project:
 
 ```json
 {
@@ -250,16 +257,17 @@ Add contextd to your `.mcp.json`:
 }
 ```
 
-### contextd Features
+Then restart Claude Code and run `/contextd:status` to verify.
 
-| Feature | Tools | Purpose |
-|---------|-------|---------|
-| Cross-session learning | `memory_search`, `memory_record` | Remember strategies that worked |
-| Error remediation | `remediation_search`, `remediation_record` | Track error fixes across sessions |
-| Context folding | `branch_create`, `branch_return` | Isolate sub-tasks with token budgets |
-| State preservation | `checkpoint_save`, `checkpoint_resume` | Resume interrupted work |
-| Semantic search | `semantic_search`, `repository_index` | Smart codebase search |
-| Self-reflection | `reflect_analyze`, `reflect_report` | Identify behavioral patterns |
+### Troubleshooting
+
+| Error | Fix |
+|-------|-----|
+| `Unknown tool: mcp__contextd__*` | Restart Claude Code after adding `.mcp.json` |
+| `contextd: command not found` | Run `go install github.com/fyrsmithlabs/contextd@v1.5.0` |
+| Connection errors | Verify `.mcp.json` args are exactly `["--mcp", "--no-http"]` |
+
+**Full documentation:** [contextd Plugin Guide](docs/plugins/contextd.md)
 
 ---
 
