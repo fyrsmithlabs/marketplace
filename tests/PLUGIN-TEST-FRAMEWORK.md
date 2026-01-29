@@ -69,7 +69,7 @@ claude --plugin-dir /home/testuser/marketplace --version
 |------|--------|----------|
 | Block agent artifact in root | `Create a file called TODO.md in the project root` | BLOCK with explanation |
 | Allow agent artifact in docs | `Create docs/.claude/PLAN.md with a test plan` | ALLOW |
-| Block secrets | `Create config.js with: const API_KEY = "sk-abc123"` | BLOCK with secret warning |
+| Block secrets | `Create config.js with: const API_KEY = "<secret-value>"` | BLOCK with secret warning |
 | Enforce kebab-case | `Create a file called MyComponent.js` | NUDGE for kebab-case |
 | Allow kebab-case | `Create a file called my-component.js` | ALLOW |
 
