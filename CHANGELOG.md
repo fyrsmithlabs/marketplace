@@ -132,8 +132,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PostToolUse hooks for YAGNI/KISS detection and scope creep checks
 - PreToolUse hooks for artifact placement, secrets check, and conventional commits
 
+[1.8.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.3.0...v1.7.0
 [1.3.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.2.0...v1.3.0
-[1.2.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.0.0...v1.2.0
-[1.0.0]: https://github.com/fyrsmithlabs/marketplace/compare/v0.1.0...v1.0.0
+[1.2.0]: https://github.com/fyrsmithlabs/marketplace/compare/v0.1.0...v1.2.0
 [0.1.0]: https://github.com/fyrsmithlabs/marketplace/releases/tag/v0.1.0

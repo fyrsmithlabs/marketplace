@@ -60,8 +60,8 @@ This marketplace contains three plugins:
 
 | Plugin | Version | Category | Description |
 |--------|---------|----------|-------------|
-| `fs-dev` | v1.6.8 | development | Core standards, workflows, planning |
-| `contextd` | v1.1.0 | memory | Cross-session memory and learning |
+| `fs-dev` | v1.8.0 | development | Core standards, workflows, planning |
+| `contextd` | v1.2.0 | memory | Cross-session memory and learning |
 | `fs-design` | v1.0.0 | design | Design system compliance |
 
 ---
