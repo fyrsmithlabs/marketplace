@@ -21,20 +21,53 @@
 
 Choose ONE installation method:
 
-### Option A: One-Command Setup (Recommended)
+### Option A: Automated Plugin Setup (Recommended)
+
+The simplest approach - handles everything automatically:
 
 ```bash
-# Step 1: Install contextd binary
-go install github.com/fyrsmithlabs/contextd@v1.5.0
+# Step 1: Add the marketplace plugin
+claude plugins add fyrsmithlabs/marketplace
 
-# Step 2: Add to Claude Code (this configures .mcp.json automatically)
-claude mcp add contextd -- contextd --mcp --no-http
+# Step 2: Restart Claude Code, then run initialization
+/contextd:init
+
+# Step 3: Verify connection
+/contextd:status
+```
+
+This automatically downloads the binary, configures MCP, and validates the setup.
+
+### Option B: Homebrew (macOS/Linux)
+
+```bash
+# Step 1: Install via Homebrew
+brew tap fyrsmithlabs/contextd https://github.com/fyrsmithlabs/contextd
+brew install contextd
+
+# Step 2: Auto-configure MCP
+ctxd mcp install
 
 # Step 3: Restart Claude Code, then verify
 /contextd:status
 ```
 
-### Option B: Manual Configuration
+### Option C: CLI Auto-Configuration
+
+If you already have the contextd binary:
+
+```bash
+# Step 1: Auto-configure MCP settings
+ctxd mcp install
+
+# Step 2: Verify configuration
+ctxd mcp status
+
+# Step 3: Restart Claude Code
+/contextd:status
+```
+
+### Option D: Manual Configuration
 
 **Step 1: Install the contextd binary**
 
@@ -47,9 +80,29 @@ contextd --version
 # Expected: contextd v1.5.0 or higher
 ```
 
+Or download from [GitHub Releases](https://github.com/fyrsmithlabs/contextd/releases):
+- macOS Apple Silicon: `contextd_*_darwin_arm64.tar.gz`
+- macOS Intel: `contextd_*_darwin_amd64.tar.gz`
+- Linux x64: `contextd_*_linux_amd64.tar.gz`
+- Windows x64: `contextd_*_windows_amd64.tar.gz`
+
 **Step 2: Configure Claude Code MCP**
 
-Create or edit `.mcp.json` in your project root:
+Add to `~/.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "contextd": {
+      "type": "stdio",
+      "command": "contextd",
+      "args": ["--mcp", "--no-http"]
+    }
+  }
+}
+```
+
+Or for project-scoped config, create `.mcp.json` in your project root:
 
 ```json
 {
@@ -88,9 +141,10 @@ Close and reopen Claude Code to load the MCP configuration.
 **Cause:** MCP server not configured or Claude Code not restarted.
 
 **Fix:**
-1. Verify `.mcp.json` exists and contains contextd config
-2. Restart Claude Code completely (not just the terminal)
-3. Run `/contextd:status` to verify
+1. Run `ctxd mcp status` to check configuration
+2. If not configured, run `ctxd mcp install`
+3. Restart Claude Code completely (not just the terminal)
+4. Run `/contextd:status` to verify
 
 ### "contextd: command not found"
 
@@ -101,7 +155,11 @@ Close and reopen Claude Code to load the MCP configuration.
 # Check if installed
 which contextd
 
-# If not found, install:
+# If not found, install via Homebrew:
+brew tap fyrsmithlabs/contextd https://github.com/fyrsmithlabs/contextd
+brew install contextd
+
+# Or via Go:
 go install github.com/fyrsmithlabs/contextd@v1.5.0
 
 # Verify Go bin is in PATH
@@ -112,16 +170,32 @@ echo $PATH | grep -q "$(go env GOPATH)/bin" && echo "OK" || echo "Add $(go env G
 
 **Cause:** MCP mode uses stdio, not HTTP. This error typically means wrong configuration.
 
-**Fix:** Ensure your `.mcp.json` uses these exact args:
-```json
-"args": ["--mcp", "--no-http"]
+**Fix:** Verify configuration with:
+```bash
+ctxd mcp status
+```
+
+If incorrect, reinstall:
+```bash
+ctxd mcp uninstall
+ctxd mcp install
+```
+
+### Permission denied
+
+**Fix:**
+```bash
+chmod +x ~/.local/bin/contextd
+# Or if installed elsewhere:
+chmod +x $(which contextd)
 ```
 
 ### Still not working?
 
 1. Check Claude Code logs: `claude --debug`
 2. Test contextd directly: `contextd --mcp --no-http` (should wait for input)
-3. File an issue: [fyrsmithlabs/contextd](https://github.com/fyrsmithlabs/contextd/issues)
+3. Check MCP status: `ctxd mcp status`
+4. File an issue: [fyrsmithlabs/contextd](https://github.com/fyrsmithlabs/contextd/issues)
 
 ---
 
@@ -159,18 +233,116 @@ Once `/contextd:status` shows connected:
 
 ---
 
+## CLI Commands Reference
+
+### MCP Management
+
+```bash
+ctxd mcp install      # Auto-configure Claude Code MCP settings
+ctxd mcp status       # Check MCP connection status
+ctxd mcp uninstall    # Remove MCP configuration
+```
+
+### Utilities
+
+```bash
+ctxd health                  # Server health check
+ctxd scrub <file>            # Remove secrets from files
+ctxd init                    # Download ONNX runtime
+ctxd migrate                 # Migrate Qdrant → chromem data
+ctxd statusline install      # Configure Claude Code status display
+ctxd statusline run          # Run statusline
+```
+
+---
+
+## Advanced Configuration
+
+### Environment Variables
+
+Configure advanced settings via environment variables:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `VECTORSTORE_PROVIDER` | `chromem` | Vector database (`chromem` or `qdrant`) |
+| `VECTORSTORE_PATH` | `~/.config/contextd/vectorstore` | Data storage location |
+| `QDRANT_HOST` | `localhost` | Qdrant hostname |
+| `QDRANT_PORT` | `6334` | Qdrant gRPC port |
+| `EMBEDDING_PROVIDER` | `fastembed` | Embedding service |
+| `LOG_LEVEL` | `info` | Logging verbosity |
+
+### External Qdrant (Team Deployments)
+
+For shared team deployments, configure a Qdrant instance:
+
+```bash
+docker run -d --name qdrant \
+  -p 6333:6333 -p 6334:6334 \
+  -v $(pwd)/qdrant_data:/qdrant/storage \
+  qdrant/qdrant
+```
+
+Update `~/.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "contextd": {
+      "type": "stdio",
+      "command": "contextd",
+      "args": ["--mcp", "--no-http"],
+      "env": {
+        "VECTORSTORE_PROVIDER": "qdrant",
+        "QDRANT_HOST": "localhost",
+        "QDRANT_PORT": "6334"
+      }
+    }
+  }
+}
+```
+
+### Data Storage & Backup
+
+Default location: `~/.config/contextd/`
+
+```
+~/.config/contextd/
+├── vectorstore/       # Memories, checkpoints, error fixes
+├── lib/              # ONNX runtime (auto-downloaded)
+└── config.yaml       # Optional settings
+```
+
+Backup your data:
+```bash
+tar czf contextd-backup.tar.gz ~/.config/contextd/
+```
+
+Restore:
+```bash
+tar xzf contextd-backup.tar.gz -C ~/
+```
+
+### Statusline Integration
+
+```bash
+ctxd statusline install --server http://localhost:9090
+```
+
+---
+
 ## Table of Contents
 
 - [Quick Setup](#quick-setup)
 - [Troubleshooting Setup](#troubleshooting-setup)
 - [What is contextd?](#what-is-contextd)
+- [CLI Commands Reference](#cli-commands-reference)
+- [Advanced Configuration](#advanced-configuration)
 - [Skills](#skills)
 - [Agents](#agents)
 - [Commands](#commands)
 - [Tool Reference](#tool-reference)
 - [Core Concepts](#core-concepts)
 - [Error Handling](#error-handling)
-- [Advanced Configuration](#advanced-configuration)
 
 ---
 
@@ -485,8 +657,8 @@ When no matches found:
 ### Recovery
 
 ```bash
-# Check health (HTTP mode only)
-curl -s http://localhost:9090/health | jq
+# Check health
+ctxd health
 
 # Diagnose issues
 /contextd:diagnose "metadata corruption"
@@ -497,43 +669,11 @@ mcp__contextd__repository_index(path: ".")
 
 ---
 
-## Advanced Configuration
-
-### HTTP Mode (for health monitoring)
-
-Instead of stdio mode, you can run contextd with HTTP endpoints:
-
-```json
-{
-  "mcpServers": {
-    "contextd": {
-      "type": "stdio",
-      "command": "contextd",
-      "args": ["serve", "--mcp"]
-    }
-  }
-}
-```
-
-Health endpoints:
-
-| Endpoint | Purpose | Status Codes |
-|----------|---------|--------------|
-| `GET /health` | Basic health | 200 OK, 503 Degraded |
-| `GET /api/v1/health/metadata` | Detailed status | 200 OK |
-
-### Statusline Integration
-
-```bash
-ctxd statusline install --server http://localhost:9090
-```
-
----
-
 ## Additional Resources
 
 - **contextd Repository**: [github.com/fyrsmithlabs/contextd](https://github.com/fyrsmithlabs/contextd)
 - **Issue Tracker**: [fyrsmithlabs/contextd/issues](https://github.com/fyrsmithlabs/contextd/issues)
+- **Releases**: [github.com/fyrsmithlabs/contextd/releases](https://github.com/fyrsmithlabs/contextd/releases)
 
 ---
 

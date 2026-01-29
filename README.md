@@ -228,44 +228,49 @@ marketplace/
 > **⚠️ REQUIRED:** The contextd plugin requires the contextd MCP server.
 > Without it, all `/contextd:*` commands will fail. Setup takes ~2 minutes.
 
-### Quick Setup (Recommended)
+### Option A: Automated Setup (Recommended)
 
 ```bash
-# Step 1: Install contextd binary
-go install github.com/fyrsmithlabs/contextd@v1.5.0
+# Already have the marketplace? Just run:
+/contextd:init
+```
 
-# Step 2: Add to Claude Code MCP config
-claude mcp add contextd -- contextd --mcp --no-http
+This auto-downloads the binary, configures MCP, and validates setup.
 
-# Step 3: Restart Claude Code, then verify
+### Option B: Homebrew
+
+```bash
+# Install via Homebrew
+brew tap fyrsmithlabs/contextd https://github.com/fyrsmithlabs/contextd
+brew install contextd
+
+# Auto-configure MCP
+ctxd mcp install
+
+# Restart Claude Code, then verify
 /contextd:status
 ```
 
-### Manual Setup
+### Option C: Manual Setup
 
-If the CLI command doesn't work, create `.mcp.json` in your project:
+```bash
+# Install binary
+go install github.com/fyrsmithlabs/contextd@v1.5.0
 
-```json
-{
-  "mcpServers": {
-    "contextd": {
-      "type": "stdio",
-      "command": "contextd",
-      "args": ["--mcp", "--no-http"]
-    }
-  }
-}
+# Auto-configure MCP (or manually add to ~/.claude/settings.json)
+ctxd mcp install
+
+# Restart Claude Code, then verify
+/contextd:status
 ```
-
-Then restart Claude Code and run `/contextd:status` to verify.
 
 ### Troubleshooting
 
 | Error | Fix |
 |-------|-----|
-| `Unknown tool: mcp__contextd__*` | Restart Claude Code after adding `.mcp.json` |
-| `contextd: command not found` | Run `go install github.com/fyrsmithlabs/contextd@v1.5.0` |
-| Connection errors | Verify `.mcp.json` args are exactly `["--mcp", "--no-http"]` |
+| `Unknown tool: mcp__contextd__*` | Run `ctxd mcp install` and restart Claude Code |
+| `contextd: command not found` | Install via Homebrew or `go install` |
+| Connection errors | Run `ctxd mcp status` to diagnose |
 
 **Full documentation:** [contextd Plugin Guide](docs/plugins/contextd.md)
 
