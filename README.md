@@ -9,6 +9,16 @@ A Claude Code plugin marketplace providing skills, commands, and agents for fyrs
 
 ---
 
+## Prerequisites
+
+Before installing, ensure you have:
+
+- **Claude Code CLI** - Required for all plugins
+- **GitHub CLI (`gh`)** - Required for planning features ([install](https://cli.github.com/))
+- **contextd MCP server** - Required for contextd plugin (see [contextd Setup](#contextd-setup))
+
+---
+
 ## Quick Start
 
 ### Installation
@@ -191,14 +201,6 @@ git commit -m "feat: add user authentication"
 # Weekly summary
 /standup --week
 ```
-
----
-
-## Prerequisites
-
-- **Claude Code CLI** - Required for all plugins
-- **GitHub CLI (`gh`)** - Required for planning features
-- **contextd MCP server** - Required for contextd plugin (see [contextd Setup](#contextd-setup))
 
 ---
 
