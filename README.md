@@ -55,7 +55,7 @@ This marketplace contains three plugins that can be installed independently:
 | Plugin | Version | Components | Purpose |
 |--------|---------|------------|---------|
 | [fs-dev](docs/plugins/fs-dev.md) | 1.9.0 | 13 skills, 15 agents, 12 commands | Development standards, workflows, planning |
-| [contextd](docs/plugins/contextd.md) | 1.2.0 | 5 skills, 2 agents, 9 commands | Cross-session memory via MCP |
+| [contextd](docs/plugins/contextd.md) | 1.2.0 | 5 skills, 2 agents, 8 commands | Cross-session memory via MCP |
 | [fs-design](docs/plugins/fs-design.md) | 1.0.0 | 1 skill, 2 agents, 1 command | Design system compliance |
 
 ---
