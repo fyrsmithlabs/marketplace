@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Agent artifacts skill** - Skill-based guidance for agent file placement conventions (`docs/.claude/`), replacing removed PreToolUse prompt hook
+- **Agent artifact settings** - `.claude/fs-dev-settings.json` for project-level artifact config (baseDir, allowedSubdirs, blockedPatterns)
+
+### Changed
+- **Hooks simplified to lifecycle-only** - Removed PreToolUse prompt hook; only PreCompact command hook remains, aligning with community best practice (skills for guidance, hooks for automation)
+- **CLAUDE.md accuracy** - Corrected artifact counts (skills 12→13, contextd skills 6→5, contextd commands 10→9), added agent-artifacts to skills table
+
+### Removed
+- **5 orphaned hook files** - `context-monitor.sh`, `error-diagnose.md`, `prompt-reminder.md`, `session-start.md`, `stop-reminder.md` (superseded by existing skills/commands)
+- **Duplicate contextd consensus-review** - Removed command and skill from contextd plugin (already exists in fs-dev with named reviewer agents)
+- **PreToolUse prompt hook** - Replaced by agent-artifacts skill for non-blocking guidance
+
 ## [1.8.0] - 2026-01-29
 
 ### Added
@@ -132,6 +147,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PostToolUse hooks for YAGNI/KISS detection and scope creep checks
 - PreToolUse hooks for artifact placement, secrets check, and conventional commits
 
+[Unreleased]: https://github.com/fyrsmithlabs/marketplace/compare/v1.8.0...HEAD
 [1.8.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.3.0...v1.7.0
 [1.3.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.2.0...v1.3.0
