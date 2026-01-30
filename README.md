@@ -1,6 +1,6 @@
 # Marketplace
 
-![Version](https://img.shields.io/badge/version-1.8.0-green)
+![Version](https://img.shields.io/badge/version-1.9.0-green)
 ![Build](https://github.com/fyrsmithlabs/marketplace/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![Gitleaks](https://img.shields.io/badge/gitleaks-enabled-blue)
@@ -54,8 +54,8 @@ This marketplace contains three plugins that can be installed independently:
 
 | Plugin | Version | Components | Purpose |
 |--------|---------|------------|---------|
-| [fs-dev](docs/plugins/fs-dev.md) | 1.8.0 | 10 skills, 7 agents, 11 commands | Development standards, workflows, planning |
-| [contextd](docs/plugins/contextd.md) | 1.2.0 | 6 skills, 2 agents, 10 commands | Cross-session memory via MCP |
+| [fs-dev](docs/plugins/fs-dev.md) | 1.9.0 | 13 skills, 15 agents, 12 commands | Development standards, workflows, planning |
+| [contextd](docs/plugins/contextd.md) | 1.2.0 | 5 skills, 2 agents, 9 commands | Cross-session memory via MCP |
 | [fs-design](docs/plugins/fs-design.md) | 1.0.0 | 1 skill, 2 agents, 1 command | Design system compliance |
 
 ---

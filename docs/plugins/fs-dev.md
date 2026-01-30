@@ -1,6 +1,6 @@
 # fs-dev Plugin Documentation
 
-**Version:** 1.8.0
+**Version:** 1.9.0
 **Category:** Development
 **Description:** Core development standards, workflows, and GitHub integration for fyrsmithlabs projects.
 
