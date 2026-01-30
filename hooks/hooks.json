@@ -9,17 +9,6 @@
           }
         ]
       }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Before writing/editing files, verify:\n1. No agent artifacts (TODO.md, PLAN.md, *.task) in repo root - must go to docs/.claude/\n2. No secrets or API keys in content\n3. If creating new file, verify it follows naming conventions (kebab-case)\n\nIf violations found, BLOCK with explanation. Otherwise, ALLOW."
-          }
-        ]
-      }
     ]
   }
 }

@@ -1,0 +1,22 @@
+{
+  "agentArtifacts": {
+    "baseDir": "docs/.claude",
+    "allowedSubdirs": [
+      "tasks",
+      "plans",
+      "orchestration",
+      "research",
+      "reviews",
+      "brainstorms"
+    ],
+    "blockedPatterns": [
+      "TODO.md",
+      "PLAN.md",
+      "NOTES.md",
+      "SCRATCH.md",
+      "*.task",
+      "*.plan",
+      "*.orchestration"
+    ]
+  }
+}

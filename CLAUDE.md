@@ -25,9 +25,10 @@ A Claude Code plugin marketplace providing skills, commands, and agents for fyrs
 marketplace/
 ├── .claude-plugin/      # Root marketplace manifest
 │   └── marketplace.json # Multi-plugin registry (strict: false)
-├── commands/            # 11 slash commands (core workflow)
-├── agents/              # 7 subagents (6 reviewers + 1 product-owner)
-├── skills/              # 10 skills (standards, workflows, planning)
+├── commands/            # 12 slash commands (core workflow)
+├── agents/              # 15 subagents (6 reviewers + 7 research + 1 orchestrator + 1 product-owner)
+├── skills/              # 13 skills (standards, workflows, planning)
+│   ├── agent-artifacts/       # Agent file placement conventions
 │   ├── git-repo-standards/    # Repo naming, structure, docs
 │   ├── git-workflows/         # Consensus review, PRs, branching
 │   ├── init/                  # Project setup
@@ -41,8 +42,8 @@ marketplace/
 │   ├── contextd/              # Cross-session memory plugin
 │   │   ├── .claude-plugin/    # Plugin manifest
 │   │   ├── agents/            # 2 contextd agents
-│   │   ├── skills/            # 6 contextd skills
-│   │   └── commands/          # 10 contextd commands
+│   │   ├── skills/            # 5 contextd skills
+│   │   └── commands/          # 9 contextd commands
 │   └── fs-design/     # Design system plugin
 │       ├── .claude-plugin/    # Plugin manifest
 │       ├── agents/            # 2 design agents
@@ -84,6 +85,9 @@ Core development standards, workflows, and GitHub integration.
 | `product-owner` | Daily standups, priority synthesis, cross-project dependencies |
 | `context-folding` | Context isolation for complex sub-tasks |
 | `effective-go` | Idiomatic Go development based on Effective Go |
+| `agent-artifacts` | Agent file placement conventions (docs/.claude/) |
+| `consensus-review` | Multi-agent code review with adaptive budgets and veto power |
+| `research-orchestration` | Parallel research agent dispatch and synthesis |
 
 ### Review Agents
 
@@ -95,6 +99,18 @@ Core development standards, workflows, and GitHub integration.
 | `documentation-reviewer` | README, API docs, CHANGELOG | Yes |
 | `user-persona-reviewer` | UX, breaking changes, ergonomics | Yes |
 | `go-reviewer` | Effective Go, concurrency, error handling | Yes |
+
+### Research Agents
+
+| Agent | Focus |
+|-------|-------|
+| `research-orchestrator` | Dispatches and coordinates research agents |
+| `research-technical` | APIs, libraries, frameworks, implementation patterns |
+| `research-architectural` | Design patterns, system structure, code organization |
+| `research-security` | Security best practices, OWASP, vulnerability patterns |
+| `research-ux` | User experience, accessibility, usability patterns |
+| `research-competitive` | Industry trends, competitor analysis, market context |
+| `research-synthesis` | Consolidates findings from all research agents |
 
 ### Other Agents
 
@@ -114,6 +130,7 @@ Core development standards, workflows, and GitHub integration.
 | `/discover` | Codebase analysis |
 | `/brainstorm` | Feature design workflow |
 | `/consensus-review` | Multi-agent code review with veto power |
+| `/research` | Multi-agent research orchestration |
 
 ---
 
@@ -128,7 +145,6 @@ Cross-session memory and learning via the contextd MCP server.
 | `contextd:using-contextd` | Core tools introduction |
 | `contextd:setup` | Project onboarding and CLAUDE.md management |
 | `contextd:workflow` | Session lifecycle management |
-| `contextd:consensus-review` | Multi-agent parallel review |
 | `contextd:orchestration` | Multi-task execution with parallel agents |
 | `contextd:self-reflection` | Behavior pattern analysis |
 
@@ -150,7 +166,6 @@ Cross-session memory and learning via the contextd MCP server.
 | `/contextd:status` | Show contextd status |
 | `/contextd:init` | Initialize contextd for project |
 | `/contextd:reflect` | Analyze patterns, improve policies |
-| `/contextd:consensus-review` | Multi-agent code review |
 | `/contextd:orchestrate` | Execute multi-task orchestration plans |
 | `/contextd:help` | List available commands |
 
@@ -198,6 +213,7 @@ Terminal Elegance design system compliance checking.
 
 ## Known Pitfalls
 
+- **fs-dev lives at the repo root, not under `plugins/`** - It is the primary plugin and owns the root manifest; secondary plugins (contextd, fs-design) are nested under `plugins/`
 - **Hook prompts are LLM instructions, not executable code** - Variables in hooks/templates (e.g., `{{filename}}`) are documentation for the LLM, not shell interpolation
 - **Template variables** use Go's `text/template` which handles escaping; they're not directly user-controlled
 - **Security reviewers may flag "injection"** in prompts - this is expected; the prompts instruct the LLM what to analyze
