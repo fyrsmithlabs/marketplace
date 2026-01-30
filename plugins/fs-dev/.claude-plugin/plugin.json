@@ -1,6 +1,6 @@
 {
   "name": "fs-dev",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "Core development standards, workflows, and GitHub integration for fyrsmithlabs projects. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and GitHub planning integration.",
   "author": {
     "name": "fyrsmithlabs"

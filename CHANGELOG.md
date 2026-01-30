@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.1] - 2026-01-30
+
+### Changed
+- **fs-dev moved under `plugins/`** - All plugins now follow `plugins/<name>/` structure; fs-dev commands register as `/fs-dev:<command>` instead of clashing with Claude's built-in `/init`
+- **All command references updated** - CLAUDE.md, README.md reflect `/fs-dev:` namespace prefix
+
+### Removed
+- **`contextd:init` command** - Removed to avoid confusion with `/fs-dev:init`
+
 ## [1.9.0] - 2026-01-30
 
 ### Added
@@ -147,6 +156,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PostToolUse hooks for YAGNI/KISS detection and scope creep checks
 - PreToolUse hooks for artifact placement, secrets check, and conventional commits
 
+[1.9.1]: https://github.com/fyrsmithlabs/marketplace/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/fyrsmithlabs/marketplace/compare/v1.3.0...v1.7.0
