@@ -34,16 +34,16 @@ claude plugin install fyrsmithlabs/marketplace
 
 ```bash
 # Initialize a project with standards
-/init
+/fs-dev:init
 
 # Run a brainstorm session for a new feature
-/brainstorm "Add user authentication"
+/fs-dev:brainstorm "Add user authentication"
 
 # Check your daily standup
-/standup
+/fs-dev:standup
 
 # Run multi-agent code review
-/consensus-review
+/fs-dev:consensus-review
 ```
 
 ---
@@ -62,51 +62,51 @@ This marketplace contains three plugins that can be installed independently:
 
 ## Featured Commands
 
-### /init - Project Setup
+### /fs-dev:init - Project Setup
 
 Set up a project to follow fyrsmithlabs standards with interactive wizard, auto-detection, and compliance checking.
 
 ```bash
 # Full interactive wizard
-/init
+/fs-dev:init
 
 # Audit compliance without making changes
-/init --check
+/fs-dev:init --check
 
 # Quick setup (skip wizard)
-/init --quick
+/fs-dev:init --quick
 
 # Check for drift from standards
-/init --validate
+/fs-dev:init --validate
 ```
 
-### /brainstorm - Feature Design
+### /fs-dev:brainstorm - Feature Design
 
 Interactive design interview with complexity assessment, requirements gathering, and GitHub planning.
 
 ```bash
 # Start a brainstorm session
-/brainstorm "Add OAuth support"
+/fs-dev:brainstorm "Add OAuth support"
 
 # Brainstorm creates GitHub Issues automatically in Phase 6
 ```
 
-### /consensus-review - Multi-Agent Code Review
+### /fs-dev:consensus-review - Multi-Agent Code Review
 
 Run parallel code review with 6 specialized agents. All agents have veto power by default. Features adaptive token budgets, context-folding isolation for large scopes, and progressive summarization.
 
 ```bash
 # Review staged changes
-/consensus-review
+/fs-dev:consensus-review
 
 # Review specific path
-/consensus-review src/auth/
+/fs-dev:consensus-review src/auth/
 
 # Ignore veto power (advisory only)
-/consensus-review --ignore-vetos
+/fs-dev:consensus-review --ignore-vetos
 
 # Run subset of agents
-/consensus-review --agents security,code-quality,go
+/fs-dev:consensus-review --agents security,code-quality,go
 ```
 
 ### /contextd:checkpoint - Session State Management
@@ -146,16 +146,16 @@ Audit CSS, templates, and documentation for Terminal Elegance design system comp
 
 ```bash
 # 1. Design the feature
-/brainstorm "Add user authentication"
+/fs-dev:brainstorm "Add user authentication"
 
 # 2. Create GitHub issues (automatic from brainstorm Phase 6)
 # or manually:
-/plan "Add user authentication"
+/fs-dev:plan "Add user authentication"
 
 # 3. Code implementation...
 
 # 4. Multi-agent code review
-/consensus-review
+/fs-dev:consensus-review
 
 # 5. Commit with standards
 git commit -m "feat: add user authentication"
@@ -183,23 +183,23 @@ git commit -m "feat: add user authentication"
 
 ```bash
 # Full codebase analysis
-/discover
+/fs-dev:discover
 
 # Security-focused analysis
-/discover --lens security
+/fs-dev:discover --lens security
 
 # Performance-focused analysis
-/discover --lens performance
+/fs-dev:discover --lens performance
 ```
 
 ### Daily Standup
 
 ```bash
 # Today's status with GitHub PR/Issue synthesis
-/standup
+/fs-dev:standup
 
 # Weekly summary
-/standup --week
+/fs-dev:standup --week
 ```
 
 ---
@@ -208,15 +208,12 @@ git commit -m "feat: add user authentication"
 
 ```
 marketplace/
-├── .claude-plugin/           # Plugin manifests (plugin.json, marketplace.json)
-├── commands/                 # Slash commands (23 total)
-├── agents/                   # Subagents (18 total)
-├── skills/                   # Skills (19 total)
-├── plugins/                  # Additional plugins
-│   ├── contextd/             # Cross-session memory plugin
-│   └── fs-design/            # Design system plugin
-├── includes/                 # Shared includes
-├── hooks/                    # Claude Code hooks
+├── .claude-plugin/           # Root marketplace manifest
+├── plugins/                  # All plugins
+│   ├── fs-dev/               # Core development plugin (13 skills, 15 agents, 12 commands)
+│   ├── contextd/             # Cross-session memory plugin (5 skills, 2 agents, 8 commands)
+│   └── fs-design/            # Design system plugin (1 skill, 2 agents, 1 command)
+├── hooks/                    # Claude Code hooks (PreCompact only)
 └── docs/                     # Documentation
     └── plugins/              # Plugin-specific docs
 ```
@@ -228,16 +225,7 @@ marketplace/
 > **⚠️ REQUIRED:** The contextd plugin requires the contextd MCP server.
 > Without it, all `/contextd:*` commands will fail. Setup takes ~2 minutes.
 
-### Option A: Automated Setup (Easiest)
-
-Already have the marketplace? Just run in Claude Code:
-```bash
-/contextd:init
-```
-
-This auto-downloads the binary, configures MCP, and validates setup.
-
-### Option B: Homebrew (macOS/Linux)
+### Option A: Homebrew (macOS/Linux)
 
 ```bash
 brew tap fyrsmithlabs/contextd https://github.com/fyrsmithlabs/contextd
@@ -246,7 +234,7 @@ ctxd mcp install
 # Restart Claude Code, then: /contextd:status
 ```
 
-### Option C: Direct Download
+### Option B: Direct Download
 
 Download from [GitHub Releases](https://github.com/fyrsmithlabs/contextd/releases), then:
 
@@ -290,17 +278,17 @@ ctxd mcp install
 
 | Command | Purpose |
 |---------|---------|
-| `/init` | Set up project to follow fyrsmithlabs standards |
-| `/yagni` | Manage YAGNI/KISS enforcement settings |
-| `/brainstorm` | Interactive design interview with complexity-aware questioning |
-| `/plan` | Full planning workflow - assess, brainstorm, create GitHub Issues |
-| `/discover` | Run codebase discovery with optional lens filtering |
-| `/standup` | Daily standup with GitHub PR/Issue synthesis |
-| `/consensus-review` | Multi-agent code review with veto power |
-| `/test-skill` | Run pressure test scenarios against marketplace skills |
-| `/comp-analysis` | Generate executive summary of competitor analysis |
-| `/spec-refinement` | Deep-dive interview to refine specification documents |
-| `/app-interview` | Comprehensive app ideation with competitor analysis |
+| `/fs-dev:init` | Set up project to follow fyrsmithlabs standards |
+| `/fs-dev:yagni` | Manage YAGNI/KISS enforcement settings |
+| `/fs-dev:brainstorm` | Interactive design interview with complexity-aware questioning |
+| `/fs-dev:plan` | Full planning workflow - assess, brainstorm, create GitHub Issues |
+| `/fs-dev:discover` | Run codebase discovery with optional lens filtering |
+| `/fs-dev:standup` | Daily standup with GitHub PR/Issue synthesis |
+| `/fs-dev:consensus-review` | Multi-agent code review with veto power |
+| `/fs-dev:test-skill` | Run pressure test scenarios against marketplace skills |
+| `/fs-dev:comp-analysis` | Generate executive summary of competitor analysis |
+| `/fs-dev:spec-refinement` | Deep-dive interview to refine specification documents |
+| `/fs-dev:app-interview` | Comprehensive app ideation with competitor analysis |
 
 ### contextd Commands
 
@@ -311,9 +299,7 @@ ctxd mcp install
 | `/contextd:checkpoint` | Save session state (accomplishments, in-progress, next steps) |
 | `/contextd:diagnose` | Diagnose errors using AI analysis and past fixes |
 | `/contextd:status` | Show contextd status for current session and project |
-| `/contextd:init` | Initialize contextd for a project (CLAUDE.md, indexing) |
 | `/contextd:reflect` | Analyze memories for behavior patterns and policy compliance |
-| `/contextd:consensus-review` | Run multi-agent consensus review on files/directories |
 | `/contextd:orchestrate` | Execute multi-task orchestration from GitHub issues |
 | `/contextd:help` | List all available contextd skills and commands |
 

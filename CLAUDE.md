@@ -24,35 +24,26 @@ A Claude Code plugin marketplace providing skills, commands, and agents for fyrs
 ```
 marketplace/
 ├── .claude-plugin/      # Root marketplace manifest
-│   └── marketplace.json # Multi-plugin registry (strict: false)
-├── commands/            # 12 slash commands (core workflow)
-├── agents/              # 15 subagents (6 reviewers + 7 research + 1 orchestrator + 1 product-owner)
-├── skills/              # 13 skills (standards, workflows, planning)
-│   ├── agent-artifacts/       # Agent file placement conventions
-│   ├── git-repo-standards/    # Repo naming, structure, docs
-│   ├── git-workflows/         # Consensus review, PRs, branching
-│   ├── init/                  # Project setup
-│   ├── yagni/                 # YAGNI/KISS enforcement
-│   ├── complexity-assessment/ # Task complexity
-│   ├── github-planning/       # GitHub Issues/Projects
-│   ├── roadmap-discovery/     # Codebase analysis
-│   ├── product-owner/         # Standups, priorities
-│   └── context-folding/       # Context isolation
-├── plugins/             # Additional plugins
+│   └── marketplace.json # Multi-plugin registry
+├── plugins/             # All plugins
+│   ├── fs-dev/                # Core development plugin
+│   │   ├── .claude-plugin/    # Plugin manifest
+│   │   ├── commands/          # 12 commands (/fs-dev:init, /fs-dev:plan, etc.)
+│   │   ├── agents/            # 15 subagents (6 reviewers + 7 research + 1 orchestrator + 1 product-owner)
+│   │   ├── skills/            # 13 skills (standards, workflows, planning)
+│   │   └── includes/          # Shared includes for skills/agents
 │   ├── contextd/              # Cross-session memory plugin
 │   │   ├── .claude-plugin/    # Plugin manifest
 │   │   ├── agents/            # 2 contextd agents
 │   │   ├── skills/            # 5 contextd skills
 │   │   └── commands/          # 8 contextd commands
-│   └── fs-design/     # Design system plugin
+│   └── fs-design/             # Design system plugin
 │       ├── .claude-plugin/    # Plugin manifest
 │       ├── agents/            # 2 design agents
 │       ├── skills/            # 1 skill (design-check)
-│       └── commands/          # 1 command (/design-check)
-├── includes/            # Shared includes for hooks
-│   └── yagni/           # Pattern detection
+│       └── commands/          # 1 command (/fs-design:check)
 └── hooks/               # Claude Code hooks
-    └── hooks.json       # Enforcement hooks
+    └── hooks.json       # Lifecycle hooks (PreCompact only)
 ```
 
 ## Plugins
@@ -122,15 +113,15 @@ Core development standards, workflows, and GitHub integration.
 
 | Command | Purpose |
 |---------|---------|
-| `/init` | Set up project standards |
-| `/yagni` | Manage YAGNI settings |
-| `/plan` | Full planning workflow |
-| `/standup` | Daily standup with GitHub synthesis |
-| `/test-skill` | Run pressure tests |
-| `/discover` | Codebase analysis |
-| `/brainstorm` | Feature design workflow |
-| `/consensus-review` | Multi-agent code review with veto power |
-| `/research` | Multi-agent research orchestration |
+| `/fs-dev:init` | Set up project standards |
+| `/fs-dev:yagni` | Manage YAGNI settings |
+| `/fs-dev:plan` | Full planning workflow |
+| `/fs-dev:standup` | Daily standup with GitHub synthesis |
+| `/fs-dev:test-skill` | Run pressure tests |
+| `/fs-dev:discover` | Codebase analysis |
+| `/fs-dev:brainstorm` | Feature design workflow |
+| `/fs-dev:consensus-review` | Multi-agent code review with veto power |
+| `/fs-dev:research` | Multi-agent research orchestration |
 
 ---
 
@@ -212,7 +203,6 @@ Terminal Elegance design system compliance checking.
 
 ## Known Pitfalls
 
-- **fs-dev lives at the repo root, not under `plugins/`** - It is the primary plugin and owns the root manifest; secondary plugins (contextd, fs-design) are nested under `plugins/`
 - **Hook prompts are LLM instructions, not executable code** - Variables in hooks/templates (e.g., `{{filename}}`) are documentation for the LLM, not shell interpolation
 - **Template variables** use Go's `text/template` which handles escaping; they're not directly user-controlled
 - **Security reviewers may flag "injection"** in prompts - this is expected; the prompts instruct the LLM what to analyze

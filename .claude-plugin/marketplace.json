@@ -16,7 +16,7 @@
       "author": {
         "name": "fyrsmithlabs"
       },
-      "source": "./",
+      "source": "./plugins/fs-dev/",
       "category": "development",
       "strict": false
     },
