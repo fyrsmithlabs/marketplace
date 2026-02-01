@@ -16,6 +16,7 @@ Then call `mcp__contextd__memory_record` with:
 - content: Detailed learning content
 - outcome: "success" or "failure"
 - tags: Relevant tags extracted from content
+- category: (optional) One of: operational, architectural, debugging, security, feature, general. Auto-detected if omitted.
 
 Confirm the memory was recorded with its ID and initial confidence.
 

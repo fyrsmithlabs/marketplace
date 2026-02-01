@@ -1,6 +1,6 @@
 # contextd Plugin Documentation
 
-**Version**: 1.2.0
+**Version**: 1.3.0
 **Category**: Memory
 **Author**: fyrsmithlabs
 
@@ -206,11 +206,13 @@ Cross-session memory and learning for Claude Code. Unlike standard Claude Code w
 
 | Feature | Without contextd | With contextd |
 |---------|------------------|---------------|
-| Remember past solutions | ❌ Lost each session | ✓ Searchable memory |
+| Remember past solutions | ❌ Lost each session | ✓ Searchable memory with category classification |
 | Learn from errors | ❌ Repeat mistakes | ✓ Remediation database |
 | Resume interrupted work | ❌ Start over | ✓ Checkpoints |
-| Search code semantically | ❌ Grep only | ✓ AI-powered search |
+| Search code semantically | ❌ Grep only | ✓ AI-powered search with cross-encoder reranking |
 | Complex multi-task work | ❌ Context overflow | ✓ Context folding |
+| Session-level learning | ❌ Record everything or nothing | ✓ Session granularity (buffer + consolidate) |
+| Analyze past conversations | ❌ Lost history | ✓ Conversation indexing + self-reflection |
 
 ---
 
@@ -531,11 +533,20 @@ Low-level MCP tools available via `mcp__contextd__*`:
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `memory_search` | Find past strategies | `project_id`, `query`, `limit` |
-| `memory_record` | Save new memory | `project_id`, `title`, `content`, `outcome`, `tags` |
+| `memory_search` | Find past strategies | `project_id`, `query`, `limit`, `category` |
+| `memory_record` | Save new memory (auto-classifies category) | `project_id`, `title`, `content`, `outcome`, `tags`, `category` |
 | `memory_feedback` | Rate memory helpfulness | `memory_id`, `helpful` |
 | `memory_outcome` | Report task result | `memory_id`, `outcome` |
-| `memory_consolidate` | Merge similar memories | `similarity_threshold` |
+| `memory_consolidate` | Flush session buffer (session mode) | `session_id` |
+
+Categories: `operational`, `architectural`, `debugging`, `security`, `feature`, `general` (auto-detected if omitted)
+
+### Conversation Tools
+
+| Tool | Purpose | Key Parameters |
+|------|---------|----------------|
+| `conversation_index` | Index Claude Code conversation files | `path`, `project_id` |
+| `conversation_search` | Search indexed conversations | `query`, `project_id`, `limit` |
 
 ### Checkpoint Tools
 
@@ -617,6 +628,32 @@ Memories have confidence scores (0-1) that:
 
 Tag memories: `tags: ["type:learning", "category:testing"]`
 
+### Memory Categories (v0.4.0+)
+
+Memories are auto-classified into categories for improved search relevance:
+
+| Category | Description |
+|----------|-------------|
+| `operational` | Deployment, ops, infrastructure |
+| `architectural` | Design patterns, structure decisions |
+| `debugging` | Error diagnosis, fix strategies |
+| `security` | Authentication, authorization, vulnerabilities |
+| `feature` | Feature implementation, requirements |
+| `general` | Everything else |
+
+Categories can be explicitly set via `memory_record` or auto-detected from content.
+
+### Session Granularity (v0.4.0+)
+
+Control how memories are captured during a session:
+
+| Mode | Behavior |
+|------|----------|
+| `turn` (default) | Each memory recorded immediately |
+| `session` | Memories buffered, consolidated at session end via `memory_consolidate` |
+
+Configure via `CONTEXTD_REASONINGBANK_GRANULARITY=session`.
+
 ### The Learning Loop
 
 ```
@@ -678,4 +715,4 @@ mcp__contextd__repository_index(path: ".")
 
 ---
 
-*Last Updated: 2026-01-29*
+*Last Updated: 2026-02-01*

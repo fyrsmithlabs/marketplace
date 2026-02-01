@@ -22,6 +22,7 @@ Take the search query from the command argument or ask the user.
    - project_id: Current project
    - query: User's search query
    - limit: 5
+   - category: (optional) Filter by category: operational, architectural, debugging, security, feature, general
 
 3. Call `mcp__contextd__remediation_search` with:
    - query: User's search query
@@ -36,9 +37,10 @@ Take the search query from the command argument or ask the user.
    - Relevance score
 
    **Memories Found:**
-   - Title, confidence, outcome
+   - Title, confidence, outcome, category
    - Content preview
    - Tags
+   - Category distribution and detected gaps (in metadata)
 
    **Remediations Found:**
    - Title, category, confidence

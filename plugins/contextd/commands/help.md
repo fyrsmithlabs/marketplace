@@ -42,10 +42,11 @@ Low-level tools available via `mcp__contextd__*`:
 
 | Tool | Purpose |
 |------|---------|
-| `memory_search` | Find relevant past strategies |
-| `memory_record` | Save new memory explicitly |
+| `memory_search` | Find relevant past strategies (supports category filter) |
+| `memory_record` | Save new memory (auto-classifies category if omitted) |
 | `memory_feedback` | Rate memory helpfulness (adjusts confidence) |
 | `memory_outcome` | Report task success/failure after using a memory |
+| `memory_consolidate` | Flush session buffer (session granularity mode) |
 | `checkpoint_save` | Save context snapshot |
 | `checkpoint_list` | List available checkpoints |
 | `checkpoint_resume` | Resume from checkpoint |
@@ -55,6 +56,10 @@ Low-level tools available via `mcp__contextd__*`:
 | `repository_search` | Semantic search over indexed code |
 | `semantic_search` | Smart search with semantic understanding + grep fallback |
 | `troubleshoot_diagnose` | AI-powered error diagnosis |
+| `conversation_index` | Index Claude Code conversation files |
+| `conversation_search` | Search indexed conversations |
+| `reflect_report` | Generate self-reflection report on memories and patterns |
+| `reflect_analyze` | Analyze behavioral patterns in memories |
 | `branch_create` | Create isolated context branch with token budget |
 | `branch_return` | Return from branch with scrubbed results |
 | `branch_status` | Get branch status and budget usage |
