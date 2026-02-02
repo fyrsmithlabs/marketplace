@@ -78,7 +78,7 @@ ctxd mcp install
 
 ```bash
 # Prerequisites: Go 1.21+, CGO
-go install github.com/fyrsmithlabs/contextd@v1.5.0
+go install github.com/fyrsmithlabs/contextd@latest
 
 # Auto-configure MCP
 ctxd mcp install
@@ -161,7 +161,7 @@ brew tap fyrsmithlabs/contextd https://github.com/fyrsmithlabs/contextd
 brew install contextd
 
 # Or via Go:
-go install github.com/fyrsmithlabs/contextd@v1.5.0
+go install github.com/fyrsmithlabs/contextd@latest
 
 # Verify Go bin is in PATH
 echo $PATH | grep -q "$(go env GOPATH)/bin" && echo "OK" || echo "Add $(go env GOPATH)/bin to PATH"
