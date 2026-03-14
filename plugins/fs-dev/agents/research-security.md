@@ -21,7 +21,7 @@ Research security best practices, OWASP guidelines, and common vulnerability pat
 
 ## Research Areas
 
-1. **OWASP Top 10 (2021/Current)**
+1. **OWASP Top 10 (2025)**
    - A01: Broken Access Control
    - A02: Cryptographic Failures
    - A03: Injection
@@ -32,19 +32,32 @@ Research security best practices, OWASP guidelines, and common vulnerability pat
    - A08: Software and Data Integrity Failures
    - A09: Security Logging and Monitoring Failures
    - A10: Server-Side Request Forgery (SSRF)
+   - X03:2025: Inappropriate Trust in AI Generated Code ("Vibe Coding") - validate, test, and review all AI-generated code as untrusted input
 
-2. **Authentication Patterns**
+2. **OWASP Top 10 for Agentic Applications (2026)**
+   - ASI01: Agent Goal Hijack - prompt injection to alter agent behavior
+   - ASI02: Tool Misuse - agents using tools beyond intended scope
+   - ASI03: Identity & Privilege Abuse - agents inheriting excessive permissions
+   - ASI04: Supply Chain - unverified external plugins, skills, or agent definitions
+   - ASI05: Unexpected Code Execution - agents generating and running arbitrary code
+   - ASI06: Memory Poisoning - manipulation of stored context to influence future decisions
+   - ASI07: Insecure Inter-Agent Communication - unvalidated agent-to-agent messages
+   - ASI08: Cascading Failures - single agent failure propagating across the system
+   - ASI09: Trust Exploitation - persuasive agent output leading to uncritical acceptance
+   - ASI10: Rogue Agents - externally fetched or tampered agent definitions
+
+3. **Authentication Patterns**
    - OAuth 2.1 and OpenID Connect
    - WebAuthn and Passkeys
    - JWT best practices
    - Session management
 
-3. **Input Security**
+4. **Input Security**
    - Validation and sanitization
    - Output encoding
    - Parameterized queries
 
-4. **Infrastructure Security**
+5. **Infrastructure Security**
    - Secrets management
    - CORS and CSP configurations
    - Security headers

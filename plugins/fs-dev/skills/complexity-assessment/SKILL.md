@@ -1,6 +1,6 @@
 ---
 name: complexity-assessment
-description: Use when assessing task complexity, determining workflow depth, asking "how complex is this?", "should I use a worktree?", "is this a big change?", or sizing work before planning. Analyzes 7 dimensions (scope, integration, infrastructure, knowledge, risk, testing, decomposability) to return SIMPLE, STANDARD, or COMPLEX tier with confidence scoring.
+description: Use when assessing task complexity, determining workflow depth, asking "how complex is this?", "should I use a worktree?", "is this a big change?", or sizing work before planning. Analyzes 7 dimensions (scope, integration, infrastructure, knowledge, risk, testing, decomposability) to return SIMPLE, STANDARD, or COMPLEX tier with confidence scoring. Includes intent confirmation gating and review agent selection hints for consensus-review integration.
 ---
 
 # Complexity Assessment
@@ -190,6 +190,17 @@ Return assessment as JSON for downstream consumption:
     "github_artifact": "epic_with_sub_issues",
     "context_branch_budget": 8192,
     "worktree_recommended": true
+  },
+  "recommended_agents": {
+    "always": ["code-quality-reviewer"],
+    "if_go": ["go-reviewer"],
+    "if_security_sensitive": ["security-reviewer", "vulnerability-reviewer"],
+    "if_api_change": ["user-persona-reviewer", "documentation-reviewer"],
+    "all": false
+  },
+  "intent_confirmation": {
+    "required": true,
+    "mode": "STANDARD"
   }
 }
 ```
@@ -221,6 +232,100 @@ Return assessment as JSON for downstream consumption:
 - **Review:** Full consensus + additional scrutiny
 - **Context branch budget:** 16384 tokens
 - **Testing:** Unit + integration + E2E, 90%+ coverage, security audit
+
+---
+
+## Intent Confirmation Gating
+
+After tier determination, include an `intent_confirmation` field in the output to signal the **caller** whether intent confirmation is recommended:
+
+| Tier | Recommendation |
+|------|----------------|
+| SIMPLE (7-11) | `"intent_confirmation": "none"` - Caller should auto-proceed. |
+| STANDARD (12-16) | `"intent_confirmation": "standard"` - Caller should invoke intent-confirmation skill. |
+| COMPLEX (17-21) | `"intent_confirmation": "detailed"` - Caller should invoke intent-confirmation skill in DETAILED mode. |
+
+### Integration Note
+
+**This skill does NOT invoke intent-confirmation itself.** It outputs a recommendation that the calling workflow uses to decide whether to invoke intent-confirmation. The typical workflow is:
+
+```
+Caller (e.g., /brainstorm, /plan):
+  1. Invoke complexity-assessment → returns tier + intent_confirmation field
+  2. If intent_confirmation != "none":
+     → Invoke intent-confirmation skill with the recommended mode
+     → Wait for user confirmation
+  3. Proceed with execution
+```
+
+This avoids a circular dependency between the two skills.
+
+### DETAILED Mode (COMPLEX only)
+
+For COMPLEX tasks, the intent preview includes:
+- Full decomposition plan with subtask dependencies
+- Risk factors and mitigation strategy
+- Estimated resource usage (agents, branches, tokens)
+- Explicit list of files to be modified
+- User must respond with explicit "Yes" (not just acknowledgment)
+
+### Why Gate on Complexity?
+
+- SIMPLE tasks should not slow down developer flow with unnecessary confirmation
+- STANDARD tasks benefit from a pause to ensure alignment
+- COMPLEX tasks require explicit buy-in because rollback cost is high
+- Research (JetBrains NeurIPS 2025) shows observation masking is 52% cheaper than full summarization; confirming intent early avoids wasted work on misunderstood requirements
+
+---
+
+## Review Agent Selection
+
+Include a `recommended_agents` field in the structured output based on the assessment. This allows the consensus-review skill to perform adaptive agent selection without re-analyzing the diff.
+
+### Output Field
+
+```json
+{
+  "recommended_agents": {
+    "always": ["code-quality-reviewer"],
+    "if_go": ["go-reviewer"],
+    "if_security_sensitive": ["security-reviewer", "vulnerability-reviewer"],
+    "if_api_change": ["user-persona-reviewer", "documentation-reviewer"],
+    "all": false
+  }
+}
+```
+
+### Selection Logic
+
+| Tier | `all` | Base Agents |
+|------|-------|-------------|
+| SIMPLE | `false` | `["code-quality-reviewer"]` |
+| STANDARD | `false` | `["code-quality-reviewer"]` + conditional agents |
+| COMPLEX | `true` | All 6 reviewers (overrides conditional logic) |
+
+### Conditional Agent Triggers
+
+These are derived from the dimension scores:
+
+| Condition | Trigger | Agents Added |
+|-----------|---------|--------------|
+| Risk score >= 2 | Security-sensitive | `security-reviewer`, `vulnerability-reviewer` |
+| Knowledge score >= 2 AND domain is Go | Go code | `go-reviewer` |
+| Integration score >= 2 | API changes likely | `user-persona-reviewer`, `documentation-reviewer` |
+| Infrastructure score >= 2 | Config/infra changes | `security-reviewer` |
+| Scope score == 3 | System-wide change | All reviewers (`all: true`) |
+
+### Integration with consensus-review
+
+The consensus-review skill reads `recommended_agents` from the assessment output:
+
+```
+1. Run complexity-assessment → get tier + recommended_agents
+2. Pass recommended_agents to consensus-review adaptive agent selection
+3. Consensus-review merges recommended_agents with its own override rules
+4. Final agent set = union(recommended_agents, override_agents)
+```
 
 ---
 
@@ -397,6 +502,17 @@ mcp__contextd__memory_record(
     "github_artifact": "epic_with_sub_issues_and_project",
     "context_branch_budget": 16384,
     "worktree_recommended": true
+  },
+  "recommended_agents": {
+    "always": ["code-quality-reviewer"],
+    "if_go": [],
+    "if_security_sensitive": ["security-reviewer", "vulnerability-reviewer"],
+    "if_api_change": ["user-persona-reviewer", "documentation-reviewer"],
+    "all": true
+  },
+  "intent_confirmation": {
+    "required": true,
+    "mode": "DETAILED"
   }
 }
 ```
@@ -459,6 +575,9 @@ mcp__contextd__branch_return(
 - [ ] Determine tier from adjusted score
 - [ ] Generate decomposition suggestions if COMPLEX
 - [ ] Include integration hints (github-planning, context-folding)
+- [ ] Include `recommended_agents` field based on tier and dimension scores
+- [ ] Include `intent_confirmation` field (required + mode)
+- [ ] Gate on intent confirmation (STANDARD: show plan; COMPLEX: require explicit "Yes")
 - [ ] **RECORD to contextd** with full JSON (see Recording section)
 - [ ] Return structured JSON output
 
@@ -481,6 +600,9 @@ If you're thinking any of these, you're about to violate the skill:
 | "Confidence scoring is extra work" | Confidence enables better decisions. Calculate it. |
 | "Decomposition is only for COMPLEX" | Consider it for STANDARD too if helpful. |
 | "Historical comparison is optional" | Past data improves accuracy. Search for it. |
+| "Intent confirmation slows things down" | It prevents wasted work on misunderstood requirements. |
+| "I don't need to include recommended_agents" | Downstream consensus-review depends on it. Always include. |
+| "SIMPLE tasks don't need intent logging" | Log anyway. Calibration data improves future accuracy. |
 
 ---
 
@@ -497,6 +619,9 @@ If you're thinking any of these, you're about to violate the skill:
 | Low confidence without clarification | Use AskUserQuestion when confidence < 60%. |
 | Missing decomposition for COMPLEX | Always suggest how to break down COMPLEX tasks. |
 | Returning text instead of JSON | Downstream tools expect structured output. |
+| Skipping intent confirmation for STANDARD | STANDARD requires plan approval before proceeding. |
+| Not including recommended_agents | consensus-review uses this for adaptive agent selection. |
+| Setting `all: true` for SIMPLE | Only COMPLEX warrants all 6 reviewers. |
 
 ---
 

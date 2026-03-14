@@ -2,7 +2,7 @@
 
 **Status**: Active Development
 **Version**: 1.9.1
-**Last Updated**: 2026-01-30
+**Last Updated**: 2026-03-14
 
 ---
 
@@ -29,8 +29,8 @@ marketplace/
 │   ├── fs-dev/                # Core development plugin
 │   │   ├── .claude-plugin/    # Plugin manifest
 │   │   ├── commands/          # 12 commands (/fs-dev:init, /fs-dev:plan, etc.)
-│   │   ├── agents/            # 15 subagents (6 reviewers + 7 research + 1 orchestrator + 1 product-owner)
-│   │   ├── skills/            # 13 skills (standards, workflows, planning)
+│   │   ├── agents/            # 17 subagents (6 reviewers + 7 research + 1 orchestrator + 1 product-owner + 2 automation)
+│   │   ├── skills/            # 15 skills (standards, workflows, planning, validation)
 │   │   └── includes/          # Shared includes for skills/agents
 │   ├── contextd/              # Cross-session memory plugin
 │   │   ├── .claude-plugin/    # Plugin manifest
@@ -43,7 +43,10 @@ marketplace/
 │       ├── skills/            # 1 skill (design-check)
 │       └── commands/          # 1 command (/fs-design:check)
 └── hooks/               # Claude Code hooks
-    └── hooks.json       # Lifecycle hooks (PreCompact only)
+    ├── hooks.json       # Lifecycle hooks (PreCompact + PreToolUse)
+    ├── precompact.sh    # Auto-checkpoint before context compaction
+    ├── pre-commit-secrets.sh  # Gitleaks scan before git commit
+    └── branch-guard.sh  # Branch protection for writes/pushes
 ```
 
 ## Plugins
@@ -79,6 +82,8 @@ Core development standards, workflows, and GitHub integration.
 | `agent-artifacts` | Agent file placement conventions (docs/.claude/) |
 | `consensus-review` | Multi-agent code review with adaptive budgets and veto power |
 | `research-orchestration` | Parallel research agent dispatch and synthesis |
+| `preflight-validation` | Multi-layer environment validation with auto-remediation |
+| `intent-confirmation` | Structured intent disambiguation gated by complexity tier |
 
 ### Review Agents
 
@@ -103,11 +108,13 @@ Core development standards, workflows, and GitHub integration.
 | `research-competitive` | Industry trends, competitor analysis, market context |
 | `research-synthesis` | Consolidates findings from all research agents |
 
-### Other Agents
+### Automation Agents
 
 | Agent | Purpose |
 |-------|---------|
 | `product-owner` | Priority analysis, cross-project dependencies, strategic recommendations |
+| `environment-validator` | Pre-session environment validation (git, tools, tokens) |
+| `sprint-orchestrator` | Autonomous sprint execution with dependency graphing and merge orchestration |
 
 ### Key Commands
 
