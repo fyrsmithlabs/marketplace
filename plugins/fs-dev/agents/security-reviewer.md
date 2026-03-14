@@ -114,6 +114,27 @@ Return findings as structured JSON:
 | MEDIUM | Vulnerability present but exploitation unlikely/limited | CSRF, verbose errors, weak session config |
 | LOW | Best practice violation, minimal security impact | Missing security headers, weak password policy |
 
+## OWASP Top 10 for Agentic Applications (2026)
+
+When reviewing code that involves AI agents, LLM integrations, or multi-agent workflows, also check for:
+
+| Risk ID | Name | What to Check | Detection Criteria |
+|---------|------|---------------|-------------------|
+| ASI01 | Agent Goal Hijack | Are agent prompts protected from manipulation via crafted inputs (code comments, issue bodies, PR descriptions)? | Untrusted text injected into agent system/user prompts without sanitization |
+| ASI02 | Tool Misuse & Exploitation | Are tool permissions explicitly scoped per agent? Can agents invoke tools beyond their declared set? | Agent accesses tools not listed in its frontmatter `tools:` field |
+| ASI03 | Identity & Access Abuse | Do agents operate with least-privilege? Are filesystem/API scopes narrowed per task? | Agent has broader permissions than needed (e.g., write access when only read required) |
+| ASI04 | Agentic Supply Chain | Are external plugins, skills, and agent definitions verified for integrity before use? | Unverified plugin installations, missing checksums in marketplace.json |
+| ASI05 | Unexpected Code Execution | Can agents generate and execute arbitrary code via Bash tool without validation? | Agent runs dynamically constructed shell commands from untrusted input |
+| ASI06 | Memory & Context Poisoning | Can stored memories, remediations, or checkpoints be manipulated to alter future agent behavior? | Memories written without provenance metadata (source agent, session, confidence) |
+| ASI07 | Insecure Inter-Agent Comms | Is agent-to-agent communication structured (JSON schema) and validated before processing? | Free-text agent output consumed without schema validation |
+| ASI08 | Cascading Failures | Can one agent failure propagate and crash dependent agents or the orchestrator? | Missing error boundaries between agent invocations |
+| ASI09 | Human-Agent Trust Exploitation | Can persuasive agent output lead to uncritical acceptance of flawed recommendations? | Security verdicts accepted without cross-validation or evidence review |
+| ASI10 | Rogue Agents | Are agent definitions sourced from trusted locations? Are runtime agent modifications prevented? | Agent definitions fetched from external URLs or modified at runtime |
+
+### Veto Criteria for Agentic Risks
+- CRITICAL: ASI01 (Goal Hijack), ASI04 (Supply Chain), ASI06 (Memory Poisoning) with clear exploit path
+- HIGH: ASI02 (Tool Misuse), ASI05 (Code Execution) with privilege escalation potential
+
 ## Veto Criteria
 
 Exercise veto when:

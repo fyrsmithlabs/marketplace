@@ -1,6 +1,6 @@
 ---
 name: consensus-review
-description: Multi-agent consensus code review with adaptive budgets, context-folding isolation, and progressive summarization. Use when reviewing PRs, directories, or code changes with 5-6 parallel reviewer agents.
+description: Multi-agent consensus code review with adaptive budgets, complexity-aware agent selection, multiple consensus protocols (Approval/Veto, AAD, CI, Supermajority), cross-agent coverage tracking, context-folding isolation, and progressive summarization. Use when reviewing PRs, directories, or code changes.
 ---
 
 # Consensus Review Skill
@@ -58,22 +58,48 @@ Multi-agent code review that dispatches specialized reviewers in parallel with a
 | `documentation-reviewer` | README, API docs, CHANGELOG | 4,096 | Yes |
 | `user-persona-reviewer` | UX, breaking changes, ergonomics | 4,096 | No |
 
-## Budget Calculation
+## Adaptive Budget Allocation
 
-See `includes/consensus-review/budget.md` for full details.
+See `includes/consensus-review/budget.md` for base budget details.
+
+Budget scales based on BOTH scope size AND complexity tier (from the complexity-assessment skill):
+
+### Base Formula (unchanged)
 
 ```
 scale = min(4.0, 1.0 + total_tokens / 16384)
 per_agent_budget = base_budget[agent] * scale
 ```
 
-### Example Calculations
+### Complexity Multiplier
 
-| Scope Size | Total Tokens | Scale | Security Budget |
-|------------|--------------|-------|-----------------|
-| Small (5 files) | ~4K | 1.25 | 10,240 |
-| Medium (15 files) | ~16K | 2.0 | 16,384 |
-| Large (50+ files) | ~48K | 4.0 (cap) | 32,768 |
+After calculating the scope-based budget, apply a complexity multiplier from the complexity-assessment tier:
+
+```
+complexity_multiplier = {
+  "SIMPLE": 0.75,    # Reduce budget for simple reviews
+  "STANDARD": 1.0,   # Standard budget
+  "COMPLEX": 1.5     # Increase budget for complex reviews
+}
+
+adjusted_budget = per_agent_budget * complexity_multiplier[tier]
+```
+
+### Example Calculations with Complexity Tiers
+
+| Scope Size | Tokens | Scale | Tier | Multiplier | Security Budget |
+|------------|--------|-------|------|------------|-----------------|
+| Small (5 files) | ~4K | 1.25 | SIMPLE | 0.75 | 7,680 |
+| Small (5 files) | ~4K | 1.25 | STANDARD | 1.0 | 10,240 |
+| Small (5 files) | ~4K | 1.25 | COMPLEX | 1.5 | 15,360 |
+| Medium (15 files) | ~16K | 2.0 | SIMPLE | 0.75 | 12,288 |
+| Medium (15 files) | ~16K | 2.0 | STANDARD | 1.0 | 16,384 |
+| Medium (15 files) | ~16K | 2.0 | COMPLEX | 1.5 | 24,576 |
+| Large (50+ files) | ~48K | 4.0 | SIMPLE | 0.75 | 24,576 |
+| Large (50+ files) | ~48K | 4.0 | STANDARD | 1.0 | 32,768 |
+| Large (50+ files) | ~48K | 4.0 | COMPLEX | 1.5 | 49,152 |
+
+When complexity tier is not available (e.g., standalone review without prior assessment), default to STANDARD (1.0x).
 
 ## Isolation Modes
 
@@ -93,6 +119,40 @@ For each agent:
   → Agent executes in isolated context
   → branch_return(findings_json)
 ```
+
+## Adaptive Agent Selection
+
+Before dispatching all reviewers, classify the review scope using the complexity tier to determine which agents are needed:
+
+### Triage Matrix
+
+| Complexity | Agents Dispatched |
+|------------|-------------------|
+| SIMPLE | code-quality-reviewer only |
+| STANDARD | code-quality-reviewer + language-specific (e.g., go-reviewer) + security-reviewer |
+| COMPLEX | All 6 reviewers |
+
+### Override Rules
+
+Regardless of complexity tier, force-include agents when the diff matches these patterns:
+
+- If diff touches auth/crypto/secrets → always include `security-reviewer`
+- If diff includes Go files → always include `go-reviewer`
+- If diff modifies public API → always include `user-persona-reviewer`
+- If diff changes docs/README → always include `documentation-reviewer`
+- If diff adds/updates dependencies → always include `vulnerability-reviewer`
+
+### Triage Workflow
+
+```
+1. Determine complexity tier (from complexity-assessment or default STANDARD)
+2. Select base agent set from triage matrix
+3. Scan diff for override patterns
+4. Merge override agents into base set (deduplicate)
+5. Dispatch final agent set with calculated budgets
+```
+
+This reduces cost and latency for SIMPLE reviews while maintaining full coverage for COMPLEX changes.
 
 ## Progressive Summarization
 
@@ -134,9 +194,11 @@ Run concurrently:
 ```python
 total_tokens = sum(file.token_count for file in indexed_files)
 scale = min(4.0, 1.0 + total_tokens / 16384)
+complexity_multiplier = {"SIMPLE": 0.75, "STANDARD": 1.0, "COMPLEX": 1.5}
+tier = complexity_assessment.tier or "STANDARD"  # Default if not available
 
 for agent in selected_agents:
-    agent.budget = base_budgets[agent] * scale
+    agent.budget = base_budgets[agent] * scale * complexity_multiplier[tier]
 ```
 
 ### 3. Isolation Decision
@@ -192,6 +254,119 @@ When agents return partial results:
 2. Show coverage percentage: `67% ⚠️` in table
 3. List skipped files
 4. Suggest follow-up: `→ Consider: /consensus-review {skipped_files}`
+
+## Consensus Protocols
+
+The default protocol is Approval/Veto. Additional protocols can be selected based on review type to improve accuracy and reduce convergence on suboptimal conclusions.
+
+### Protocol Selection Matrix
+
+| Review Type | Protocol | Rationale |
+|-------------|----------|-----------|
+| Code review (default) | Approval/Veto | Security needs hard stops |
+| Research synthesis | Supermajority (66%) | Knowledge tasks benefit from consensus |
+| Architecture review | All-Agents Drafting (AAD) | Prevents early convergence on suboptimal design |
+| Iterative improvement | Collective Improvement (CI) | Allows agents to refine findings collaboratively |
+
+### Approval/Veto (Default)
+
+The existing protocol. Each agent independently reviews and can veto. Synthesis agent merges findings. Best for code reviews where security vetoes are critical.
+
+### All-Agents Drafting (AAD)
+
+Each agent independently generates findings before seeing other agents' outputs. No cross-agent communication during the initial review phase. The synthesis agent merges all findings after all agents complete.
+
+```
+1. Dispatch all agents in parallel (no shared context)
+2. Collect all agent outputs
+3. Synthesis agent merges findings (no agent sees others' work)
+4. Final report generated from merged findings
+```
+
+Research basis: ACL 2025 shows +3.3% accuracy improvement over sequential protocols by preventing anchoring bias.
+
+### Collective Improvement (CI)
+
+After initial findings, agents exchange findings (not rationale). Each agent can update their findings based on others' discoveries. Maximum 2 rounds of exchange.
+
+```
+Round 1: All agents generate independent findings
+Exchange: Findings (not rationale) shared across agents
+Round 2: Agents update their findings based on others' discoveries
+Synthesis: Final merge of updated findings
+```
+
+**Important:** Research shows more than 2 rounds decrease performance due to groupthink convergence. Do NOT exceed 2 rounds.
+
+Research basis: ACL 2025 shows +7.4% accuracy improvement. Best for iterative reviews where agents can build on each other's discoveries.
+
+### Supermajority
+
+Findings require 66% agent agreement to be included in the final report. Vetoes still apply regardless of protocol (security vetoes are never overridden by majority).
+
+```
+1. Collect all agent findings
+2. Group findings by file + issue
+3. Include in report only if >= 66% of reviewing agents flagged it
+4. Exception: CRITICAL/HIGH security findings always included (veto applies)
+```
+
+Used for knowledge-heavy reviews where binary pass/fail is too coarse.
+
+### Protocol Override via Command
+
+```
+/consensus-review <scope> --protocol aad    # All-Agents Drafting
+/consensus-review <scope> --protocol ci     # Collective Improvement
+/consensus-review <scope> --protocol vote   # Supermajority
+/consensus-review <scope>                   # Default: Approval/Veto
+```
+
+## Cross-Agent Coverage Tracking
+
+Track file coverage across ALL agents to identify gaps, not just per-agent coverage:
+
+### Coverage Matrix
+
+```
+| File         | Security | Vuln | Quality | Go  | Docs | Persona |
+|--------------|----------|------|---------|-----|------|---------|
+| handler.go   | Y        | Y    | Y       | Y   | -    | -       |
+| worker.go    | SKIP     | Y    | Y       | Y   | -    | -       |
+| README.md    | -        | -    | -       | -   | Y    | Y       |
+| auth.go      | Y        | Y    | Y       | Y   | -    | Y       |
+```
+
+Legend:
+- `Y` = File reviewed by this agent
+- `SKIP` = File in scope but skipped (budget/partial)
+- `-` = File not in this agent's review domain
+
+### Gap Detection
+
+After collecting all agent outputs, check for coverage gaps:
+
+1. If a file is skipped by an agent but covered by others:
+   → Note: "worker.go has quality coverage but lacks security coverage"
+   → Suggest targeted follow-up: `/consensus-review worker.go --agents security`
+
+2. If a file has NO agent coverage at all:
+   → Flag as UNCOVERED in the report header
+   → Require manual review or re-run with expanded budget
+
+3. If a security-sensitive file lacks security-reviewer coverage:
+   → Escalate: "auth.go was not reviewed by security-reviewer (budget limit)"
+   → Block merge until security coverage is obtained
+
+### Coverage in Report Output
+
+Include coverage matrix in the report footer:
+
+```
+Coverage: 11/12 files fully covered
+Gap: worker.go lacks security coverage (skipped due to budget)
+→ Suggested: /consensus-review worker.go --agents security
+```
 
 ## contextd Integration
 
@@ -305,5 +480,6 @@ Low (6): ...
 
 - `includes/consensus-review/budget.md` - Budget calculation formula
 - `includes/consensus-review/progressive.md` - Degradation protocol
+- `complexity-assessment` skill - Provides tier, recommended_agents, and intent gating
 - `/discover` - Broader codebase analysis
 - `effective-go` skill - Go-specific guidance

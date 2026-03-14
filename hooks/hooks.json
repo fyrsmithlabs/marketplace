@@ -9,6 +9,54 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": {
+          "tool_name": "Bash",
+          "command_pattern": "^git\\s+commit"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/pre-commit-secrets.sh"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Bash",
+          "command_pattern": "^git\\s+push"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/branch-guard.sh push"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Write"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/branch-guard.sh write"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Edit"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/branch-guard.sh write"
+          }
+        ]
+      }
     ]
   }
 }
