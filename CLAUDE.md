@@ -1,7 +1,7 @@
 # CLAUDE.md - Marketplace
 
 **Status**: Active Development
-**Version**: 1.9.1
+**Version**: 1.10.0
 **Last Updated**: 2026-03-14
 
 ---
@@ -29,7 +29,7 @@ marketplace/
 │   ├── fs-dev/                # Core development plugin
 │   │   ├── .claude-plugin/    # Plugin manifest
 │   │   ├── commands/          # 12 commands (/fs-dev:init, /fs-dev:plan, etc.)
-│   │   ├── agents/            # 17 subagents (6 reviewers + 7 research + 1 orchestrator + 1 product-owner + 2 automation)
+│   │   ├── agents/            # 16 subagents (6 reviewers + 7 research + 1 product-owner + 2 automation)
 │   │   ├── skills/            # 15 skills (standards, workflows, planning, validation)
 │   │   └── includes/          # Shared includes for skills/agents
 │   ├── contextd/              # Cross-session memory plugin
@@ -55,7 +55,7 @@ This marketplace contains three plugins:
 
 | Plugin | Version | Category | Description |
 |--------|---------|----------|-------------|
-| `fs-dev` | v1.9.1 | development | Core standards, workflows, planning |
+| `fs-dev` | v1.10.0 | development | Core standards, workflows, planning |
 | `contextd` | v1.2.0 | memory | Cross-session memory and learning |
 | `fs-design` | v1.0.0 | design | Design system compliance |
 
