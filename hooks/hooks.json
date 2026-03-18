@@ -57,6 +57,44 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": {
+          "tool_name": "Edit",
+          "file_pattern": "**/*plugin*/*.json"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/validate-manifests.sh"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Write",
+          "file_pattern": "**/*plugin*/*.json"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/validate-manifests.sh"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Edit",
+          "file_pattern": "**/CLAUDE.md"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/validate-manifests.sh"
+          }
+        ]
+      }
     ]
   }
 }
