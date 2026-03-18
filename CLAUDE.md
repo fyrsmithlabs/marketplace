@@ -1,7 +1,7 @@
 # CLAUDE.md - Marketplace
 
 **Status**: Active Development
-**Version**: 1.10.0
+**Version**: 1.10.1
 **Last Updated**: 2026-03-14
 
 ---
@@ -55,7 +55,7 @@ This marketplace contains three plugins:
 
 | Plugin | Version | Category | Description |
 |--------|---------|----------|-------------|
-| `fs-dev` | v1.10.0 | development | Core standards, workflows, planning |
+| `fs-dev` | v1.10.1 | development | Core standards, workflows, planning |
 | `contextd` | v1.2.0 | memory | Cross-session memory and learning |
 | `fs-design` | v1.0.0 | design | Design system compliance |
 
