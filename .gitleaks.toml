@@ -37,6 +37,25 @@ regexes = [
     '''EXAMPLE_.*''',
     '''YOUR_.*_HERE''',
     '''<your-.*>''',
+
+    # 1Password secret references (op://vault/item/field) - pointers, not actual secrets
+    '''op://[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+''',
+
+    # Variable references / templating - not actual secrets
+    '''\$\{[A-Z_]+\}''',
+    '''\$[A-Z_]+''',
+    '''\{\{.*\}\}''',
+
+    # File paths used as secret source references
+    '''/run/secrets/.*''',
+    '''/etc/ssl/.*''',
+    '''/var/run/secrets/.*''',
+
+    # Vault / secret manager path references
+    '''vault/data/.*''',
+    '''secretsmanager:.*''',
+    '''arn:aws:secretsmanager:.*''',
+    '''projects/.*/secrets/.*''',
 ]
 
 # Specific commits to ignore (add as needed for false positives)
@@ -71,14 +90,14 @@ tags = ["entropy", "base64"]
 id = "high-entropy-hex"
 description = "High entropy hex string (potential secret)"
 regex = '''[a-fA-F0-9]{32,}'''
-entropy = 3.5
+entropy = 4.0
 tags = ["entropy", "hex"]
 
-# Environment file patterns
+# Environment file patterns (only .env, not .env.example or .env.template)
 [[rules]]
 id = "env-file-secret"
 description = "Secret in .env file format"
-regex = '''(?i)^[A-Z_]*(SECRET|PASSWORD|TOKEN|KEY|CREDENTIAL)[A-Z_]*\s*=\s*(.+)$'''
-path = '''\.env.*'''
+regex = '''(?i)^[A-Z_]*(SECRET|PASSWORD|TOKEN|KEY|CREDENTIAL)[A-Z_]*\s*=\s*['"]*([^${\s<][^'"]{8,})['"]*$'''
+path = '''\.env$'''
 secretGroup = 2
 tags = ["env", "secret"]
