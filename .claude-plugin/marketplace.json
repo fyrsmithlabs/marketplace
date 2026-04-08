@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, cross-session memory, and design system compliance",
-    "version": "1.10.1"
+    "version": "1.11.0"
   },
   "plugins": [
     {
@@ -39,6 +39,16 @@
       },
       "source": "./plugins/fs-design/",
       "category": "design"
+    },
+    {
+      "name": "open-policy-agent",
+      "description": "OPA/Rego policy authoring, validation, testing, and benchmark-aligned spec generation for Kubernetes, Terraform, Docker, cloud providers, and service mesh platforms.",
+      "version": "0.1.0",
+      "author": {
+        "name": "fyrsmithlabs"
+      },
+      "source": "./plugins/open-policy-agent/",
+      "category": "security"
     }
   ]
 }
