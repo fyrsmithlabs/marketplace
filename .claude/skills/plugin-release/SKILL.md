@@ -138,7 +138,16 @@ For each file matching `plugins/{plugin}/commands/*.md`:
 
 Report any commands missing frontmatter.
 
-### 4f. Validation Results
+### 4f. Reference File Verification
+
+For each `SKILL.md` in `plugins/{plugin}/skills/*/SKILL.md`:
+- Extract referenced file paths (patterns like `references/*.md` or `**references/<name>.md**`)
+- Verify each referenced file exists on disk relative to the skill directory
+- Report any missing reference files
+
+Missing reference files cause skills to promise resources that don't exist, breaking progressive disclosure.
+
+### 4g. Validation Results
 
 Present results as a table:
 
@@ -154,6 +163,7 @@ Present results as a table:
 | Agent frontmatter (17 agents) | PASS | All have name + description |
 | Command frontmatter (13 commands) | PASS | All have name + description |
 | Count accuracy | PASS | CLAUDE.md matches disk |
+| Reference file integrity | PASS | All SKILL.md references resolve |
 ```
 
 If ANY check fails, stop and report the failures. Do NOT proceed to release steps until all checks pass.
@@ -265,6 +275,7 @@ mcp__contextd__memory_record(
 - [ ] Validate all JSON files parse correctly
 - [ ] Verify version consistency across all 5 locations
 - [ ] Validate frontmatter on all skills, agents, and commands
+- [ ] Verify all SKILL.md referenced files exist on disk
 - [ ] Generate release notes from commit log
 - [ ] Present release notes to user for review
 - [ ] Commit, tag, push, create GitHub release

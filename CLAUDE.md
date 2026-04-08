@@ -259,6 +259,8 @@ OPA/Rego policy authoring, validation, testing, and benchmark-aligned spec gener
 - **Hook prompts are LLM instructions, not executable code** - Variables in hooks/templates (e.g., `{{filename}}`) are documentation for the LLM, not shell interpolation
 - **Template variables** use Go's `text/template` which handles escaping; they're not directly user-controlled
 - **Security reviewers may flag "injection"** in prompts - this is expected; the prompts instruct the LLM what to analyze
+- **Verify all SKILL.md reference file paths exist on disk** - Skills reference files in `references/` that may not have been created yet; always check before release
+- **Pressure test skills before release** - Use `/fs-dev:test-skill` with adversarial scenarios; harden HIGH-risk patterns with explicit "DO NOT" / "CRITICAL" warnings in skill body
 
 ## ADRs (Architectural Decisions)
 
