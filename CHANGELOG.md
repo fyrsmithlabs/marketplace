@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **`cc-skills-golang` plugin (external)** - Added [samber/cc-skills-golang](https://github.com/samber/cc-skills-golang) as a GitHub-sourced marketplace entry, providing 40+ production-ready Go skills (code quality, architecture, concurrency, testing, performance, tooling)
+- **fs-dev depends on cc-skills-golang** - fs-dev's `plugin.json` declares `cc-skills-golang` as a dependency, so installing fs-dev auto-installs the Go skills from upstream
 
 ### Removed
 - **fs-dev `effective-go` skill** - Removed the single in-tree Go idiom skill in favor of the more comprehensive external `cc-skills-golang` plugin (the only point of overlap between the two)

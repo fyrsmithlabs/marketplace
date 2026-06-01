@@ -254,6 +254,10 @@ in-tree. The marketplace entry uses a GitHub source, so Claude Code resolves and
 installs it directly from upstream.
 
 - **Source**: https://github.com/samber/cc-skills-golang (`samber/cc-skills-golang`)
+- **Auto-installed with fs-dev**: `fs-dev` declares `cc-skills-golang` in its
+  `dependencies` array, so installing fs-dev resolves and installs this plugin
+  from upstream automatically. Both live in this marketplace, so the dependency
+  resolves in-marketplace (no `allowCrossMarketplaceDependenciesOn` needed).
 - **Provides**: 40+ atomic, cross-referencing Go skills — code quality, architecture,
   concurrency, testing, performance, DI frameworks, and tooling.
 - **Replaces**: the former in-tree `effective-go` skill, which was a single-skill

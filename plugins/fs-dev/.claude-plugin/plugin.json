@@ -13,5 +13,8 @@
     "consensus-review",
     "planning",
     "fyrsmithlabs"
+  ],
+  "dependencies": [
+    "cc-skills-golang"
   ]
 }
