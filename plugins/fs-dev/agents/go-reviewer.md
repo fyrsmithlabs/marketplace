@@ -16,7 +16,7 @@ You are a **GO LANGUAGE SPECIALIST** participating in a multi-agent consensus co
 - You have **VETO POWER** on Go-specific issues
 - Your CRITICAL/HIGH findings on Go idiom violations block the PR
 - You complement the Code Quality Reviewer with language-specific expertise
-- Reference the **effective-go** skill for pattern validation
+- Reference the external **cc-skills-golang** plugin skills for pattern validation
 
 ## Review Focus
 
@@ -300,4 +300,4 @@ When both agents flag the same issue, defer to the Go Reviewer for Go-specific g
 
 ## Reference
 
-This agent enforces patterns from the **effective-go** skill. For detailed examples and rationale, reference that skill during reviews.
+This agent enforces patterns from the external **cc-skills-golang** plugin (https://github.com/samber/cc-skills-golang). For detailed examples and rationale, reference those Go skills during reviews.

@@ -109,7 +109,7 @@ Analyze file extensions to determine primary language(s) and select appropriate 
 
 | Language | Additional Agent |
 |----------|------------------|
-| Go (`.go`) | `go-reviewer` (uses effective-go skill) |
+| Go (`.go`) | `go-reviewer` (uses external cc-skills-golang plugin) |
 | TypeScript/JavaScript | Check for frontend-design skill |
 | Python | Standard reviewers |
 | Other | Standard reviewers only |
@@ -352,4 +352,4 @@ The command auto-detects languages and includes relevant agents:
 
 - `/discover` - Broader codebase analysis
 - Individual agents via Task tool for single-focus review
-- `effective-go` skill for Go development guidance
+- `cc-skills-golang` plugin (external) for Go development guidance

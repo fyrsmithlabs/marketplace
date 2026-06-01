@@ -1,6 +1,6 @@
 # fs-dev Plugin Documentation
 
-**Version:** 1.9.1
+**Version:** 1.11.0
 **Category:** Development
 **Description:** Core development standards, workflows, and GitHub integration for fyrsmithlabs projects.
 
@@ -36,7 +36,8 @@ The plugin activates automatically when installed. Skills trigger based on conte
 | `roadmap-discovery` | Codebase analysis with configurable lenses (architecture, security, performance, testing, documentation) for understanding existing projects | "discover codebase", "analyze architecture", "understand this project", "roadmap discovery" |
 | `product-owner` | Daily standups with GitHub synthesis, priority analysis, cross-project dependency detection, and strategic recommendations | "standup", "what should I work on", "priorities", "daily status" |
 | `context-folding` | Context isolation for complex sub-tasks using contextd branch_create/branch_return to prevent context pollution | Automatically used during complex agent workflows; "isolate context", "context branch" |
-| `effective-go` | Idiomatic Go development guidance based on Effective Go, covering naming, error handling, concurrency, and package design | Triggered when working with Go files; "go best practices", "idiomatic go", "effective go" |
+
+> **Go idiom guidance** is provided by the external [`cc-skills-golang`](https://github.com/samber/cc-skills-golang) plugin (added to this marketplace as a GitHub-sourced entry), which supersedes the former in-tree `effective-go` skill. The `go-reviewer` agent references those skills for pattern validation.
 
 ---
 

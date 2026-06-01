@@ -1,8 +1,8 @@
 # CLAUDE.md - Marketplace
 
 **Status**: Active Development
-**Version**: 1.11.1
-**Last Updated**: 2026-04-08
+**Version**: 1.12.0
+**Last Updated**: 2026-06-01
 
 ---
 
@@ -30,8 +30,9 @@ marketplace/
 │   │   ├── .claude-plugin/    # Plugin manifest
 │   │   ├── commands/          # 12 commands (/fs-dev:init, /fs-dev:plan, etc.)
 │   │   ├── agents/            # 16 subagents (6 reviewers + 7 research + 1 product-owner + 2 automation)
-│   │   ├── skills/            # 15 skills (standards, workflows, planning, validation)
+│   │   ├── skills/            # 14 skills (standards, workflows, planning, validation)
 │   │   └── includes/          # Shared includes for skills/agents
+│   ├── cc-skills-golang/      # External Go skills plugin (github: samber/cc-skills-golang)
 │   ├── contextd/              # Cross-session memory plugin
 │   │   ├── .claude-plugin/    # Plugin manifest
 │   │   ├── agents/            # 2 contextd agents
@@ -58,11 +59,12 @@ marketplace/
 
 ## Plugins
 
-This marketplace contains four plugins:
+This marketplace contains five plugins. Four are maintained in-tree; `cc-skills-golang` is referenced externally via a GitHub source.
 
 | Plugin | Version | Category | Description |
 |--------|---------|----------|-------------|
-| `fs-dev` | v1.10.2 | development | Core standards, workflows, planning |
+| `fs-dev` | v1.11.0 | development | Core standards, workflows, planning |
+| `cc-skills-golang` | external | development | Go development skills (github: samber/cc-skills-golang) |
 | `contextd` | v1.2.0 | memory | Cross-session memory and learning |
 | `fs-design` | v1.0.0 | design | Design system compliance |
 | `open-policy-agent` | v0.1.0 | security | OPA/Rego policy authoring, validation, benchmarks |
@@ -86,7 +88,6 @@ Core development standards, workflows, and GitHub integration.
 | `roadmap-discovery` | Codebase analysis with lens filtering |
 | `product-owner` | Daily standups, priority synthesis, cross-project dependencies |
 | `context-folding` | Context isolation for complex sub-tasks |
-| `effective-go` | Idiomatic Go development based on Effective Go |
 | `agent-artifacts` | Agent file placement conventions (docs/.claude/) |
 | `consensus-review` | Multi-agent code review with adaptive budgets and veto power |
 | `research-orchestration` | Parallel research agent dispatch and synthesis |
@@ -243,6 +244,28 @@ OPA/Rego policy authoring, validation, testing, and benchmark-aligned spec gener
 | `/opa:spec <platform> <component>` | Create benchmark-aligned policy spec |
 | `/opa:review [path]` | Deep security review against benchmarks |
 | `/opa:migrate [path]` | Migrate Rego v0 to v1 syntax |
+
+---
+
+## cc-skills-golang Plugin (external)
+
+Go development skills referenced from an external repository rather than vendored
+in-tree. The marketplace entry uses a GitHub source, so Claude Code resolves and
+installs it directly from upstream.
+
+- **Source**: https://github.com/samber/cc-skills-golang (`samber/cc-skills-golang`)
+- **Auto-installed with fs-dev**: `fs-dev` declares `cc-skills-golang` in its
+  `dependencies` array, so installing fs-dev resolves and installs this plugin
+  from upstream automatically. Both live in this marketplace, so the dependency
+  resolves in-marketplace (no `allowCrossMarketplaceDependenciesOn` needed).
+- **Provides**: 40+ atomic, cross-referencing Go skills — code quality, architecture,
+  concurrency, testing, performance, DI frameworks, and tooling.
+- **Replaces**: the former in-tree `effective-go` skill, which was a single-skill
+  subset of this coverage. The `go-reviewer` consensus agent now references these
+  skills for Go pattern validation.
+- **Maintenance**: owned upstream by samber; version is tracked by the external repo,
+  not this marketplace. Pin a specific release by adding `"ref"`/`"sha"` to the
+  plugin's `source` block in `marketplace.json` if reproducibility is needed.
 
 ---
 

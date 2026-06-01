@@ -6,13 +6,23 @@
   },
   "metadata": {
     "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, cross-session memory, and design system compliance",
-    "version": "1.11.1"
+    "version": "1.12.0"
   },
   "plugins": [
     {
+      "name": "cc-skills-golang",
+      "description": "AI Agent Skills for production-ready Go projects. 40+ atomic, cross-referencing Go skills covering code quality, architecture, concurrency, testing, performance, and tooling. Maintained externally by samber.",
+      "source": {
+        "source": "github",
+        "repo": "samber/cc-skills-golang"
+      },
+      "category": "development",
+      "strict": false
+    },
+    {
       "name": "fs-dev",
-      "description": "Claude Code plugins for fyrsmithlabs project standards and workflows. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and GitHub planning integration.",
-      "version": "1.10.2",
+      "description": "Claude Code plugins for fyrsmithlabs project standards and workflows. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and GitHub planning integration. Go idiom guidance is provided by the external cc-skills-golang plugin.",
+      "version": "1.11.0",
       "author": {
         "name": "fyrsmithlabs"
       },
