@@ -1,7 +1,7 @@
 # CLAUDE.md - Marketplace
 
 **Status**: Active Development
-**Version**: 1.12.0
+**Version**: 1.13.0
 **Last Updated**: 2026-06-01
 
 ---
@@ -38,18 +38,11 @@ marketplace/
 │   │   ├── agents/            # 2 contextd agents
 │   │   ├── skills/            # 5 contextd skills
 │   │   └── commands/          # 8 contextd commands
-│   ├── fs-design/             # Design system plugin
-│   │   ├── .claude-plugin/    # Plugin manifest
-│   │   ├── agents/            # 2 design agents
-│   │   ├── skills/            # 1 skill (design-check)
-│   │   └── commands/          # 1 command (/fs-design:check)
-│   └── open-policy-agent/     # OPA/Rego policy plugin
+│   └── fs-design/             # Design system plugin
 │       ├── .claude-plugin/    # Plugin manifest
-│       ├── agents/            # 4 agents (validator, spec-gen, reviewer, test-gen)
-│       ├── skills/            # 7 skills (rego, testing, toolchain, platforms, benchmarks, specs, migration)
-│       ├── commands/          # 6 commands (/opa:write, /opa:validate, etc.)
-│       ├── hooks/             # PreToolUse hook for .rego validation
-│       └── includes/          # Shared OPA conventions
+│       ├── agents/            # 2 design agents
+│       ├── skills/            # 1 skill (design-check)
+│       └── commands/          # 1 command (/fs-design:check)
 └── hooks/               # Claude Code hooks
     ├── hooks.json       # Lifecycle hooks (PreCompact + PreToolUse)
     ├── precompact.sh    # Auto-checkpoint before context compaction
@@ -59,15 +52,14 @@ marketplace/
 
 ## Plugins
 
-This marketplace contains five plugins. Four are maintained in-tree; `cc-skills-golang` is referenced externally via a GitHub source.
+This marketplace contains four plugins. Three are maintained in-tree; `cc-skills-golang` is referenced externally via a GitHub source.
 
 | Plugin | Version | Category | Description |
 |--------|---------|----------|-------------|
 | `fs-dev` | v1.11.0 | development | Core standards, workflows, planning |
 | `cc-skills-golang` | external | development | Go development skills (github: samber/cc-skills-golang) |
-| `contextd` | v1.2.0 | memory | Cross-session memory and learning |
+| `contextd` | v1.3.0 | memory | Cross-session memory and learning |
 | `fs-design` | v1.0.0 | design | Design system compliance |
-| `open-policy-agent` | v0.1.0 | security | OPA/Rego policy authoring, validation, benchmarks |
 
 ---
 
@@ -206,44 +198,6 @@ Terminal Elegance design system compliance checking.
 - Checks accessibility (alt text, ARIA labels, focus states)
 - Validates brand name consistency in documentation
 - Report-only tool, does not auto-fix issues
-
----
-
-## open-policy-agent Plugin
-
-OPA/Rego policy authoring, validation, testing, and benchmark-aligned spec generation.
-
-### Skills
-
-| Skill | Purpose |
-|-------|---------|
-| `rego-language` | Rego v1 syntax, idioms, built-in functions, safe navigation |
-| `opa-testing` | `opa test` framework, mocking, coverage, Conftest patterns |
-| `opa-toolchain` | OPA CLI, Regal linter, bundle management, CI/CD |
-| `policy-platforms` | K8s (Gatekeeper), Terraform, Docker, Envoy platform patterns |
-| `security-benchmarks` | CIS, SOC2, HIPAA, PCI-DSS, NIST control mappings |
-| `spec-driven-policy` | Spec-first workflow with benchmark research and approval gates |
-| `rego-v1-migration` | Rego v0 to v1 migration patterns and tooling |
-
-### Agents
-
-| Agent | Purpose |
-|-------|---------|
-| `policy-validator` | Validates syntax, lint, tests, benchmark alignment |
-| `spec-generator` | Researches benchmarks, generates SPEC.md |
-| `policy-reviewer` | Security gap analysis and benchmark coverage review |
-| `test-generator` | Generates comprehensive `_test.rego` suites |
-
-### Commands
-
-| Command | Purpose |
-|---------|---------|
-| `/opa:write <platform> <component>` | Guided policy creation with spec and tests |
-| `/opa:validate [path]` | Full validation pipeline |
-| `/opa:test [path]` | Generate and run test suites |
-| `/opa:spec <platform> <component>` | Create benchmark-aligned policy spec |
-| `/opa:review [path]` | Deep security review against benchmarks |
-| `/opa:migrate [path]` | Migrate Rego v0 to v1 syntax |
 
 ---
 

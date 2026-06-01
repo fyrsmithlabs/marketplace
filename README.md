@@ -50,15 +50,14 @@ claude plugin install fyrsmithlabs/marketplace
 
 ## Plugins
 
-This marketplace contains five plugins that can be installed independently:
+This marketplace contains four plugins that can be installed independently:
 
 | Plugin | Version | Components | Purpose |
 |--------|---------|------------|---------|
 | [fs-dev](docs/plugins/fs-dev.md) | 1.11.0 | 14 skills, 16 agents, 12 commands | Development standards, workflows, planning |
 | [cc-skills-golang](https://github.com/samber/cc-skills-golang) | external | 40+ Go skills | Go development skills (referenced from GitHub) |
-| [contextd](docs/plugins/contextd.md) | 1.2.0 | 5 skills, 2 agents, 8 commands | Cross-session memory via MCP |
+| [contextd](docs/plugins/contextd.md) | 1.3.0 | 5 skills, 2 agents, 8 commands | Cross-session memory via MCP |
 | [fs-design](docs/plugins/fs-design.md) | 1.0.0 | 1 skill, 2 agents, 1 command | Design system compliance |
-| [open-policy-agent](plugins/open-policy-agent/) | 0.1.0 | 7 skills, 4 agents, 6 commands | OPA/Rego policy authoring and validation |
 
 ---
 

@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, cross-session memory, and design system compliance",
-    "version": "1.12.0"
+    "version": "1.13.0"
   },
   "plugins": [
     {
@@ -33,7 +33,7 @@
     {
       "name": "contextd",
       "description": "Cross-session memory and learning for Claude Code. Provides semantic search, memory recording, checkpoints, error remediation, and multi-agent orchestration via the contextd MCP server.",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "author": {
         "name": "fyrsmithlabs"
       },
@@ -49,16 +49,6 @@
       },
       "source": "./plugins/fs-design/",
       "category": "design"
-    },
-    {
-      "name": "open-policy-agent",
-      "description": "OPA/Rego policy authoring, validation, testing, and benchmark-aligned spec generation for Kubernetes, Terraform, Docker, cloud providers, and service mesh platforms.",
-      "version": "0.1.0",
-      "author": {
-        "name": "fyrsmithlabs"
-      },
-      "source": "./plugins/open-policy-agent/",
-      "category": "security"
     }
   ]
 }

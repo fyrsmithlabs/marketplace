@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0] - 2026-06-01
+
+### Removed
+- **`open-policy-agent` plugin** - Removed the OPA/Rego plugin (skills, agents, commands, hooks, includes) and its marketplace entry, along with its CLAUDE.md and README.md sections
+
+### Changed
+- **contextd entry → v1.3.0** - Bumped the contextd marketplace entry to match its `plugin.json` (was 1.2.0), resolving the version-mismatch validation warning; updated CLAUDE.md and README.md to match
+
 ## [1.12.0] - 2026-06-01
 
 ### Added
