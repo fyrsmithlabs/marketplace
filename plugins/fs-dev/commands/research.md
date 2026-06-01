@@ -17,7 +17,7 @@ options:
     description: Debug mode - technical + architectural for troubleshooting
     type: boolean
   - name: --output
-    description: Output directory (default: docs/.claude/research/{topic})
+    description: "Output directory (default: docs/.claude/research/{topic})"
     type: string
 ---
 
