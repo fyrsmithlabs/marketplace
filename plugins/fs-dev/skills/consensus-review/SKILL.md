@@ -482,4 +482,4 @@ Low (6): ...
 - `includes/consensus-review/progressive.md` - Degradation protocol
 - `complexity-assessment` skill - Provides tier, recommended_agents, and intent gating
 - `/discover` - Broader codebase analysis
-- `effective-go` skill - Go-specific guidance
+- `cc-skills-golang` plugin (external) - Go-specific guidance

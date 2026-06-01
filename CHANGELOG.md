@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2026-06-01
+
+### Added
+- **`cc-skills-golang` plugin (external)** - Added [samber/cc-skills-golang](https://github.com/samber/cc-skills-golang) as a GitHub-sourced marketplace entry, providing 40+ production-ready Go skills (code quality, architecture, concurrency, testing, performance, tooling)
+
+### Removed
+- **fs-dev `effective-go` skill** - Removed the single in-tree Go idiom skill in favor of the more comprehensive external `cc-skills-golang` plugin (the only point of overlap between the two)
+
+### Changed
+- **fs-dev → v1.11.0** - `go-reviewer` agent and `consensus-review` skill/command now reference the external `cc-skills-golang` plugin for Go pattern validation instead of the removed `effective-go` skill
+- **Docs refreshed** - CLAUDE.md, README.md, and docs/plugins/fs-dev.md updated to list the new plugin, correct plugin counts, and document the external reference
+
 ## [1.9.1] - 2026-01-30
 
 ### Changed
