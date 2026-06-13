@@ -111,7 +111,7 @@ memory_search(project_id, "rationalized OR justified OR implied consent")
 memory_search(project_id, "assumed OR without verification OR without checking")
 
 # Semantic search for instruction violations
-repository_search(project_path, "skills commands instructions requirements")
+semantic_search(project_path, "skills commands instructions requirements")
 semantic_search(project_path, "agent behavior patterns violations")
 ```
 
@@ -158,7 +158,7 @@ Action: Update policy violations count, record finding
 For each finding, identify which instruction was violated:
 
 ```
-repository_search(project_path, "<behavior description>")
+semantic_search(project_path, "<behavior description>")
 → Returns: skill file, command, or CLAUDE.md section that was ignored
 ```
 

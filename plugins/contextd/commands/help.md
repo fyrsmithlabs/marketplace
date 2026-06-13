@@ -53,8 +53,7 @@ Low-level tools available via `mcp__contextd__*`:
 | `remediation_search` | Find error fix patterns |
 | `remediation_record` | Record new fix |
 | `repository_index` | Index repo for semantic search |
-| `repository_search` | Semantic search over indexed code |
-| `semantic_search` | Smart search with semantic understanding + grep fallback |
+| `semantic_search` | Smart search with semantic understanding + grep fallback (accepts optional `collection_name` to search a specific collection) |
 | `troubleshoot_diagnose` | AI-powered error diagnosis |
 | `conversation_index` | Index Claude Code conversation files |
 | `conversation_search` | Search indexed conversations |

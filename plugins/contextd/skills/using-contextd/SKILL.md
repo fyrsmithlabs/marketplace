@@ -51,7 +51,7 @@ Skipping this is a protocol violation.
 
 | Category | Tools | Purpose |
 |----------|-------|---------|
-| **Search** | `semantic_search`, `repository_search`, `repository_index` | Code lookup by meaning |
+| **Search** | `semantic_search`, `repository_index` | Code lookup by meaning (`semantic_search` accepts optional `collection_name` to target a specific indexed collection) |
 | **Memory** | `memory_search`, `memory_record`, `memory_feedback`, `memory_outcome` | Cross-session learning |
 | **Checkpoint** | `checkpoint_save`, `checkpoint_list`, `checkpoint_resume` | Context preservation |
 | **Remediation** | `remediation_search`, `remediation_record`, `troubleshoot_diagnose` | Error pattern tracking |
@@ -87,7 +87,7 @@ curl -s http://localhost:9090/health | jq
 
 All tools accepting `project_path` validate paths before use:
 - **No directory traversal**: Paths containing `../` are rejected
-- **Affected tools**: `semantic_search`, `repository_index`, `repository_search`, `reflect_report`
+- **Affected tools**: `semantic_search`, `repository_index`, `reflect_report`
 - **Use absolute paths** or paths within the current project directory
 
 ## The Learning Loop
