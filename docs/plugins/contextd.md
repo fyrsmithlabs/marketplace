@@ -1,8 +1,12 @@
 # contextd Plugin Documentation
 
-**Version**: 1.3.0
+**Version**: 1.4.0
 **Category**: Memory
 **Author**: fyrsmithlabs
+
+> **v0.5.0+ required.** This release adds support for contextd v0.5.0: memory category
+> classification, security/input-validation hardening, a fix for long project paths breaking
+> storage, and fallback-store concurrency fixes.
 
 ---
 

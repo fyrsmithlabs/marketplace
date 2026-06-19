@@ -30,10 +30,9 @@ Skills are activated automatically based on context or can be referenced with `@
 | Skill | Description |
 |-------|-------------|
 | `using-contextd` | Canonical reference for all contextd tools |
-| `contextd-workflow` | Pre/work/post-flight flow for sessions |
-| `context-folding` | Isolate complex sub-tasks with token budgets |
-| `project-setup` | Onboarding, CLAUDE.md generation, policies |
-| `consensus-review` | Multi-agent code review with parallel reviewers |
+| `workflow` | Pre/work/post-flight flow for sessions |
+| `setup` | Onboarding, CLAUDE.md generation, policies |
+| `orchestration` | Multi-task execution with parallel agents |
 | `self-reflection` | Analyze behavior patterns, improve skills/docs |
 
 ## MCP Tools
@@ -47,11 +46,13 @@ Low-level tools available via `mcp__contextd__*`:
 | `memory_feedback` | Rate memory helpfulness (adjusts confidence) |
 | `memory_outcome` | Report task success/failure after using a memory |
 | `memory_consolidate` | Flush session buffer (session granularity mode) |
+| `memory_consolidate_session` | Flush session turns into session-level memories |
 | `checkpoint_save` | Save context snapshot |
 | `checkpoint_list` | List available checkpoints |
 | `checkpoint_resume` | Resume from checkpoint |
 | `remediation_search` | Find error fix patterns |
 | `remediation_record` | Record new fix |
+| `remediation_feedback` | Rate whether a fix was helpful |
 | `repository_index` | Index repo for semantic search |
 | `repository_search` | Semantic search over indexed code |
 | `semantic_search` | Smart search with semantic understanding + grep fallback |
@@ -77,9 +78,9 @@ Low-level tools available via `mcp__contextd__*`:
 ## Getting Started with Skills
 
 Reference skills in conversation:
-- "Use the @contextd:contextd-workflow skill for session flow"
-- "Apply @contextd:project-setup to create CLAUDE.md"
-- "Follow @contextd:context-folding for isolated sub-tasks"
+- "Use the @contextd:workflow skill for session flow"
+- "Apply @contextd:setup to create CLAUDE.md"
+- "Follow @contextd:orchestration for multi-agent task execution"
 
 ## Additional Features
 
