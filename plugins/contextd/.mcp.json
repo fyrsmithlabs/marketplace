@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "contextd": {
-      "type": "stdio",
-      "command": "contextd",
-      "args": ["--mcp", "--no-http"]
-    }
-  }
-}
